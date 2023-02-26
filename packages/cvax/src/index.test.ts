@@ -1,5 +1,5 @@
-import type * as CVA from "./";
-import { cvax, cx } from "./";
+import type * as CVA from "./"
+import { cvax, cx } from "./"
 
 describe("cx", () => {
   describe.each<CVA.CxOptions>([
@@ -14,13 +14,7 @@ describe("cx", () => {
           ["bar"],
           [
             undefined,
-            [
-              "baz",
-              "qux",
-              "quux",
-              "quuz",
-              [[[[[[[[["corge", "grault"]]]]], "garply"]]]],
-            ],
+            ["baz", "qux", "quux", "quuz", [[[[[[[[["corge", "grault"]]]]], "garply"]]]]],
           ],
         ],
       ],
@@ -28,90 +22,80 @@ describe("cx", () => {
     ],
   ])("cx(%o)", (options, expected) => {
     test(`returns ${expected}`, () => {
-      expect(cx(options)).toBe(expected);
-    });
-  });
-});
+      expect(cx(options)).toBe(expected)
+    })
+  })
+})
 
 describe("cvax", () => {
   describe("without base", () => {
     describe("without anything", () => {
       test("empty", () => {
-        const example = cvax();
+        const example = cvax()
 
-        expect(example()).toBe("");
+        expect(example()).toBe("")
 
         expect(
           example({
             // @ts-expect-error
             aCheekyInvalidProp: "lol",
-          })
-        ).toBe("");
+          }),
+        ).toBe("")
 
-        expect(example({ className: "adhoc-className" })).toBe(
-          "adhoc-className"
-        );
+        expect(example({ className: "adhoc-className" })).toBe("adhoc-className")
 
         expect(
           example({
             className: "adhoc-className",
-          })
-        ).toBe("adhoc-className");
-      });
+          }),
+        ).toBe("adhoc-className")
+      })
 
       test("undefined", () => {
-        const example = cvax(undefined);
+        const example = cvax(undefined)
 
-        expect(example()).toBe("");
+        expect(example()).toBe("")
 
         expect(
           example({
             // @ts-expect-error
             aCheekyInvalidProp: "lol",
-          })
-        ).toBe("");
+          }),
+        ).toBe("")
 
-        expect(example({ className: "adhoc-className" })).toBe(
-          "adhoc-className"
-        );
+        expect(example({ className: "adhoc-className" })).toBe("adhoc-className")
 
         expect(
           example({
             className: "adhoc-className",
-          })
-        ).toBe("adhoc-className");
-      });
+          }),
+        ).toBe("adhoc-className")
+      })
 
       test("null", () => {
-        const example = cvax(null);
+        const example = cvax(null)
 
-        expect(example()).toBe("");
+        expect(example()).toBe("")
 
         expect(
           example({
             // @ts-expect-error
             aCheekyInvalidProp: "lol",
-          })
-        ).toBe("");
+          }),
+        ).toBe("")
 
-        expect(example({ className: "adhoc-className" })).toBe(
-          "adhoc-className"
-        );
-      });
-    });
+        expect(example({ className: "adhoc-className" })).toBe("adhoc-className")
+      })
+    })
 
     describe("without defaults", () => {
       const buttonWithoutBaseWithoutDefaultsWithClassNameString = cvax(null, {
         variants: {
           intent: {
-            primary:
-              "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
-            secondary:
-              "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-            warning:
-              "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger:
-              "button--danger bg-red-500 text-white border-transparent hover:bg-red-600",
+            primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
+            secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
+            warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
+            danger: "button--danger bg-red-500 text-white border-transparent hover:bg-red-600",
           },
           disabled: {
             true: "button--disabled opacity-050 cursor-not-allowed",
@@ -144,7 +128,7 @@ describe("cvax", () => {
             className: "button--warning-disabled text-black",
           },
         ],
-      });
+      })
 
       const buttonWithoutBaseWithoutDefaultsWithClassNameArray = cvax(null, {
         variants: {
@@ -208,15 +192,11 @@ describe("cvax", () => {
             className: ["button--warning-disabled", "text-black"],
           },
         ],
-      });
+      })
 
       type ButtonWithoutDefaultsWithoutBaseProps =
-        | CVA.VariantProps<
-            typeof buttonWithoutBaseWithoutDefaultsWithClassNameString
-          >
-        | CVA.VariantProps<
-            typeof buttonWithoutBaseWithoutDefaultsWithClassNameArray
-          >;
+        | CVA.VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameString>
+        | CVA.VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithoutDefaultsWithoutBaseProps, string]>([
         [
@@ -280,15 +260,11 @@ describe("cvax", () => {
         // typings needed
       ])("button(%o)", (options, expected) => {
         test(`returns ${expected}`, () => {
-          expect(
-            buttonWithoutBaseWithoutDefaultsWithClassNameString(options)
-          ).toBe(expected);
-          expect(
-            buttonWithoutBaseWithoutDefaultsWithClassNameArray(options)
-          ).toBe(expected);
-        });
-      });
-    });
+          expect(buttonWithoutBaseWithoutDefaultsWithClassNameString(options)).toBe(expected)
+          expect(buttonWithoutBaseWithoutDefaultsWithClassNameArray(options)).toBe(expected)
+        })
+      })
+    })
 
     describe("with defaults", () => {
       const buttonWithoutBaseWithDefaultsWithClassNameString = cvax(
@@ -300,10 +276,8 @@ describe("cvax", () => {
                 "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
               secondary:
                 "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-              warning:
-                "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-              danger:
-                "button--danger bg-red-500 text-white border-transparent hover:bg-red-600",
+              warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
+              danger: "button--danger bg-red-500 text-white border-transparent hover:bg-red-600",
             },
             disabled: {
               true: "button--disabled opacity-050 cursor-not-allowed",
@@ -351,8 +325,8 @@ describe("cvax", () => {
             intent: "primary",
             size: "medium",
           },
-        }
-      );
+        },
+      )
 
       const buttonWithoutBaseWithDefaultsWithClassNameArray = cvax(
         ["button", "font-semibold", "border", "rounded"],
@@ -433,16 +407,12 @@ describe("cvax", () => {
             intent: "primary",
             size: "medium",
           },
-        }
-      );
+        },
+      )
 
       type ButtonWithoutBaseWithDefaultsProps =
-        | CVA.VariantProps<
-            typeof buttonWithoutBaseWithDefaultsWithClassNameString
-          >
-        | CVA.VariantProps<
-            typeof buttonWithoutBaseWithDefaultsWithClassNameArray
-          >;
+        | CVA.VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameString>
+        | CVA.VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithoutBaseWithDefaultsProps, string]>([
         [
@@ -516,16 +486,12 @@ describe("cvax", () => {
         ],
       ])("button(%o)", (options, expected) => {
         test(`returns ${expected}`, () => {
-          expect(
-            buttonWithoutBaseWithDefaultsWithClassNameString(options)
-          ).toBe(expected);
-          expect(buttonWithoutBaseWithDefaultsWithClassNameArray(options)).toBe(
-            expected
-          );
-        });
-      });
-    });
-  });
+          expect(buttonWithoutBaseWithDefaultsWithClassNameString(options)).toBe(expected)
+          expect(buttonWithoutBaseWithDefaultsWithClassNameArray(options)).toBe(expected)
+        })
+      })
+    })
+  })
 
   describe("with base", () => {
     describe("without defaults", () => {
@@ -538,10 +504,8 @@ describe("cvax", () => {
                 "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
               secondary:
                 "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-              warning:
-                "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-              danger:
-                "button--danger bg-red-500 text-white border-transparent hover:bg-red-600",
+              warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
+              danger: "button--danger bg-red-500 text-white border-transparent hover:bg-red-600",
             },
             disabled: {
               true: "button--disabled opacity-050 cursor-not-allowed",
@@ -579,8 +543,8 @@ describe("cvax", () => {
               className: "button--warning-danger-medium",
             },
           ],
-        }
-      );
+        },
+      )
 
       const buttonWithBaseWithoutDefaultsWithClassNameArray = cvax(
         ["button", "font-semibold", "border", "rounded"],
@@ -651,16 +615,12 @@ describe("cvax", () => {
               className: ["button--warning-danger-medium"],
             },
           ],
-        }
-      );
+        },
+      )
 
       type ButtonWithBaseWithoutDefaultsProps =
-        | CVA.VariantProps<
-            typeof buttonWithBaseWithoutDefaultsWithClassNameString
-          >
-        | CVA.VariantProps<
-            typeof buttonWithBaseWithoutDefaultsWithClassNameArray
-          >;
+        | CVA.VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameString>
+        | CVA.VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithBaseWithoutDefaultsProps, string]>([
         [
@@ -680,14 +640,8 @@ describe("cvax", () => {
           "button font-semibold border rounded button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
         ],
 
-        [
-          { size: "small" },
-          "button font-semibold border rounded button--small text-sm py-1 px-2",
-        ],
-        [
-          { disabled: false },
-          "button font-semibold border rounded button--enabled cursor-pointer",
-        ],
+        [{ size: "small" }, "button font-semibold border rounded button--small text-sm py-1 px-2"],
+        [{ disabled: false }, "button font-semibold border rounded button--enabled cursor-pointer"],
         [
           { disabled: true },
           "button font-semibold border rounded button--disabled opacity-050 cursor-not-allowed",
@@ -730,15 +684,11 @@ describe("cvax", () => {
         ],
       ])("button(%o)", (options, expected) => {
         test(`returns ${expected}`, () => {
-          expect(
-            buttonWithBaseWithoutDefaultsWithClassNameString(options)
-          ).toBe(expected);
-          expect(buttonWithBaseWithoutDefaultsWithClassNameArray(options)).toBe(
-            expected
-          );
-        });
-      });
-    });
+          expect(buttonWithBaseWithoutDefaultsWithClassNameString(options)).toBe(expected)
+          expect(buttonWithBaseWithoutDefaultsWithClassNameArray(options)).toBe(expected)
+        })
+      })
+    })
 
     describe("with defaults", () => {
       const buttonWithBaseWithDefaultsWithClassNameString = cvax(
@@ -750,10 +700,8 @@ describe("cvax", () => {
                 "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
               secondary:
                 "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-              warning:
-                "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-              danger:
-                "button--danger bg-red-500 text-white border-transparent hover:bg-red-600",
+              warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
+              danger: "button--danger bg-red-500 text-white border-transparent hover:bg-red-600",
             },
             disabled: {
               true: "button--disabled opacity-050 cursor-not-allowed",
@@ -796,8 +744,8 @@ describe("cvax", () => {
             intent: "primary",
             size: "medium",
           },
-        }
-      );
+        },
+      )
 
       const buttonWithBaseWithDefaultsWithClassNameArray = cvax(
         ["button", "font-semibold", "border", "rounded"],
@@ -873,12 +821,12 @@ describe("cvax", () => {
             intent: "primary",
             size: "medium",
           },
-        }
-      );
+        },
+      )
 
       type ButtonWithBaseWithDefaultsProps =
         | CVA.VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameString>
-        | CVA.VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameArray>;
+        | CVA.VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithBaseWithDefaultsProps, string]>([
         [
@@ -959,19 +907,15 @@ describe("cvax", () => {
         ],
       ])("button(%o)", (options, expected) => {
         test(`returns ${expected}`, () => {
-          expect(buttonWithBaseWithDefaultsWithClassNameString(options)).toBe(
-            expected
-          );
-          expect(buttonWithBaseWithDefaultsWithClassNameArray(options)).toBe(
-            expected
-          );
-        });
-      });
-    });
-  });
+          expect(buttonWithBaseWithDefaultsWithClassNameString(options)).toBe(expected)
+          expect(buttonWithBaseWithDefaultsWithClassNameArray(options)).toBe(expected)
+        })
+      })
+    })
+  })
 
   describe("composing classes", () => {
-    type BoxProps = CVA.VariantProps<typeof box>;
+    type BoxProps = CVA.VariantProps<typeof box>
     const box = cvax(["box", "box-border"], {
       variants: {
         margin: { 0: "m-0", 2: "m-2", 4: "m-4", 8: "m-8" },
@@ -981,25 +925,22 @@ describe("cvax", () => {
         margin: 0,
         padding: 0,
       },
-    });
+    })
 
-    type CardBaseProps = CVA.VariantProps<typeof cardBase>;
-    const cardBase = cvax(
-      ["card", "border-solid", "border-slate-300", "rounded"],
-      {
-        variants: {
-          shadow: {
-            md: "drop-shadow-md",
-            lg: "drop-shadow-lg",
-            xl: "drop-shadow-xl",
-          },
+    type CardBaseProps = CVA.VariantProps<typeof cardBase>
+    const cardBase = cvax(["card", "border-solid", "border-slate-300", "rounded"], {
+      variants: {
+        shadow: {
+          md: "drop-shadow-md",
+          lg: "drop-shadow-lg",
+          xl: "drop-shadow-xl",
         },
-      }
-    );
+      },
+    })
 
     interface CardProps extends BoxProps, CardBaseProps {}
     const card = ({ margin, padding, shadow }: CardProps = {}) =>
-      cx(box({ margin, padding }), cardBase({ shadow }));
+      cx(box({ margin, padding }), cardBase({ shadow }))
 
     describe.each<[CardProps, string]>([
       [
@@ -1008,14 +949,8 @@ describe("cvax", () => {
         "box box-border m-0 p-0 card border-solid border-slate-300 rounded",
       ],
       [{}, "box box-border m-0 p-0 card border-solid border-slate-300 rounded"],
-      [
-        { margin: 4 },
-        "box box-border m-4 p-0 card border-solid border-slate-300 rounded",
-      ],
-      [
-        { padding: 4 },
-        "box box-border m-0 p-4 card border-solid border-slate-300 rounded",
-      ],
+      [{ margin: 4 }, "box box-border m-4 p-0 card border-solid border-slate-300 rounded"],
+      [{ padding: 4 }, "box box-border m-0 p-4 card border-solid border-slate-300 rounded"],
       [
         { margin: 2, padding: 4 },
         "box box-border m-2 p-4 card border-solid border-slate-300 rounded",
@@ -1026,8 +961,8 @@ describe("cvax", () => {
       ],
     ])("card(%o)", (options, expected) => {
       test(`returns ${expected}`, () => {
-        expect(card(options)).toBe(expected);
-      });
-    });
-  });
-});
+        expect(card(options)).toBe(expected)
+      })
+    })
+  })
+})

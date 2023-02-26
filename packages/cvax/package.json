@@ -41,7 +41,8 @@
   },
   "dependencies": {
     "lodash.isequal": "^4.5.0",
-    "tailwind-merge": "^1.10.0"
+    "tailwind-merge": "^1.10.0",
+    "type-fest": "^3.6.1"
   },
   "devDependencies": {
     "@jest/types": "29.4.3",

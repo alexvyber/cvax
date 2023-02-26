@@ -238,10 +238,12 @@ importers:
       react-dom: 18.2.0
       tailwind-merge: ^1.10.0
       ts-node: 10.9.1
+      type-fest: ^3.6.1
       typescript: 5.0.0-beta
     dependencies:
       lodash.isequal: 4.5.0
       tailwind-merge: 1.10.0
+      type-fest: 3.6.1
     devDependencies:
       '@jest/types': 29.4.3
       '@swc/cli': 0.1.62_@swc+core@1.3.36
@@ -9175,6 +9177,11 @@ packages:
   /type-fest/2.19.0:
     resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
     engines: {node: '>=12.20'}
+    dev: false
+
+  /type-fest/3.6.1:
+    resolution: {integrity: sha512-htXWckxlT6U4+ilVgweNliPqlsVSSucbxVexRYllyMVJDtf5rTjv6kF/s+qAd4QSL1BZcnJPEJavYBPQiWuZDA==}
+    engines: {node: '>=14.16'}
     dev: false
 
   /typed-array-length/1.0.4:
