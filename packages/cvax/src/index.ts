@@ -1,7 +1,15 @@
 import { twMerge } from "tailwind-merge"
 import isEqual from "lodash.isequal" // FIXME: find the way to not to use lodash
-import type { ClassProp, ClassValue, OmitUndefined, StringToBoolean } from "./types"
+import type {
+  ClassProp,
+  ClassValue,
+  CxOptions,
+  CxReturn,
+  OmitUndefined,
+  StringToBoolean,
+} from "./types"
 import { MergeDeep } from "type-fest"
+
 export type VariantProps<Component extends (...args: any) => any> = Omit<
   OmitUndefined<Parameters<Component>[0]>,
   "className"
@@ -13,9 +21,6 @@ function falsyToString<T extends unknown>(value: T) {
 
 /* cx
   ============================================ */
-
-export type CxOptions = ClassValue[]
-export type CxReturn = string
 
 export function cx<T extends CxOptions>(...classes: T): CxReturn {
   return classes
@@ -34,7 +39,7 @@ export function cn(...inputs: ClassValue[]) {
 /* cvax
   ============================================ */
 
-export type RequiredConfig<T> = T extends ConfigSchema
+type RequiredConfig<T> = T extends ConfigSchema
   ? {
       variants: T
       defaultVariants: ConfigVariants<T>
@@ -44,9 +49,9 @@ export type RequiredConfig<T> = T extends ConfigSchema
     }
   : never
 
-export type ConfigSchema = Record<string, Record<string, ClassValue>>
+type ConfigSchema = Record<string, Record<string, ClassValue>>
 
-export type ConfigVariants<T extends ConfigSchema> = {
+type ConfigVariants<T extends ConfigSchema> = {
   [Variant in keyof T]?: StringToBoolean<keyof T[Variant]> | null
 }
 
@@ -54,7 +59,7 @@ type ConfigVariantsMulti<T extends ConfigSchema> = {
   [Variant in keyof T]?: StringToBoolean<keyof T[Variant]> | StringToBoolean<keyof T[Variant]>[]
 }
 
-export type Config<T> = T extends ConfigSchema
+type Config<T> = T extends ConfigSchema
   ? {
       variants?: T
       defaultVariants?: ConfigVariants<T>
@@ -128,9 +133,7 @@ export function mergeVariants<T, U>(baseVariants: Config<T>, newVariants: Config
   const new_ = getAbsentKeys(newVariants)
 
   const variants = getVariants(base_.variants, new_.variants)
-
   const defaultVariants = getDefaultVariants(base_.defaultVariants, new_.defaultVariants)
-
   const compoundVariants = getCompoundVariants(base_.compoundVariants, new_.compoundVariants)
 
   return {
