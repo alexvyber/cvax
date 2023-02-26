@@ -143,7 +143,7 @@ export function mergeVariants<T, U>(baseVariants: Config<T>, newVariants: Config
   }
 }
 
-function getAbsentKeys<T>(config: Config<T>): RequiredConfig<T> {
+function getAbsentKeys<T>(config: Config<T>) {
   if (!("variants" in config)) Object.assign(config, { variants: {} })
   if (!("defaultVariants" in config)) Object.assign(config, { defaultVariants: {} })
   if (!("compoundVariants" in config)) Object.assign(config, { compoundVariants: [] })
