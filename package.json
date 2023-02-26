@@ -10,15 +10,11 @@
     "lint:deps": "syncpack list-mismatches --config .config/.syncpackrc",
     "lint:format": "pnpm run prettier -- --check .",
     "preinstall": "npx only-allow pnpm && corepack enable",
-    "prepare": "run-p -s prepare:*",
-    "prepare:husky": "if-env VERCEL=1 && echo 'Skipping prepare' || husky install",
-    "prepare:packages": "pnpm build",
     "prettier": "prettier --ignore-unknown --no-error-on-unmatched-pattern",
     "test": "pnpm run -r --parallel test",
     "tsc": "pnpm run -r --parallel tsc"
   },
   "devDependencies": {
-    "husky": "8.0.1",
     "if-env": "1.0.4",
     "lint-staged": "13.0.1",
     "npm-run-all": "4.1.5",
