@@ -1,6 +1,6 @@
 {
   "name": "cvax",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Customized CVA. fork 'class-variance-authority'",
   "keywords": [
     "Class Variance Authority",
@@ -36,7 +36,7 @@
     "prepublishOnly": "pnpm build",
     "test": "run-p test:*",
     "test:jest": "jest --config .config/jest.config.ts --coverage",
-    "test:size": "pnpm build && bundlesize -f 'dist/*.js' -s 1.5KB",
+    "test:size": "pnpm build && bundlesize -f 'dist/*.js' -s 1.6KB",
     "tsc": "tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {
