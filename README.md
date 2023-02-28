@@ -1,4 +1,4 @@
-![CVA](/docs/public/assets/img/wallpaper-hd.jpg)
+<!-- ![CVA](/docs/public/assets/img/wallpaper-hd.jpg)
 
 <h1 align="center">cva</h1>
 
@@ -39,4 +39,4 @@ Visit [**cva.style**](https://cva.style) to get started.
 
 ## License
 
-[Apache-2.0 License](/LICENSE) © [Joe Bell](https://twitter.com/joebell_)
+[Apache-2.0 License](/LICENSE) © [Joe Bell](https://twitter.com/joebell_) -->

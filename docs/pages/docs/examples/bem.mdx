@@ -26,7 +26,7 @@
 ```
 
 ```ts
-import { cva } from "class-variance-authority";
+import { cva } from "class-variance-authority"
 
 const button = cva("button", {
   variants: {
@@ -39,18 +39,16 @@ const button = cva("button", {
       medium: "button--medium",
     },
   },
-  compoundVariants: [
-    { intent: "primary", size: "medium", class: "button--primary-small" },
-  ],
+  compoundVariants: [{ intent: "primary", size: "medium", class: "button--primary-small" }],
   defaultVariants: {
     intent: "primary",
     size: "medium",
   },
-});
+})
 
-button();
+button()
 // => "button button--primary button--medium"
 
-button({ intent: "secondary", size: "small" });
+button({ intent: "secondary", size: "small" })
 // => "button button--secondary button--small"
 ```

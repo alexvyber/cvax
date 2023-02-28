@@ -1,8 +1,8 @@
-import { cx } from "class-variance-authority";
-import { Button } from "./components";
+import { cx } from "class-variance-authority"
+import { Button } from "./components"
 
-const intents = [undefined, "primary", "secondary"] as const;
-const sizes = [undefined, "medium", "small"] as const;
+const intents = [undefined, "primary", "secondary"] as const
+const sizes = [undefined, "medium", "small"] as const
 
 function App() {
   return (
@@ -11,22 +11,21 @@ function App() {
         "relative",
         "h-max w-max",
         "self-center justify-self-center",
-        "[&_:where(th,td)]:p-2"
-      )}
-    >
+        "[&_:where(th,td)]:p-2",
+      )}>
       <thead>
         <tr>
           <th></th>
-          {intents.map((intent) => (
+          {intents.map(intent => (
             <th scope="col">{intent || "default"}</th>
           ))}
         </tr>
       </thead>
       <tbody>
-        {sizes.map((size) => (
+        {sizes.map(size => (
           <tr>
             <th scope="row">{size || "default"}</th>
-            {intents.map((intent) => (
+            {intents.map(intent => (
               <td scope="col">
                 <Button {...(intent && { intent })} {...(size && { size })}>
                   {intent || "default"} button
@@ -37,7 +36,7 @@ function App() {
         ))}
       </tbody>
     </table>
-  );
+  )
 }
 
-export default App;
+export default App

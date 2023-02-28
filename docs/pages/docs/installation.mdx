@@ -1,4 +1,4 @@
-import { Tab, Tabs } from "nextra-theme-docs";
+import { Tab, Tabs } from "nextra-theme-docs"
 
 # Installation
 
@@ -45,7 +45,7 @@ In the meantime, you can always alias the package for your convenience…
 2. Then import like so:
 
    ```ts
-   import { cva } from "cva";
+   import { cva } from "cva"
 
    // …
    ```
@@ -113,8 +113,8 @@ For bulletproof components, wrap your `cva` component with `twMerge`.
 <summary>Example with tailwind-merge</summary>
 
 ```ts
-import { cva, type VariantProps } from "class-variance-authority";
-import { twMerge } from "tailwind-merge";
+import { cva, type VariantProps } from "class-variance-authority"
+import { twMerge } from "tailwind-merge"
 
 const buttonVariants = cva(["your", "base", "classes"], {
   variants: {
@@ -125,12 +125,11 @@ const buttonVariants = cva(["your", "base", "classes"], {
   defaultVariants: {
     intent: "primary",
   },
-});
+})
 
 export interface ButtonVariants extends VariantProps<typeof buttonVariants> {}
 
-export const button = (variants: ButtonVariants) =>
-  twMerge(buttonVariants(variants));
+export const button = (variants: ButtonVariants) => twMerge(buttonVariants(variants))
 ```
 
 </details>

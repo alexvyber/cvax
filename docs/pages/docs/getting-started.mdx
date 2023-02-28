@@ -1,4 +1,4 @@
-import { Callout } from "nextra-theme-docs";
+import { Callout } from "nextra-theme-docs"
 
 # Getting Started
 
@@ -24,25 +24,15 @@ Use of Tailwind CSS is optional
 
 ```ts
 // components/button.ts
-import { cva } from "class-variance-authority";
+import { cva } from "class-variance-authority"
 
 const button = cva(["font-semibold", "border", "rounded"], {
   variants: {
     intent: {
-      primary: [
-        "bg-blue-500",
-        "text-white",
-        "border-transparent",
-        "hover:bg-blue-600",
-      ],
+      primary: ["bg-blue-500", "text-white", "border-transparent", "hover:bg-blue-600"],
       // **or**
       // primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
-      secondary: [
-        "bg-white",
-        "text-gray-800",
-        "border-gray-400",
-        "hover:bg-gray-100",
-      ],
+      secondary: ["bg-white", "text-gray-800", "border-gray-400", "hover:bg-gray-100"],
     },
     size: {
       small: ["text-sm", "py-1", "px-2"],
@@ -62,12 +52,12 @@ const button = cva(["font-semibold", "border", "rounded"], {
     intent: "primary",
     size: "medium",
   },
-});
+})
 
-button();
+button()
 // => "font-semibold border rounded bg-blue-500 text-white border-transparent hover:bg-blue-600 text-base py-2 px-4 uppercase"
 
-button({ intent: "secondary", size: "small" });
+button({ intent: "secondary", size: "small" })
 // => "font-semibold border rounded bg-white text-gray-800 border-gray-400 hover:bg-gray-100 text-sm py-1 px-2"
 ```
 
@@ -77,7 +67,7 @@ Variants that apply when multiple other variant conditions are met.
 
 ```ts
 // components/button.ts
-import { cva } from "class-variance-authority";
+import { cva } from "class-variance-authority"
 
 const button = cva("…", {
   variants: {
@@ -93,14 +83,14 @@ const button = cva("…", {
       class: "…",
     },
   ],
-});
+})
 ```
 
 ### Targeting Multiple Variant Conditions
 
 ```ts
 // components/button.ts
-import { cva } from "class-variance-authority";
+import { cva } from "class-variance-authority"
 
 const button = cva("…", {
   variants: {
@@ -118,7 +108,7 @@ const button = cva("…", {
       class: "…",
     },
   ],
-});
+})
 ```
 
 ## Additional Classes
@@ -127,14 +117,14 @@ All `cva` components provide an optional `class` **or** `className` prop, which 
 
 ```ts
 // components/button.ts
-import { cva } from "class-variance-authority";
+import { cva } from "class-variance-authority"
 
-const button = cva(/* … */);
+const button = cva(/* … */)
 
-button({ class: "m-4" });
+button({ class: "m-4" })
 // => "…buttonClasses m-4"
 
-button({ className: "m-4" });
+button({ className: "m-4" })
 // => "…buttonClasses m-4"
 ```
 
@@ -146,14 +136,14 @@ button({ className: "m-4" });
 
 ```ts
 // components/button.ts
-import type { VariantProps } from "class-variance-authority";
-import { cva, cx } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority"
+import { cva, cx } from "class-variance-authority"
 
 /**
  * Button
  */
-export type ButtonProps = VariantProps<typeof button>;
-export const button = cva(/* … */);
+export type ButtonProps = VariantProps<typeof button>
+export const button = cva(/* … */)
 ```
 
 ### Required Variants
@@ -164,15 +154,15 @@ Instead, we recommend using TypeScript's [Utility Types](https://www.typescriptl
 
 ```ts
 // components/button.ts
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority"
 
-export type ButtonVariantProps = VariantProps<typeof buttonVariants>;
+export type ButtonVariantProps = VariantProps<typeof buttonVariants>
 export const buttonVariants = cva("…", {
   variants: {
     optional: { a: "…", b: "…" },
     required: { a: "…", b: "…" },
   },
-});
+})
 
 /**
  * Button
@@ -181,16 +171,16 @@ export interface ButtonProps
   extends Omit<ButtonVariantProps, "required">,
     Required<Pick<ButtonVariantProps, "required">> {}
 
-export const button = (props: ButtonProps) => buttonVariants(props);
+export const button = (props: ButtonProps) => buttonVariants(props)
 
 // ❌ TypeScript Error:
 // Argument of type "{}": is not assignable to parameter of type "ButtonProps".
 //   Property "required" is missing in type "{}" but required in type
 //   "ButtonProps".
-button({});
+button({})
 
 // ✅
-button({ required: "a" });
+button({ required: "a" })
 ```
 
 ## Composing Components
@@ -201,13 +191,13 @@ For example; two `cva` components, concatenated together with `cx`:
 
 ```ts
 // components/card.ts
-import type { VariantProps } from "class-variance-authority";
-import { cva, cx } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority"
+import { cva, cx } from "class-variance-authority"
 
 /**
  * Box
  */
-export type BoxProps = VariantProps<typeof box>;
+export type BoxProps = VariantProps<typeof box>
 export const box = cva(["box", "box-border"], {
   variants: {
     margin: { 0: "m-0", 2: "m-2", 4: "m-4", 8: "m-8" },
@@ -217,12 +207,12 @@ export const box = cva(["box", "box-border"], {
     margin: 0,
     padding: 0,
   },
-});
+})
 
 /**
  * Card
  */
-type CardBaseProps = VariantProps<typeof cardBase>;
+type CardBaseProps = VariantProps<typeof cardBase>
 const cardBase = cva(["card", "border-solid", "border-slate-300", "rounded"], {
   variants: {
     shadow: {
@@ -231,9 +221,9 @@ const cardBase = cva(["card", "border-solid", "border-slate-300", "rounded"], {
       xl: "drop-shadow-xl",
     },
   },
-});
+})
 
 export interface CardProps extends BoxProps, CardBaseProps {}
 export const card = ({ margin, padding, shadow }: CardProps = {}) =>
-  cx(box({ margin, padding }), cardBase({ shadow }));
+  cx(box({ margin, padding }), cardBase({ shadow }))
 ```

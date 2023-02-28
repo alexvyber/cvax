@@ -1,5 +1,5 @@
-import { useConfig, type DocsThemeConfig } from "nextra-theme-docs";
-import { useRouter } from "next/router";
+import { useConfig, type DocsThemeConfig } from "nextra-theme-docs"
+import { useRouter } from "next/router"
 
 export const config = {
   title: "cva",
@@ -14,11 +14,11 @@ export const config = {
   },
   og: "/assets/img/og.png",
   favicon: "/assets/img/favicon.png",
-} as const;
+} as const
 
-export const PROJECT = `https://github.com/${config.repo}`;
-export const SITE = `https://${config.domain}`;
-export const TWITTER = `https://twitter.com/${config.author.twitter}`;
+export const PROJECT = `https://github.com/${config.repo}`
+export const SITE = `https://${config.domain}`
+export const TWITTER = `https://twitter.com/${config.author.twitter}`
 
 const nextraConfig: DocsThemeConfig = {
   chat: {
@@ -40,8 +40,7 @@ const nextraConfig: DocsThemeConfig = {
         viewBox="0 0 1160 780"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        style={{ height: 42 }}
-      >
+        style={{ height: 42 }}>
         <path
           fillRule="evenodd"
           clipRule="evenodd"
@@ -55,8 +54,7 @@ const nextraConfig: DocsThemeConfig = {
             y1="0"
             x2="580"
             y2="780"
-            gradientUnits="userSpaceOnUse"
-          >
+            gradientUnits="userSpaceOnUse">
             <stop offset="0.145833" stopColor="white" />
             <stop offset="0.822917" stopColor="currentColor" />
           </linearGradient>
@@ -85,34 +83,26 @@ const nextraConfig: DocsThemeConfig = {
   },
   feedback: {
     useLink() {
-      const config = useConfig();
+      const config = useConfig()
 
-      return `${
-        config.project.link
-      }/discussions/new?category=feedback&title=${encodeURIComponent(
-        `Feedback for "${config.title}"`
-      )}`;
+      return `${config.project.link}/discussions/new?category=feedback&title=${encodeURIComponent(
+        `Feedback for "${config.title}"`,
+      )}`
     },
   },
   head: () => {
-    const { asPath } = useRouter();
-    const { frontMatter } = useConfig();
+    const { asPath } = useRouter()
+    const { frontMatter } = useConfig()
 
-    const canonical = new URL(asPath, SITE).toString();
+    const canonical = new URL(asPath, SITE).toString()
 
     return (
       <>
         <meta property="og:url" content={canonical} />
         <link rel="canonical" href={canonical} />
 
-        <meta
-          name="description"
-          content={frontMatter.description || config.description}
-        />
-        <meta
-          property="og:description"
-          content={frontMatter.description || config.description}
-        />
+        <meta name="description" content={frontMatter.description || config.description} />
+        <meta property="og:description" content={frontMatter.description || config.description} />
         <meta name="twitter:site" content={`@${config.author.twitter}`} />
         <meta name="twitter:creator" content={`@${config.author.twitter}`} />
         <meta name="twitter:card" content="summary_large_image" />
@@ -121,13 +111,13 @@ const nextraConfig: DocsThemeConfig = {
         <link rel="apple-touch-icon" href={config.favicon} />
         <meta name="apple-mobile-web-app-title" content={config.title} />
       </>
-    );
+    )
   },
   sidebar: {
     toggleButton: true,
   },
   useNextSeoProps() {
-    const { asPath } = useRouter();
+    const { asPath } = useRouter()
 
     const shared = {
       openGraph: {
@@ -141,14 +131,14 @@ const nextraConfig: DocsThemeConfig = {
           },
         ],
       },
-    };
-
-    if (["/", "/docs"].includes(asPath)) {
-      return { ...shared, titleTemplate: config.title };
     }
 
-    return { ...shared, titleTemplate: `%s | ${config.title}` };
-  },
-};
+    if (["/", "/docs"].includes(asPath)) {
+      return { ...shared, titleTemplate: config.title }
+    }
 
-export default nextraConfig;
+    return { ...shared, titleTemplate: `%s | ${config.title}` }
+  },
+}
+
+export default nextraConfig

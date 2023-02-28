@@ -1,4 +1,4 @@
-# Contributing
+<!-- # Contributing
 
 Welcome, and thanks for your interest in contributing! Please take a moment to review the following:
 
@@ -30,4 +30,4 @@ Welcome, and thanks for your interest in contributing! Please take a moment to r
 
 ## Releases
 
-A trade-off with using a personal repo is that permissions are fairly locked-down. In the mean-time releases will be made manually by the project owner.
+A trade-off with using a personal repo is that permissions are fairly locked-down. In the mean-time releases will be made manually by the project owner. -->
