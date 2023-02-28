@@ -1,6 +1,6 @@
 import { forwardRef } from "react"
-
 import { cn, cvax, mergeVariants, type VariantProps } from "../src/"
+
 import React from "react"
 const btnStyles = {
   variants: {
@@ -39,6 +39,7 @@ const defaultVariants = {
       light: "bg-white hover:bg-neutral-50",
       underline: "hover:text-primary-hover underline p-0",
     },
+
     size: {
       large: "py-4 px-6",
       small: "py-2 px-4",

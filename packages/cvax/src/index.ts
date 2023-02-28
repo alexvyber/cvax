@@ -85,7 +85,7 @@ export function cvax<T>(base?: ClassValue, config?: Config<T>) {
       if (variantProp === null) return null
 
       const variantKey = (falsyToString(variantProp) ||
-        falsyToString(defaultVariantProp)) as keyof typeof variants[typeof variant]
+        falsyToString(defaultVariantProp)) as keyof (typeof variants)[typeof variant]
 
       return variants[variant][variantKey]
     })
@@ -159,7 +159,7 @@ function getVariants<T extends ConfigSchema, U extends ConfigSchema>(
 
   ;(
     Object.entries(newVariants) as Array<
-      [vartiant: keyof typeof newVariants, value: typeof newVariants[keyof typeof newVariants]]
+      [vartiant: keyof typeof newVariants, value: (typeof newVariants)[keyof typeof newVariants]]
     >
   ).map(([variant, value]) =>
     (Object.keys(value) as Array<keyof typeof value>).map((key: keyof typeof value) => {

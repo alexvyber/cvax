@@ -2,6 +2,8 @@ import type * as CVA from "./"
 import type { CxOptions } from "./types"
 import { cvax, cx } from "./"
 
+import { describe, it as test, expect } from "vitest"
+
 describe("cx", () => {
   describe.each<CxOptions>([
     [null, ""],
