@@ -41,6 +41,7 @@ export function cn(...inputs: ClassValue[]) {
 
 type RequiredConfig<T> = T extends ConfigSchema
   ? {
+      base?: ClassValue
       variants: T
       defaultVariants: ConfigVariants<T>
       compoundVariants: readonly (T extends ConfigSchema
@@ -61,6 +62,7 @@ type ConfigVariantsMulti<T extends ConfigSchema> = {
 
 type Config<T> = T extends ConfigSchema
   ? {
+      base?: ClassValue
       variants?: T
       defaultVariants?: ConfigVariants<T>
       compoundVariants?:
@@ -72,9 +74,9 @@ type Config<T> = T extends ConfigSchema
 
 type Props<T> = T extends ConfigSchema ? ConfigVariants<T> & ClassProp : ClassProp
 
-export function cvax<T>(base?: ClassValue, config?: Config<T>) {
+export function cvax<T>(config: Config<T>) {
   return (props?: Props<T>) => {
-    if (config?.variants == null) return cx(base, props?.className)
+    if (config?.variants == null) return cx(config?.base, props?.className)
 
     const { variants, defaultVariants } = config
 
@@ -121,7 +123,7 @@ export function cvax<T>(base?: ClassValue, config?: Config<T>) {
       [] as ClassValue[],
     )
 
-    return cx(base, getVariantClassNames, getCompoundVariantClassNames, props?.className)
+    return cx(config?.base, getVariantClassNames, getCompoundVariantClassNames, props?.className)
   }
 }
 
@@ -132,11 +134,13 @@ export function mergeVariants<T, U>(baseVariants: Config<T>, newVariants: Config
   const base_ = getAbsentKeys(baseVariants)
   const new_ = getAbsentKeys(newVariants)
 
+  const base = cn(baseVariants.base, newVariants.base)
   const variants = getVariants(base_.variants, new_.variants)
   const defaultVariants = getDefaultVariants(base_.defaultVariants, new_.defaultVariants)
   const compoundVariants = getCompoundVariants(base_.compoundVariants, new_.compoundVariants)
 
   return {
+    base,
     variants,
     defaultVariants,
     compoundVariants,
@@ -163,6 +167,7 @@ function getVariants<T extends ConfigSchema, U extends ConfigSchema>(
     >
   ).map(([variant, value]) =>
     (Object.keys(value) as Array<keyof typeof value>).map((key: keyof typeof value) => {
+      if (!(typeof obj !== "object")) throw new Error(`obj ${obj} is not an Object`)
       if (!(variant in obj)) Object.assign(obj, { [variant]: newVariants[variant] })
 
       Object.assign(obj[variant], {
