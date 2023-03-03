@@ -1,9 +1,8 @@
-import { forwardRef } from "react"
 import { cn, cvax, mergeVariants, type VariantProps } from "../src/"
 
-import React from "react"
 const btnStyles = {
-  base: "rounded-lg disabled:bg-red-[#ff0] disabled:opacity-50 flex items-center justify-center transition-all",
+  base: "rounded-lg disabled:bg-[#e0e0e0] disabled:opacity-50  items-center justify-center transition-all bg-green-900 sm:flex",
+
   variants: {
     variant: {
       primary: "bg-red-500 hover:bg-primary-hover text-main font-medium text-base",
@@ -20,19 +19,20 @@ const btnStyles = {
     },
   },
 
-  // defaultVariants: {
-  //   variant: 'primary',
-  //   size: 'large',
-  // },
+  defaultVariants: {
+    variant: "primary",
+    size: "small",
+  },
 
   compoundVariants: [],
 } as const
 
-const className =
-  "rounded-lg disabled:bg-[#e0e0e0] disabled:opacity-50 flex items-center justify-center transition-all"
-
 const defaultVariants = {
-  base: "rounded-lg disabled:bg-[#e0e0e0] disabled:opacity-50 flex items-center justify-center transition-all",
+  base: [
+    "rounded-lg disabled:bg-[#ff0] disabled:opacity-50 flex items-left justify-center transition-all bg-red-500 grid",
+    "rounded-lg disabled:bg-[#ff0] disabled:opacity-50 flex items-left justify-center transition-all bg-red-500 grid",
+    "rounded-lg disabled:bg-[#ff0] disabled:opacity-50 flex items-left justify-center transition-all bg-red-500 grid",
+  ],
   variants: {
     variant: {
       primary: "bg-primary hover:bg-primary-hover text-main font-medium text-base",
@@ -58,21 +58,11 @@ const defaultVariants = {
 } as const
 
 const mergedVariants = mergeVariants(defaultVariants, btnStyles)
-mergedVariants.variants.variant
+
 console.log("🚀 ~ mergedVariants:", mergedVariants)
+
 const buttonVariants = cvax(mergeVariants(defaultVariants, btnStyles))
 console.log("🚀 ~ buttonVariants:", buttonVariants)
 
-export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
-  VariantProps<typeof buttonVariants>
-
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => {
-    return (
-      <button className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />
-    )
-  },
-)
-Button.displayName = "Button"
-
-export { Button }
+const asdf = buttonVariants({ variant: "secondary" })
+console.log("🚀 ~ asdf:", asdf)
