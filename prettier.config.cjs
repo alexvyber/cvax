@@ -14,14 +14,5 @@ module.exports = {
     require.resolve("prettier-plugin-tailwindcss"),
   ],
 
-  overrides: [
-    {
-      files: "*.astro",
-      options: {
-        parser: "astro",
-      },
-    },
-  ],
-
   pluginSearchDirs: ["."],
 }
