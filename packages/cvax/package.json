@@ -1,6 +1,6 @@
 {
   "name": "cvax",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Customized CVA. fork 'class-variance-authority'",
   "repository": "https://github.com/alexvyber/cvax.git",
   "exports": {
