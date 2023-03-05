@@ -8,7 +8,7 @@ import type {
   OmitUndefined,
   StringToBoolean,
 } from "./types"
-import { Merge, MergeDeep } from "type-fest"
+import { MergeDeep } from "type-fest"
 
 export type VariantProps<Component extends (...args: any) => any> = Omit<
   OmitUndefined<Parameters<Component>[0]>,
