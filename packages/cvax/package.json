@@ -1,6 +1,6 @@
 {
   "name": "cvax",
-  "version": "0.3.0",
+  "version": "0.1.5",
   "description": "Customized CVA. fork 'class-variance-authority'",
   "repository": "https://github.com/alexvyber/cvax.git",
   "exports": {
@@ -9,7 +9,7 @@
   },
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
-  "types": "./dist/index.d.ts",
+  "typings": "dist/index.d.ts",
   "files": [
     "dist/*.js",
     "dist/*.js.map",
