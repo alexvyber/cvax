@@ -1,23 +1,22 @@
 {
   "name": "cvax",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Customized CVA. fork 'class-variance-authority'",
   "repository": "https://github.com/alexvyber/cvax.git",
   "exports": {
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.cjs"
+    "import": "./dist/index.esm.js",
+    "require": "./dist/index.cjs.js"
   },
   "types": "./dist/index.d.ts",
   "files": [
-    "dist/*.mjs",
-    "dist/*.cjs",
+    "dist/*.js",
     "dist/*.js.map",
     "dist/*.d.ts"
   ],
   "scripts": {
     "build": "run-p build:**",
-    "build:cjs": "swc ./src/index.ts --config-file ./.config/.swcrc -o dist/index.cjs -C module.type=commonjs",
-    "build:esm": "swc ./src/index.ts --config-file ./.config/.swcrc -o dist/index.mjs -C module.type=es6",
+    "build:cjs": "swc ./src/index.ts --config-file ./.config/.swcrc -o dist/index.cjs.js -C module.type=commonjs",
+    "build:esm": "swc ./src/index.ts --config-file ./.config/.swcrc -o dist/index.esm.js -C module.type=es6 ",
     "build:tsc": "tsc --project .config/tsconfig.build.json",
     "dev-OLD": "jest --config .config/jest.config.ts --watch",
     "dev": "vitest",

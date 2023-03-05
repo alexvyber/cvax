@@ -1,4 +1,3 @@
-export {}
 // import type * as CVA from "./"
 // import type { CxOptions } from "./types"
 // import { cvax, cx } from "./"

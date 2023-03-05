@@ -4,7 +4,7 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "target": "ES2020",
+    "target": "ES2019",
     "strict": true,
     "incremental": true,
     "skipLibCheck": true
