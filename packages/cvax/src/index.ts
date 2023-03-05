@@ -8,7 +8,7 @@ import type {
   OmitUndefined,
   StringToBoolean,
 } from "./types"
-import { MergeDeep } from "type-fest"
+import { Merge, MergeDeep } from "type-fest"
 
 export type VariantProps<Component extends (...args: any) => any> = Omit<
   OmitUndefined<Parameters<Component>[0]>,
@@ -189,7 +189,7 @@ function getDefaultVariants<T extends ConfigSchema, U extends ConfigSchema>(
     Object.assign(obj, { [variant]: newVariants[variant] })
   })
 
-  return obj as unknown as ConfigVariants<T> & ConfigVariants<U>
+  return obj as unknown as T & U
 }
 
 // FIXME: make newVariants as first priopity
