@@ -75,7 +75,7 @@ type Config<T> = T extends ConfigSchema
 type Props<T> = T extends ConfigSchema ? ConfigVariants<T> & ClassProp : ClassProp
 
 export function cvax<T>(config: Config<T>) {
-  return (props?: Props<T>) => {
+  return (props?: Props<T>): string => {
     if (config?.variants == null) return cx(config?.base, props?.className)
 
     const { variants, defaultVariants } = config
@@ -123,7 +123,8 @@ export function cvax<T>(config: Config<T>) {
       [] as ClassValue[],
     )
 
-    return cx(config?.base, getVariantClassNames, getCompoundVariantClassNames, props?.className)
+    // return cx(config?.base, getVariantClassNames, getCompoundVariantClassNames, props?.className)
+    return cn(config?.base, getVariantClassNames, getCompoundVariantClassNames, props?.className)
   }
 }
 
