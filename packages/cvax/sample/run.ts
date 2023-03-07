@@ -1,4 +1,4 @@
-import { cn, cvax, merge, mergeVariants, type VariantProps } from "../src/"
+import { cn, cvax, mergeVariants, type VariantProps } from "../src/"
 
 const btnStyles = {
   base: "rounded-lg disabled:bg-[#e0e0e0] disabled:opacity-50  items-center justify-center transition-all bg-green-900 sm:flex",
@@ -27,6 +27,13 @@ const btnStyles = {
     intent: "primary",
     size: "small",
   },
+  compoundVariants: [
+    {
+      intent: "primary",
+      size: "large",
+      className: "some className",
+    },
+  ],
 } as const
 
 const defaultVariants = {
@@ -53,12 +60,23 @@ const defaultVariants = {
     AOC: {
       one: "1",
     },
+    toggle: {
+      true: "TOGGGGGGGGGGGGGLE",
+    },
   },
 
   defaultVariants: {
     intent: "primary",
     size: "large",
+    toggle: true,
   },
+  compoundVariants: [
+    {
+      intent: "primary",
+      size: "large",
+      className: "some className",
+    },
+  ],
 } as const
 
 // const merged = merge(defaultVariants, btnStyles)
@@ -75,7 +93,8 @@ buttonVariants_({
   intent: "SOME_STUFF",
 })
 const asdf = buttonVariants_({
-  intent: "SOME_STUFF",
+  intent: "OTHER_STUF",
+  toggle: false,
 })
 console.log("🚀 ~ asdf:", asdf)
 
