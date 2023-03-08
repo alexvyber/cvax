@@ -9,7 +9,6 @@ import type {
   StringToBoolean,
 } from "./types"
 import { MergeDeep } from "type-fest"
-import { merge } from "./merge"
 
 export type VariantProps<Component extends (...args: any) => any> = Omit<
   OmitUndefined<Parameters<Component>[0]>,
@@ -75,7 +74,7 @@ type Config<T> = T extends ConfigSchema
 
 type Props<T> = T extends ConfigSchema ? ConfigVariants<T> & ClassProp : ClassProp
 
-export function cvax<T>(config: Config<T>) {
+export function cvax<T>(config?: Config<T>) {
   return (props?: Props<T>): string => {
     if (config?.variants == null) return cx(config?.base, props?.className)
 
@@ -215,4 +214,35 @@ function getCompoundVariants<T extends readonly any[], U extends readonly any[]>
     | T[number]
     | U[number]
   )[]
+}
+
+type OptionalPropertyNames<T> = {
+  [Key in keyof T]-?: {} extends { [P in Key]: T[Key] } ? Key : never
+}[keyof T]
+
+type SpreadProperties<Left, Right, Key extends keyof Left & keyof Right> = {
+  [P in Key]: Left[P] | Exclude<Right[P], undefined>
+}
+
+type Identity<T> = T extends infer U ? { [Key in keyof U]: U[Key] } : never
+
+type SpreadTwo<Left, Right> = Identity<
+  Pick<Left, Exclude<keyof Left, keyof Right>> &
+    Pick<Right, Exclude<keyof Right, OptionalPropertyNames<Right>>> &
+    Pick<Right, Exclude<OptionalPropertyNames<Right>, keyof Left>> &
+    SpreadProperties<Left, Right, OptionalPropertyNames<Right> & keyof Left>
+>
+
+type Spread<Args extends readonly [...any]> = Args extends [infer Left, ...infer Right]
+  ? SpreadTwo<Left, Spread<Right>>
+  : unknown
+
+function removeEmptyObjects(element: object) {
+  return Object.keys(element).length === 0
+}
+
+export function merge<Args extends object[]>(...args: [...Args]) {
+  // const asdf = args.filter(removeEmptyObjects)
+
+  return Object.assign({}, ...args.filter(removeEmptyObjects)) as Spread<Args>
 }
