@@ -241,8 +241,6 @@ function removeEmptyObjects(element: object) {
   return Object.keys(element).length === 0
 }
 
-export function merge<Args extends object[]>(...args: [...Args]) {
-  // const asdf = args.filter(removeEmptyObjects)
-
-  return Object.assign({}, ...args.filter(removeEmptyObjects)) as Spread<Args>
+export function merge<Args extends object[]>(...args: [...Args]): Spread<Args> {
+  return Object.assign({}, ...args.filter(removeEmptyObjects))
 }
