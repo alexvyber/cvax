@@ -1,7 +1,7 @@
-import type * as CVA from "./"
+import * as CVA from "./"
 import type { CxOptions } from "./types"
 import { cvax, cx } from "./"
-
+import { merge } from "./"
 import { describe, it as test, expect } from "vitest"
 
 describe("cx", () => {
@@ -950,6 +950,215 @@ describe("cvax", () => {
       test(`returns ${expected}`, () => {
         expect(card(options)).toBe(expected)
       })
+    })
+  })
+})
+
+// TODO: write all test cases for mergeVariants
+describe("mergeVariants", () => {
+  const defaultVarinats = {
+    variants: {
+      intent: {
+        primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
+        secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
+        warning: "bg-yellow-500 border-transparent hover:bg-yellow-600",
+        danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
+      },
+      disabled: {
+        true: "opacity-050 cursor-not-allowed",
+        false: "cursor-pointer",
+      },
+      size: {
+        small: "text-sm py-1 px-2",
+        medium: "text-base py-2 px-4",
+        large: "text-lg py-2.5 px-4",
+      },
+      m: {
+        0: "m-0",
+        1: "m-1",
+      },
+    },
+
+    compoundVariants: [
+      {
+        intent: "primary",
+        size: "medium",
+        className: "uppercase",
+      },
+      {
+        intent: "warning",
+        disabled: false,
+        className: "text-gray-800",
+      },
+      {
+        intent: "warning",
+        disabled: true,
+        className: "text-black",
+      },
+    ],
+  } as const
+
+  const newVariants = {
+    variants: {
+      intent: {
+        primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
+        secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
+        warning: "bg-yellow-500 border-transparent hover:bg-yellow-600",
+        danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
+      },
+      disabled: {
+        true: "opacity-050 cursor-not-allowed",
+        false: "cursor-pointer",
+      },
+      size: {
+        small: "text-sm py-1 px-2",
+        medium: "text-base py-2 px-4",
+        large: "text-lg py-2.5 px-4",
+      },
+      m: {
+        0: "m-0",
+        1: "m-1",
+      },
+    },
+
+    compoundVariants: [
+      {
+        intent: "primary",
+        size: "medium",
+        className: "uppercase",
+      },
+      {
+        intent: "warning",
+        disabled: false,
+        className: "text-gray-800",
+      },
+      {
+        intent: "warning",
+        disabled: true,
+        className: "text-black",
+      },
+    ],
+  } as const
+
+  const mergedVariants = CVA.mergeVariants(defaultVarinats, newVariants)
+
+  test("same variants", () => {
+    expect(mergedVariants).toEqual(defaultVarinats)
+    expect(mergedVariants).toEqual(newVariants)
+  })
+})
+
+describe("mergevariants", () => {
+  const baseOnly = {
+    base: "mt-2",
+  }
+
+  const variantsOnly = {
+    base: "mt-2",
+    variants: {
+      intent: {
+        primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
+        secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
+        warning: "bg-yellow-500 border-transparent hover:bg-yellow-600",
+        danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
+      },
+    },
+  } as const
+
+  const defaultVariants = {
+    base: "mt-2",
+    variants: {
+      intent: {
+        primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
+        secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
+        warning: "bg-yellow-500 border-transparent hover:bg-yellow-600",
+        danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
+      },
+    },
+    defaultVariants: {
+      intent: "primary",
+    },
+  } as const
+
+  const compoundVariants = {
+    base: "mt-2",
+    variants: {
+      intent: {
+        primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
+        secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
+        warning: "bg-yellow-500 border-transparent hover:bg-yellow-600",
+        danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
+      },
+    },
+    compoundVariants: [
+      {
+        intent: "primary",
+        className: "mt-14",
+      },
+    ],
+  } as const
+
+  describe.each([
+    [{}, {}, {}],
+    [baseOnly, baseOnly, baseOnly],
+    [variantsOnly, variantsOnly, variantsOnly],
+    [defaultVariants, defaultVariants, defaultVariants],
+    [compoundVariants, compoundVariants, compoundVariants],
+  ])("mergevariants(%o)", (baseVariants, newVariants, expected) => {
+    test("same variants", () => {
+      expect(CVA.mergeVariants(baseVariants, newVariants)).toEqual(expected)
+    })
+  })
+})
+
+describe("merge", () => {
+  const func = () => console.log("func")
+  const otherFunc = () => console.log("otherFunc")
+
+  const obj = {
+    a: { f: func },
+  }
+  const otherObj = {
+    a: { f: otherFunc },
+  }
+
+  describe.each<{
+    left: object
+    right: object
+    expected: object
+  }>([
+    { left: {}, right: {}, expected: {} },
+    { left: [], right: [], expected: {} },
+    { left: [1, 2, 3, 4], right: [], expected: {} },
+    { left: () => {}, right: [], expected: {} },
+    {
+      left: (a: any, b: any, c: any) => {
+        return [a, b, c]
+      },
+      right: [],
+      expected: {},
+    },
+    { left: { a: 1 }, right: {}, expected: { a: 1 } },
+    { left: { a: "string" }, right: { a: "string" }, expected: { a: "string" } },
+    { left: { a: "string" }, right: { a: 69 }, expected: { a: 69 } },
+    { left: { a: "string" }, right: { a: false }, expected: { a: false } },
+    { left: { a: 420 }, right: { a: obj }, expected: { a: obj } },
+    { left: { a: "string", b: { c: [] } }, right: {}, expected: { a: "string", b: { c: [] } } },
+    {
+      left: { a: "string", b: { c: [], f: func } },
+      right: {},
+      expected: { a: "string", b: { c: [], f: func } },
+    },
+    { left: { o: obj }, right: {}, expected: { o: obj } },
+    { left: { f: func }, right: { f: otherFunc }, expected: { f: otherFunc } },
+    {
+      left: { f: func, o: obj },
+      right: { f: otherFunc, o: otherObj },
+      expected: { f: otherFunc, o: otherObj },
+    },
+  ])("merge(%o)", ({ left, right, expected }) => {
+    test(`returns ${expected}`, () => {
+      expect(merge(left, right, {}, () => {})).toEqual(expected)
     })
   })
 })

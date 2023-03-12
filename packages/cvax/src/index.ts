@@ -60,7 +60,7 @@ type ConfigVariantsMulti<T extends ConfigSchema> = {
   [Variant in keyof T]?: StringToBoolean<keyof T[Variant]> | StringToBoolean<keyof T[Variant]>[]
 }
 
-type Config<T> = T extends ConfigSchema
+export type Config<T> = T extends ConfigSchema
   ? {
       base?: ClassValue
       variants?: T
@@ -123,36 +123,44 @@ export function cvax<T>(config?: Config<T>) {
       [] as ClassValue[],
     )
 
-    return cn(config?.base, getVariantClassNames, getCompoundVariantClassNames, props?.className)
+    return cx(config?.base, getVariantClassNames, getCompoundVariantClassNames, props?.className)
   }
 }
 
 /* mergeVariants
   ============================================ */
 
+// TODO: merge non-tailwind classes
 export function mergeVariants<T, U>(baseVariants: Config<T>, newVariants: Config<U>) {
   const base_ = getAbsentKeys(baseVariants)
   const new_ = getAbsentKeys(newVariants)
 
-  const base = cn(baseVariants.base, newVariants.base)
+  let base: string | undefined
+  // const base = cn(baseVariants.base, newVariants.base)
+  if (baseVariants.base || newVariants.base) {
+    base = cn(baseVariants.base, newVariants.base)
+  }
+
   const variants = getVariants(base_.variants, new_.variants)
   const defaultVariants = getDefaultVariants(base_.defaultVariants, new_.defaultVariants)
   const compoundVariants = getCompoundVariants(base_.compoundVariants, new_.compoundVariants)
 
   return {
-    base,
-    variants,
-    defaultVariants,
-    compoundVariants,
+    ...(base && { base }),
+    ...(Object.keys(variants).length > 0 && { variants }),
+    ...(Object.keys(defaultVariants).length > 0 && { defaultVariants }),
+    ...(compoundVariants.length > 0 && { compoundVariants }),
   }
 }
 
 function getAbsentKeys<T>(config: Config<T>) {
-  if (!("variants" in config)) Object.assign(config, { variants: {} })
-  if (!("defaultVariants" in config)) Object.assign(config, { defaultVariants: {} })
-  if (!("compoundVariants" in config)) Object.assign(config, { compoundVariants: [] })
+  const obj = Object.assign({}, config)
 
-  return config as unknown as RequiredConfig<T>
+  if (!("variants" in config)) Object.assign(obj, { variants: {} })
+  if (!("defaultVariants" in config)) Object.assign(obj, { defaultVariants: {} })
+  if (!("compoundVariants" in config)) Object.assign(obj, { compoundVariants: [] })
+
+  return obj as unknown as RequiredConfig<T>
 }
 
 function getVariants<T extends ConfigSchema, U extends ConfigSchema>(
@@ -237,10 +245,14 @@ type Spread<Args extends readonly [...any]> = Args extends [infer Left, ...infer
   ? SpreadTwo<Left, Spread<Right>>
   : unknown
 
-function removeEmptyObjects(element: object) {
-  return Object.keys(element).length === 0
+function cleanObjects(element: object) {
+  // console.log("🚀 ~ cleanObjects ~ element:", element)
+  // console.log("🚀 ~ cleanObjects ~ Object.keys(element):", Object.keys(element))
+  if (Array.isArray(element)) return false
+  if (element === null) return false
+  return Object.keys(element).length !== 0
 }
 
-export function merge<Args extends object[]>(...args: [...Args]): Spread<Args> {
-  return Object.assign({}, ...args.filter(removeEmptyObjects))
+export function merge<Args extends object[]>(...args: [...Args]) {
+  return Object.assign({}, ...args.filter(cleanObjects)) as Spread<Args>
 }
