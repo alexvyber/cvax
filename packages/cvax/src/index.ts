@@ -135,8 +135,7 @@ export function mergeVariants<T, U>(baseVariants: Config<T>, newVariants: Config
   const base_ = getAbsentKeys(baseVariants)
   const new_ = getAbsentKeys(newVariants)
 
-  let base: string | undefined
-  // const base = cn(baseVariants.base, newVariants.base)
+  let base = ""
   if (baseVariants.base || newVariants.base) {
     base = cn(baseVariants.base, newVariants.base)
   }
@@ -146,11 +145,18 @@ export function mergeVariants<T, U>(baseVariants: Config<T>, newVariants: Config
   const compoundVariants = getCompoundVariants(base_.compoundVariants, new_.compoundVariants)
 
   return {
-    ...(base && { base }),
-    ...(Object.keys(variants).length > 0 && { variants }),
-    ...(Object.keys(defaultVariants).length > 0 && { defaultVariants }),
-    ...(compoundVariants.length > 0 && { compoundVariants }),
+    base,
+    variants,
+    defaultVariants,
+    compoundVariants,
   }
+
+  // return {
+  //   ...(base && { base }),
+  //   ...(Object.keys(variants).length > 0 && { variants }),
+  //   ...(Object.keys(defaultVariants).length > 0 && { defaultVariants }),
+  //   ...(compoundVariants.length > 0 && { compoundVariants }),
+  // }
 }
 
 function getAbsentKeys<T>(config: Config<T>) {

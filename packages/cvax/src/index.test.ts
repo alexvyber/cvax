@@ -954,6 +954,23 @@ describe("cvax", () => {
   })
 })
 
+//
+const generatedDefault = {
+  base: "",
+  compoundVariants: [],
+  defaultVariants: {},
+  variants: {},
+}
+
+function withGeneratedDefault(obj: object): {
+  base: string
+  compoundVariants: any[]
+  defaultVariants: object
+  variants: object
+} {
+  return { ...generatedDefault, ...obj }
+}
+
 // TODO: write all test cases for mergeVariants
 describe("mergeVariants", () => {
   const defaultVarinats = {
@@ -1043,8 +1060,8 @@ describe("mergeVariants", () => {
   const mergedVariants = CVA.mergeVariants(defaultVarinats, newVariants)
 
   test("same variants", () => {
-    expect(mergedVariants).toEqual(defaultVarinats)
-    expect(mergedVariants).toEqual(newVariants)
+    expect(mergedVariants).toEqual(withGeneratedDefault(defaultVarinats))
+    expect(mergedVariants).toEqual(withGeneratedDefault(newVariants))
   })
 })
 
@@ -1099,11 +1116,11 @@ describe("mergevariants", () => {
   } as const
 
   describe.each([
-    [{}, {}, {}],
-    [baseOnly, baseOnly, baseOnly],
-    [variantsOnly, variantsOnly, variantsOnly],
-    [defaultVariants, defaultVariants, defaultVariants],
-    [compoundVariants, compoundVariants, compoundVariants],
+    [{}, {}, generatedDefault],
+    [baseOnly, baseOnly, withGeneratedDefault(baseOnly)],
+    [variantsOnly, variantsOnly, withGeneratedDefault(variantsOnly)],
+    [defaultVariants, defaultVariants, withGeneratedDefault(defaultVariants)],
+    [compoundVariants, compoundVariants, withGeneratedDefault(compoundVariants)],
   ])("mergevariants(%o)", (baseVariants, newVariants, expected) => {
     test("same variants", () => {
       expect(CVA.mergeVariants(baseVariants, newVariants)).toEqual(expected)
