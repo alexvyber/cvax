@@ -57,10 +57,7 @@ const defaultVariants = {
 } as const
 
 const mergedVariants = mergeVariants(defaultVariants, btnStyles)
-mergedVariants.variants.variant
-console.log("🚀 ~ mergedVariants:", mergedVariants)
 const buttonVariants = cvax(mergeVariants(defaultVariants, btnStyles))
-console.log("🚀 ~ buttonVariants:", buttonVariants)
 
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
   VariantProps<typeof buttonVariants>

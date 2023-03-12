@@ -24,7 +24,7 @@ function falsyToString<T extends unknown>(value: T) {
 
 export function cx<T extends CxOptions>(...classes: T): CxReturn {
   return classes
-    .flat(Infinity as 0) // HACK: hack around TS behavior
+    .flat(Infinity as 0)
     .filter(Boolean)
     .join(" ")
 }
@@ -130,7 +130,7 @@ export function cvax<T>(config?: Config<T>) {
 /* mergeVariants
   ============================================ */
 
-// TODO: merge non-tailwind classes
+// TODO: merge non-tailwind classes?..
 export function mergeVariants<T, U>(baseVariants: Config<T>, newVariants: Config<U>) {
   const base_ = getAbsentKeys(baseVariants)
   const new_ = getAbsentKeys(newVariants)
@@ -230,15 +230,21 @@ function getCompoundVariants<T extends readonly any[], U extends readonly any[]>
   )[]
 }
 
-type OptionalPropertyNames<T> = {
-  [Key in keyof T]-?: {} extends { [P in Key]: T[Key] } ? Key : never
-}[keyof T]
-
-type SpreadProperties<Left, Right, Key extends keyof Left & keyof Right> = {
-  [P in Key]: Left[P] | Exclude<Right[P], undefined>
+/* merge
+  ============================================ */
+export function merge<Args extends object[]>(...args: [...Args]) {
+  return Object.assign({}, ...args.filter(cleanObjects)) as Spread<Args>
 }
 
-type Identity<T> = T extends infer U ? { [Key in keyof U]: U[Key] } : never
+function cleanObjects(element: object) {
+  if (element === null) return false
+  if (Array.isArray(element)) return false
+  return Object.keys(element).length !== 0
+}
+
+type Spread<Args extends readonly [...any]> = Args extends [infer Left, ...infer Right]
+  ? SpreadTwo<Left, Spread<Right>>
+  : unknown
 
 type SpreadTwo<Left, Right> = Identity<
   Pick<Left, Exclude<keyof Left, keyof Right>> &
@@ -247,18 +253,12 @@ type SpreadTwo<Left, Right> = Identity<
     SpreadProperties<Left, Right, OptionalPropertyNames<Right> & keyof Left>
 >
 
-type Spread<Args extends readonly [...any]> = Args extends [infer Left, ...infer Right]
-  ? SpreadTwo<Left, Spread<Right>>
-  : unknown
+type Identity<T> = T extends infer U ? { [Key in keyof U]: U[Key] } : never
 
-function cleanObjects(element: object) {
-  // console.log("🚀 ~ cleanObjects ~ element:", element)
-  // console.log("🚀 ~ cleanObjects ~ Object.keys(element):", Object.keys(element))
-  if (Array.isArray(element)) return false
-  if (element === null) return false
-  return Object.keys(element).length !== 0
-}
+type OptionalPropertyNames<T> = {
+  [Key in keyof T]-?: {} extends { [P in Key]: T[Key] } ? Key : never
+}[keyof T]
 
-export function merge<Args extends object[]>(...args: [...Args]) {
-  return Object.assign({}, ...args.filter(cleanObjects)) as Spread<Args>
+type SpreadProperties<Left, Right, Key extends keyof Left & keyof Right> = {
+  [P in Key]: Left[P] | Exclude<Right[P], undefined>
 }
