@@ -9,11 +9,7 @@
     "lint": "pnpm run --filter './packages/*' --parallel lint",
     "lint-staged": "lint-staged --config .config/lint-staged.config.mjs",
     "preinstall": "npx only-allow pnpm && corepack enable",
-    "NO-prepare": "run-p -s prepare:*",
-    "NO-prepare:husky": "if-env VERCEL=1 && echo 'Skipping prepare' || husky install",
-    "NO-prepare:packages": "pnpm build",
     "prettier": "prettier --ignore-unknown --no-error-on-unmatched-pattern",
-    "syncpack": "syncpack list-mismatches --config .config/.syncpackrc",
     "test": "pnpm run --filter './packages/*' --parallel test"
   },
   "devDependencies": {
