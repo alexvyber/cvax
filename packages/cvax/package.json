@@ -1,6 +1,6 @@
 {
   "name": "cvax",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Customized CVA. fork 'class-variance-authority'",
   "repository": "https://github.com/alexvyber/cvax.git",
   "main": "dist/index.cjs.js",
@@ -11,6 +11,11 @@
     "dist/*.js.map",
     "dist/*.d.ts"
   ],
+  "exports": {
+    "import": "./dist/*.mjs",
+    "require": "./dist/*.js",
+    "types": "./dist/*.d.ts"
+  },
   "scripts": {
     "build": "run-p build:**",
     "build:cjs": "swc ./src/index.ts --config-file ./.config/.swcrc -o dist/index.cjs.js -C module.type=commonjs",
@@ -24,9 +29,9 @@
     "build:tsc": "tsc --project .config/tsconfig.build.json",
     "dev": "vitest",
     "prepublishOnly": "pnpm build",
-    "test": "run-p test:vitest",
+    "test": "run-p test:*",
     "test:vitest": "vitest",
-    "test:size": "pnpm build && bundlesize -f 'dist/*.js' -s 2KB",
+    "test:size": "pnpm build && bundlesize -f 'dist/*.js' -s 1.1KB",
     "tsc": "tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {
