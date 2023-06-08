@@ -1,7 +1,33 @@
+export type ClassValue =
+  | ClassValue[]
+  | ClassDictionary
+  | string
+  | number
+  | null
+  | boolean
+  | undefined
+export type ClassDictionary = Record<
+  string,
+  | ClassValue[]
+  | string
+  | number
+  | null
+  | boolean
+  | undefined
+  | Record<string, ClassValue[] | string | number | null | boolean | undefined>
+>
 export type ClassPropKey = "class" | "className"
-export type ClassValue = string | null | undefined | ClassValue[]
-export type ClassProp = { className?: ClassValue | undefined }
-export type OmitUndefined<T> = T extends undefined ? never : T
+export type ClassProp =
+  | {
+      class: ClassValue
+      className?: never
+    }
+  | { class?: never; className: ClassValue }
+  | { class?: never; className?: never }
+export type ExcludeUndefined<T> = T extends undefined ? never : T
 export type StringToBoolean<T> = T extends "true" | "false" ? boolean : T
 export type CxOptions = ClassValue[]
 export type CxReturn = string
+export type Prettify<T> = {
+  [K in keyof T]: T[K] extends object ? Prettify<T[K]> : T[K]
+} & {}
