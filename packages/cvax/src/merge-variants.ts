@@ -1,153 +1,163 @@
 import isEqual from "lodash.isequal" // FIXME: find the way to not to use lodash
-import { MergeDeep } from "type-fest"
-
-import type { ClassProp, ClassValue } from "./types"
-
-import { Config, ConfigSchema, ConfigVariants, ConfigVariantsMulti, cn } from "."
-
-type RequiredConfig<T> = T extends ConfigSchema
-  ? {
-      base?: ClassValue
-      variants: T
-      defaultVariants: ConfigVariants<T>
-      compoundVariants: readonly (T extends ConfigSchema
-        ? (ConfigVariants<T> | ConfigVariantsMulti<T>) & ClassProp
-        : ClassProp)[]
-    }
-  : never
+import type { ClassProp, Prettify } from "./types"
+import type { Config, VariantShape, VariantSchema } from "."
+import { cn } from "./cn"
 
 /* mergeVariants
    ============================================ */
+type MergeVariants<Left, Right> = {
+  [Key in keyof Left & keyof Right]: MergeObjects<Left[Key], Right[Key]>
+} & MergeObjects<Left, Right>
 
-// TODO: merge non-tailwind classes?..
-export function mergeVariants<T, U>(baseVariants: Config<T>, newVariants: Config<U>) {
-  const base_ = getAbsentKeys(baseVariants)
-  const new_ = getAbsentKeys(newVariants)
+type ToString<T> = T extends string ? string : T extends string[] ? string[] : T
 
-  let base = ""
-  if (baseVariants.base || newVariants.base) {
-    base = cn(baseVariants.base, newVariants.base)
-  }
+type MergeObjects<Left, Right> = {
+  [Prop in keyof Left | keyof Right]: Prop extends keyof Right
+    ? Right[Prop]
+    : Prop extends keyof Left
+    ? ToString<Left[Prop]>
+    : never
+}
 
-  const variants = getVariants(base_.variants, new_.variants)
-  const defaultVariants = getDefaultVariants(base_.defaultVariants, new_.defaultVariants)
-  const compoundVariants = getCompoundVariants(base_.compoundVariants, new_.compoundVariants)
+type DefaultVariants<T> = {
+  [Key in keyof T]?: keyof T[Key]
+}
+
+export function mergeVariants<T, U>(
+  baseVariants: Config<T>,
+  newVariants: Config<U>
+): Prettify<{
+  base: string
+  variants: Prettify<MergeVariants<T, U>>
+  defaultVariants: DefaultVariants<MergeVariants<T, U>>
+  compoundVariants: []
+}> {
+  const base = cn(baseVariants.base, newVariants.base)
+  const variants = getVariants(baseVariants.variants, newVariants.variants)
+  const defaultVariants = getDefaultVariants(
+    baseVariants.defaultVariants,
+    newVariants.defaultVariants
+  )
+
+  const compoundVariants = getCompoundVariants(
+    baseVariants.compoundVariants,
+    newVariants.compoundVariants
+  )
 
   return {
     base,
     variants,
     defaultVariants,
     compoundVariants,
-  }
-
-  // return {
-  //   ...(base && { base }),
-  //   ...(Object.keys(variants).length > 0 && { variants }),
-  //   ...(Object.keys(defaultVariants).length > 0 && { defaultVariants }),
-  //   ...(compoundVariants.length > 0 && { compoundVariants }),
-  // }
+  } as any
 }
 
-function getAbsentKeys<T>(config: Config<T>) {
-  const obj = Object.assign({}, config)
-
-  if (!("variants" in config)) Object.assign(obj, { variants: {} })
-  if (!("defaultVariants" in config)) Object.assign(obj, { defaultVariants: {} })
-  if (!("compoundVariants" in config)) Object.assign(obj, { compoundVariants: [] })
-
-  return obj as unknown as RequiredConfig<T>
+export function mergeTwoObjects<Left extends object, Right extends object>(
+  left: Left,
+  right: Right
+): Prettify<MergeObjects<Left, Right>> {
+  if (Array.isArray(left) || Array.isArray(left)) return {} as any
+  return Object.assign({}, left, right) as any
 }
 
-function getVariants<T extends ConfigSchema, U extends ConfigSchema>(
-  baseVariants: T,
-  newVariants: U,
-) {
-  const variants = { ...baseVariants }
-  ;(
-    Object.entries(newVariants) as Array<
-      [vartiant: keyof typeof newVariants, value: (typeof newVariants)[keyof typeof newVariants]]
-    >
-  ).map(([variant, value]) =>
-    (
-      Object.entries(value) as Array<
-        [key: keyof typeof value, classes: (typeof value)[keyof typeof value]]
-      >
-    ).map(([key, classes]) => {
-      if (!(variant in variants)) Object.assign(variants, { [variant]: {} })
+// getVariants
+function getVariants<T extends VariantShape | undefined, U extends VariantShape | undefined>(
+  left: T,
+  right: U
+): Prettify<MergeVariants<T, U>> {
+  const acc = {} as Exclude<T & U, undefined>
 
-      Object.assign((variants as T & U)[variant], {
-        [key]: cn((variants as T & U)?.[variant]?.[key], classes),
-      })
-    }),
-  )
-
-  return variants as unknown as MergeDeep<T, U>
-}
-
-function getDefaultVariants<T extends ConfigSchema, U extends ConfigSchema>(
-  baseVariants: ConfigVariants<T>,
-  newVariants: ConfigVariants<U>,
-) {
-  return merge(baseVariants, newVariants)
-}
-
-// FIXME: make newVariants as first priopity
-// TODO: optimize algorithm
-function getCompoundVariants<T extends readonly any[], U extends readonly any[]>(
-  baseVariants: T,
-  newVariants: U,
-) {
-  const arr = [...baseVariants, ...newVariants]
-  const markArr: (undefined | null)[] = []
-
-  for (const [key, { className, ...rest }] of (
-    arr as Array<{ className: string; [key: string]: string }>
-  ).entries()) {
-    for (let i = key + 1; i < arr.length; i++) {
-      const { className, ...arrRest } = arr[i] as {
-        className: string
-        [key: string]: string
+  if (left)
+    for (const variants in left) {
+      for (const variant in left[variants]) {
+        Object.assign(acc, { [variants]: {} })
+        Object.assign(acc[variants], { [variant]: left[variants][variant] })
       }
+    }
 
-      if (isEqual(rest, arrRest)) markArr[i] = null
+  if (right)
+    for (const variants in right) {
+      for (const variant in right[variants]) {
+        if (!(variants in acc)) {
+          Object.assign(acc, { [variants]: {} })
+          Object.assign(acc[variants], { [variant]: right[variants][variant] })
+        } else {
+          Object.assign(acc[variants], {
+            [variant]: cn(left?.[variants][variant], right[variants][variant]),
+          })
+        }
+      }
+    }
+
+  return acc as any
+}
+
+// getDefaultVariants
+function getDefaultVariants<
+  T extends VariantSchema<any> | undefined,
+  U extends VariantSchema<any> | undefined
+>(left: T, right: U): Prettify<MergeObjects<T, U>> {
+  const acc = Object.assign({}, left)
+
+  if (right)
+    for (const variants in right) {
+      Object.assign(acc, { [variants]: right[variants] })
+    }
+
+  return acc as any
+}
+
+function length(obj: unknown) {
+  return obj ? Object.keys(obj).length : -1
+}
+
+// getCompoundVariants
+function getCompoundVariants<
+  const T extends readonly any[] | undefined,
+  const U extends readonly any[] | undefined
+>(baseVariants: T, newVariants: U) {
+  if (!baseVariants) return newVariants ? newVariants : []
+  if (!newVariants) return baseVariants
+
+  const base = [...baseVariants, ...newVariants]
+
+  const markingArray: (undefined | null)[] = new Array(base.length)
+
+  for (const [key, compound] of base.entries()) {
+    let compoundLength = length(compound)
+    if (compoundLength <= 1) {
+      markingArray[key] = null
+      continue
+    }
+
+    const {
+      className: _,
+      class: __,
+      ...rest
+    } = base[key] as {
+      [key: string]: string
+    } & ClassProp
+
+    for (let i = key + 1; i < base.length; i++) {
+      if (base[i] < compoundLength) {
+        compoundLength--
+        break
+      }
+      const {
+        className: _,
+        class: __,
+        ...rest2
+      } = base[i] as {
+        [key: string]: string
+      } & ClassProp
+
+      if (isEqual(rest, rest2)) markingArray[i] = null
     }
   }
 
-  return arr.map((item, index) => (markArr[index] === undefined ? item : null)).filter(Boolean) as (
-    | T[number]
-    | U[number]
-  )[]
-}
+  for (let i = base.length; i >= 0; i--) {
+    if (markingArray[i] === null) [base.splice(i, 1)]
+  }
 
-/* merge
-   ============================================ */
-export function merge<Args extends object[]>(...args: [...Args]) {
-  return Object.assign({}, ...args.filter(cleanObjects)) as Spread<Args>
-}
-
-function cleanObjects(element: object) {
-  if (element === null) return false
-  if (Array.isArray(element)) return false
-  return Object.keys(element).length !== 0
-}
-
-type Spread<Args extends readonly [...any]> = Args extends [infer Left, ...infer Right]
-  ? SpreadTwo<Left, Spread<Right>>
-  : unknown
-
-type SpreadTwo<Left, Right> = Identity<
-  Pick<Left, Exclude<keyof Left, keyof Right>> &
-    Pick<Right, Exclude<keyof Right, OptionalPropertyNames<Right>>> &
-    Pick<Right, Exclude<OptionalPropertyNames<Right>, keyof Left>> &
-    SpreadProperties<Left, Right, OptionalPropertyNames<Right> & keyof Left>
->
-
-type Identity<T> = T extends infer U ? { [Key in keyof U]: U[Key] } : never
-
-type OptionalPropertyNames<T> = {
-  [Key in keyof T]-?: {} extends { [P in Key]: T[Key] } ? Key : never
-}[keyof T]
-
-type SpreadProperties<Left, Right, Key extends keyof Left & keyof Right> = {
-  [P in Key]: Left[P] | Exclude<Right[P], undefined>
+  return base
 }

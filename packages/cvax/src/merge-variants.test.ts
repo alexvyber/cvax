@@ -1,5 +1,6 @@
 import { describe, it as test, expect } from "vitest"
-import { merge, mergeVariants } from "./merge-variants"
+import { mergeTwoObjects, mergeVariants } from "./merge-variants"
+import { createVariant } from "."
 
 const generatedDefault = {
   base: "",
@@ -19,7 +20,7 @@ function withGeneratedDefault(obj: object): {
 
 // TODO: write all test cases for mergeVariants
 describe("mergeVariants", () => {
-  const defaultVarinats = {
+  const defaultVarinats = createVariant({
     variants: {
       intent: {
         primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
@@ -44,14 +45,15 @@ describe("mergeVariants", () => {
 
     compoundVariants: [
       {
-        intent: "primary",
-        size: "medium",
-        className: "uppercase",
-      },
-      {
         intent: "warning",
         disabled: false,
         className: "text-gray-800",
+      },
+
+      {
+        intent: "primary",
+        size: "medium",
+        className: "uppercase",
       },
       {
         intent: "warning",
@@ -59,9 +61,8 @@ describe("mergeVariants", () => {
         className: "text-black",
       },
     ],
-  } as const
-
-  const newVariants = {
+  })
+  const newVariants = createVariant({
     variants: {
       intent: {
         primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
@@ -86,14 +87,14 @@ describe("mergeVariants", () => {
 
     compoundVariants: [
       {
-        intent: "primary",
-        size: "medium",
-        className: "uppercase",
-      },
-      {
         intent: "warning",
         disabled: false,
         className: "text-gray-800",
+      },
+      {
+        intent: "primary",
+        size: "medium",
+        className: "uppercase",
       },
       {
         intent: "warning",
@@ -101,13 +102,46 @@ describe("mergeVariants", () => {
         className: "text-black",
       },
     ],
-  } as const
+  })
 
   const mergedVariants = mergeVariants(defaultVarinats, newVariants)
 
   test("same variants", () => {
     expect(mergedVariants).toEqual(withGeneratedDefault(defaultVarinats))
     expect(mergedVariants).toEqual(withGeneratedDefault(newVariants))
+  })
+})
+
+describe("mergeVariants", () => {
+  const defaultVarinats = {
+    variants: {
+      intent: {
+        primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600 text-7xl",
+      },
+    },
+  }
+
+  const newVariants = {
+    variants: {
+      intent: {
+        primary: "bg-blue-500 text-red border-transparent hover:bg-blue-600",
+      },
+    },
+  }
+
+  const expected = {
+    variants: {
+      intent: {
+        primary: "text-7xl bg-blue-500 text-red border-transparent hover:bg-blue-600",
+      },
+    },
+  }
+
+  const mergedVariants = mergeVariants(defaultVarinats, newVariants)
+
+  test("same variants", () => {
+    expect(mergedVariants).toEqual(withGeneratedDefault(expected))
+    // expect(mergedVariants).toEqual(withGeneratedDefault(newVariants))
   })
 })
 
@@ -174,7 +208,9 @@ describe("mergevariants", () => {
   })
 })
 
-describe("merge", () => {
+
+
+describe("mergeTwoObjects", () => {
   const func = () => console.log("func")
   const otherFunc = () => console.log("otherFunc")
 
@@ -202,11 +238,19 @@ describe("merge", () => {
       expected: {},
     },
     { left: { a: 1 }, right: {}, expected: { a: 1 } },
-    { left: { a: "string" }, right: { a: "string" }, expected: { a: "string" } },
+    {
+      left: { a: "string" },
+      right: { a: "string" },
+      expected: { a: "string" },
+    },
     { left: { a: "string" }, right: { a: 69 }, expected: { a: 69 } },
     { left: { a: "string" }, right: { a: false }, expected: { a: false } },
     { left: { a: 420 }, right: { a: obj }, expected: { a: obj } },
-    { left: { a: "string", b: { c: [] } }, right: {}, expected: { a: "string", b: { c: [] } } },
+    {
+      left: { a: "string", b: { c: [] } },
+      right: {},
+      expected: { a: "string", b: { c: [] } },
+    },
     {
       left: { a: "string", b: { c: [], f: func } },
       right: {},
@@ -221,7 +265,7 @@ describe("merge", () => {
     },
   ])("merge(%o)", ({ left, right, expected }) => {
     test(`returns ${expected}`, () => {
-      expect(merge(left, right, {}, () => {})).toEqual(expected)
+      expect(mergeTwoObjects(left, right)).toEqual(expected)
     })
   })
 })
