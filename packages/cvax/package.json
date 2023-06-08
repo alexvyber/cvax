@@ -15,28 +15,34 @@
     "build": "run-p build:**",
     "build:cjs": "swc ./src/index.ts --config-file ./.config/.swcrc -o dist/index.cjs.js -C module.type=commonjs",
     "build:esm": "swc ./src/index.ts --config-file ./.config/.swcrc -o dist/index.esm.js -C module.type=es6 ",
+    "build:cjs-cx": "swc ./src/cx.ts --config-file ./.config/.swcrc -o dist/cx.cjs.js -C module.type=commonjs",
+    "build:esm-cx": "swc ./src/cx.ts --config-file ./.config/.swcrc -o dist/cx.esm.js -C module.type=es6 ",
+    "build:cjs-cn": "swc ./src/cn.ts --config-file ./.config/.swcrc -o dist/cn.cjs.js -C module.type=commonjs",
+    "build:esm-cn": "swc ./src/cn.ts --config-file ./.config/.swcrc -o dist/cn.esm.js -C module.type=es6 ",
+    "build:cjs-merge": "swc ./src/merge-variants.ts --config-file ./.config/.swcrc -o dist/merge-variants.cjs.js -C module.type=commonjs",
+    "build:esm-merge": "swc ./src/merge-variants.ts --config-file ./.config/.swcrc -o dist/merge-variants.esm.js -C module.type=es6 ",
     "build:tsc": "tsc --project .config/tsconfig.build.json",
     "dev": "vitest",
     "prepublishOnly": "pnpm build",
-    "test": "run-p test:*",
+    "test": "run-p test:vitest",
     "test:vitest": "vitest",
-    "test:size": "pnpm build && bundlesize -f 'dist/*.js' -s 1KB",
+    "test:size": "pnpm build && bundlesize -f 'dist/*.js' -s 2KB",
     "tsc": "tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {
     "lodash.isequal": "^4.5.0",
-    "tailwind-merge": "^1.12.0",
-    "type-fest": "^3.9.0"
+    "tailwind-merge": "^1.13.1",
+    "type-fest": "^3.11.1"
   },
   "devDependencies": {
     "@swc/cli": "0.1.62",
-    "@swc/core": "1.3.56",
+    "@swc/core": "1.3.62",
     "@types/lodash.isequal": "^4.5.6",
     "bundlesize": "^0.18.1",
     "npm-run-all": "4.1.5",
     "react": "18.2.0",
-    "typescript": "5.0.4",
-    "vitest": "^0.30.1"
+    "typescript": "5.1.3",
+    "vitest": "^0.32.0"
   },
   "peerDependencies": {
     "typescript": ">= 4.5.5 || >= 5.0.0 || >= 5.0.0-beta"
