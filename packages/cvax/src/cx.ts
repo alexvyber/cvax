@@ -1,22 +1,7 @@
-export type ClassDictionary = Record<
-  string,
-  | ClassValue[]
-  | string
-  | number
-  | null
-  | boolean
-  | undefined
-  | Record<string, ClassValue[] | string | number | null | boolean | undefined>
->
+import { ClassValue } from "./types"
 
-export type ClassValue =
-  | ClassValue[]
-  | ClassDictionary
-  | string
-  | number
-  | null
-  | boolean
-  | undefined
+export type CxOptions = Parameters<typeof cx>
+export type CxReturn = ReturnType<typeof cx>
 
 /* cx
    ============================================ */
@@ -33,12 +18,12 @@ export function cx() {
     }
   }
 
-  return str.replace(/\s+/g, " ").trim()
+  return str.trim()
 }
 
 function getStr(classes: ClassValue) {
   if (!classes || typeof classes === "boolean") return ""
-  if (typeof classes === "number") return classes.toString() + " "
+  if (typeof classes === "number") return classes + " "
 
   if (typeof classes === "object") {
     let str = ""

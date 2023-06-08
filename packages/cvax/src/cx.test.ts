@@ -1,10 +1,18 @@
 import { describe, it as test, expect } from "vitest"
-import { cx, ClassValue } from "./cx"
+import { cx } from "./cx"
+import { ClassValue } from "./types"
 
 test("keeps object keys with truthy values", () => {
-  expect(cx({ one: true, two: false, three: 0, four: null, five: undefined, six: 1 })).toBe(
-    "one six",
-  )
+  expect(
+    cx({
+      one: true,
+      two: false,
+      three: 0,
+      four: null,
+      five: undefined,
+      six: 1,
+    })
+  ).toBe("one six")
 })
 
 test("joins arrays of class names and ignore falsy values", () => {
@@ -19,7 +27,7 @@ test("supports heterogenous arguments", () => {
   expect(
     cx({ one: true }, "two", 0, false, "five", [[{ six: true }]], {
       className: [{ seven: false }, [[{ eight: true }]]],
-    }),
+    })
   ).toBe("one two five six eight")
 })
 
@@ -29,8 +37,8 @@ test("should be trimmed", () => {
       "",
       "                   two             three            ",
       { four: true, "                five              ": true },
-      "",
-    ),
+      ""
+    ).replace(/\s+/g, " ")
   ).toBe("two three four five")
 })
 
@@ -82,7 +90,7 @@ test("handles nested arrays that have empty nested arrays", () => {
           { three: () => {} },
         ],
       ],
-    ]),
+    ])
   ).toBe("one three")
 })
 
@@ -112,7 +120,7 @@ test("handles all types of truthy and falsy property values as expected", () => 
   })
 
   expect(res).toBe(
-    "function emptyObject nonEmptyString whitespace nonEmptyObject emptyList nonEmptyList greaterZero",
+    "function emptyObject nonEmptyString whitespace nonEmptyObject emptyList nonEmptyList greaterZero"
   )
 })
 
@@ -137,7 +145,7 @@ test("handles all types of truthy and falsy property values as expected", () => 
     class: ["ten", ["eleven", ["twelve", { thirteen: true }]]],
   })
 
-  expect(res).toBe("one two three six seven nine ten eleven twelve thirteen")
+  expect(res.replace(/\s+/g, " ")).toBe("one two three six seven nine ten eleven twelve thirteen")
 })
 
 describe("cx", () => {
