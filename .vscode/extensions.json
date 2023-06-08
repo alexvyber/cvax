@@ -1,9 +1,0 @@
-{
-  "recommendations": [
-    "astro-build.astro-vscode",
-    "svelte.svelte-vscode",
-    "Vue.volar",
-    "Vue.vscode-typescript-vue-plugin"
-  ],
-  "unwantedRecommendations": []
-}
