@@ -1,10 +1,10 @@
 import { ClassValue } from "./types"
 
+/* cx
+   ============================================ */
 export type CxOptions = Parameters<typeof cx>
 export type CxReturn = ReturnType<typeof cx>
 
-/* cx
-   ============================================ */
 export function cx(...inputs: ClassValue[]): string
 export function cx() {
   let i = 0,

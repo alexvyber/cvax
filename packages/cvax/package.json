@@ -7,28 +7,21 @@
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
+    "dist/*.mjs",
+    "dist/*.mjs.map",
     "dist/*.js",
     "dist/*.js.map",
     "dist/*.d.ts"
   ],
   "exports": {
-    "types": "./dist/*.d.ts",
-    "default": "./dist/index.esm.js",
-    "node": "./dist/index.cjs.js",
-    "cn": "./dist/cn.esm.js",
-    "cx": "./dist/cx.esm.js",
-    "merge-variants": "./dist/merge-variants.esm.js"
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.js",
+    "types": "./dist/index.d.ts"
   },
   "scripts": {
     "build": "run-p build:**",
     "build:cjs": "swc ./src/index.ts --config-file ./.config/.swcrc -o dist/index.cjs.js -C module.type=commonjs",
     "build:esm": "swc ./src/index.ts --config-file ./.config/.swcrc -o dist/index.esm.js -C module.type=es6 ",
-    "build:cjs-cx": "swc ./src/cx.ts --config-file ./.config/.swcrc -o dist/cx.cjs.js -C module.type=commonjs",
-    "build:esm-cx": "swc ./src/cx.ts --config-file ./.config/.swcrc -o dist/cx.esm.js -C module.type=es6 ",
-    "build:cjs-cn": "swc ./src/cn.ts --config-file ./.config/.swcrc -o dist/cn.cjs.js -C module.type=commonjs",
-    "build:esm-cn": "swc ./src/cn.ts --config-file ./.config/.swcrc -o dist/cn.esm.js -C module.type=es6 ",
-    "build:cjs-merge": "swc ./src/merge-variants.ts --config-file ./.config/.swcrc -o dist/merge-variants.cjs.js -C module.type=commonjs",
-    "build:esm-merge": "swc ./src/merge-variants.ts --config-file ./.config/.swcrc -o dist/merge-variants.esm.js -C module.type=es6 ",
     "build:tsc": "tsc --project .config/tsconfig.build.json",
     "dev": "vitest",
     "prepublishOnly": "pnpm build",
