@@ -1,77 +1,163 @@
-import * as CVAX from "./"
-
+import type * as CVAX from "./"
+import { cvax } from "./"
 import { describe, it as test, expect } from "vitest"
 import { cx } from "./cx"
 
 describe("cvax", () => {
   describe("without base", () => {
-    // describe("without anything", () => {
-    //   test("empty", () => {
-    //     const example = CVAX.cvax()
+    describe("without anything", () => {
+      test("empty", () => {
+        // @ts-expect-error
+        const example = cvax()
+        expect(example()).toBe("")
+        expect(
+          example({
+            // @ts-expect-error
+            aCheekyInvalidProp: "lol",
+          })
+        ).toBe("")
+        expect(example({ class: "adhoc-class" })).toBe("adhoc-class")
+        expect(example({ className: "adhoc-className" })).toBe("adhoc-className")
+        expect(
+          example({
+            className: "adhoc-className",
+            // @ts-expect-error
+            class: "adhoc-class",
+          })
+        ).toBe("adhoc-class adhoc-className")
+        expect(
+          example({
+            class: "adhoc-class",
+            // @ts-expect-error
+            className: "adhoc-className",
+          })
+        ).toBe("adhoc-class adhoc-className")
+      })
 
-    //     expect(example()).toBe("")
+      test("undefined", () => {
+        // @ts-expect-error
+        const example = cvax(undefined)
+        expect(example()).toBe("")
+        expect(
+          example({
+            // @ts-expect-error
+            aCheekyInvalidProp: "lol",
+          })
+        ).toBe("")
+        expect(example({ class: "adhoc-class" })).toBe("adhoc-class")
+        expect(example({ className: "adhoc-className" })).toBe("adhoc-className")
+        expect(
+          example({
+            class: "adhoc-class",
+            // @ts-expect-error
+            className: "adhoc-className",
+          })
+        ).toBe("adhoc-class adhoc-className")
 
-    //     expect(
-    //       example({
-    //         // @ts-expect-error
-    //         aCheekyInvalidProp: "lol",
-    //       }),
-    //     ).toBe("")
+        expect(
+          example({
+            className: "adhoc-className",
+            // @ts-expect-error
+            class: "adhoc-class",
+          })
+        ).toBe("adhoc-class adhoc-className")
+      })
 
-    //     expect(example({ className: "adhoc-className" })).toBe("adhoc-className")
-
-    //     expect(
-    //       example({
-    //         className: "adhoc-className",
-    //       }),
-    //     ).toBe("adhoc-className")
-    //   })
-
-    //   test("undefined", () => {
-    //     const example = CVAX.cvax(undefined)
-
-    //     expect(example()).toBe("")
-
-    //     expect(
-    //       example({
-    //         // @ts-expect-error
-    //         aCheekyInvalidProp: "lol",
-    //       }),
-    //     ).toBe("")
-
-    //     expect(example({ className: "adhoc-className" })).toBe("adhoc-className")
-
-    //     expect(
-    //       example({
-    //         className: "adhoc-className",
-    //       }),
-    //     ).toBe("adhoc-className")
-    //   })
-
-    //   // test("null", () => {
-    //   //   const example = CVAX.cvax(null)
-
-    //   //   expect(example()).toBe("")
-
-    //   //   expect(
-    //   //     example({
-    //   //       // @ts-expect-error
-    //   //       aCheekyInvalidProp: "lol",
-    //   //     }),
-    //   //   ).toBe("")
-
-    //   //   expect(example({ className: "adhoc-className" })).toBe("adhoc-className")
-    //   // })
-    // })
+      test("null", () => {
+        const example = cvax(
+          // @ts-expect-error
+          null
+        )
+        expect(example()).toBe("")
+        expect(
+          example({
+            // @ts-expect-error
+            aCheekyInvalidProp: "lol",
+          })
+        ).toBe("")
+        expect(example({ class: "adhoc-class" })).toBe("adhoc-class")
+        expect(example({ className: "adhoc-className" })).toBe("adhoc-className")
+        expect(
+          example({
+            class: "adhoc-class",
+            // @ts-expect-error
+            className: "adhoc-className",
+          })
+        ).toBe("adhoc-class adhoc-className")
+        expect(
+          example({
+            className: "adhoc-className",
+            // @ts-expect-error
+            class: "adhoc-class",
+          })
+        ).toBe("adhoc-class adhoc-className")
+      })
+    })
 
     describe("without defaults", () => {
-      const buttonWithoutBaseWithoutDefaultsWithClassNameString = CVAX.cvax({
+      const buttonWithoutBaseWithoutDefaultsString = cvax({
         variants: {
           intent: {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: "button--danger bg-red-500 text-white border-transparent hover:bg-red-600",
+            danger: [
+              "button--danger",
+              [
+                1 && "bg-red-500",
+                { baz: false, bat: null },
+                ["text-white", ["border-transparent"]],
+              ],
+              "hover:bg-red-600",
+            ],
+          },
+          disabled: {
+            true: "button--disabled opacity-050 cursor-not-allowed",
+            false: "button--enabled cursor-pointer",
+          },
+          size: {
+            small: "button--small text-sm py-1 px-2",
+            medium: "button--medium text-base py-2 px-4",
+            large: "button--large text-lg py-2.5 px-4",
+          },
+          m: {
+            0: "m-0",
+            1: "m-1",
+          },
+        },
+        compoundVariants: [
+          {
+            intent: "primary",
+            size: "medium",
+            class: "button--primary-medium uppercase",
+          },
+          {
+            intent: "warning",
+            disabled: false,
+            class: "button--warning-enabled text-gray-800",
+          },
+          {
+            intent: "warning",
+            disabled: true,
+            class: ["button--warning-disabled", [1 && "text-black", { baz: false, bat: null }]],
+          },
+        ],
+      })
+      const buttonWithoutBaseWithoutDefaultsWithClassNameString = cvax({
+        variants: {
+          intent: {
+            primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
+            secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
+            warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
+            danger: [
+              "button--danger",
+              [
+                1 && "bg-red-500",
+                { baz: false, bat: null },
+                ["text-white", ["border-transparent"]],
+              ],
+              "hover:bg-red-600",
+            ],
           },
           disabled: {
             true: "button--disabled opacity-050 cursor-not-allowed",
@@ -101,12 +187,11 @@ describe("cvax", () => {
           {
             intent: "warning",
             disabled: true,
-            className: "button--warning-disabled text-black",
+            className: ["button--warning-disabled", [1 && "text-black", { baz: false, bat: null }]],
           },
         ],
       })
-
-      const buttonWithoutBaseWithoutDefaultsWithClassNameArray = CVAX.cvax({
+      const buttonWithoutBaseWithoutDefaultsArray = cvax({
         variants: {
           intent: {
             primary: [
@@ -131,9 +216,76 @@ describe("cvax", () => {
             ],
             danger: [
               "button--danger",
-              "bg-red-500",
+              [
+                1 && "bg-red-500",
+                { baz: false, bat: null },
+                ["text-white", ["border-transparent"]],
+              ],
+              "hover:bg-red-600",
+            ],
+          },
+          disabled: {
+            true: ["button--disabled", "opacity-050", "cursor-not-allowed"],
+            false: ["button--enabled", "cursor-pointer"],
+          },
+          size: {
+            small: ["button--small", "text-sm", "py-1", "px-2"],
+            medium: ["button--medium", "text-base", "py-2", "px-4"],
+            large: ["button--large", "text-lg", "py-2.5", "px-4"],
+          },
+          m: {
+            0: "m-0",
+            1: "m-1",
+          },
+        },
+        compoundVariants: [
+          {
+            intent: "primary",
+            size: "medium",
+            class: ["button--primary-medium", "uppercase"],
+          },
+          {
+            intent: "warning",
+            disabled: false,
+            class: ["button--warning-enabled", "text-gray-800"],
+          },
+          {
+            intent: "warning",
+            disabled: true,
+            class: ["button--warning-disabled", [1 && "text-black", { baz: false, bat: null }]],
+          },
+        ],
+      })
+      const buttonWithoutBaseWithoutDefaultsWithClassNameArray = cvax({
+        variants: {
+          intent: {
+            primary: [
+              "button--primary",
+              "bg-blue-500",
               "text-white",
               "border-transparent",
+              "hover:bg-blue-600",
+            ],
+            secondary: [
+              "button--secondary",
+              "bg-white",
+              "text-gray-800",
+              "border-gray-400",
+              "hover:bg-gray-100",
+            ],
+            warning: [
+              "button--warning",
+              "bg-yellow-500",
+              "border-transparent",
+              "hover:bg-yellow-600",
+            ],
+            danger: [
+              "button--danger",
+              [
+                1 && "bg-red-500",
+                { baz: false, bat: null },
+                ["text-white", ["border-transparent"]],
+              ],
               "hover:bg-red-600",
             ],
           },
@@ -165,13 +317,15 @@ describe("cvax", () => {
           {
             intent: "warning",
             disabled: true,
-            className: ["button--warning-disabled", "text-black"],
+            className: ["button--warning-disabled", [1 && "text-black", { baz: false, bat: null }]],
           },
         ],
       })
 
       type ButtonWithoutDefaultsWithoutBaseProps =
+        | CVAX.VariantProps<typeof buttonWithoutBaseWithoutDefaultsString>
         | CVAX.VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameString>
+        | CVAX.VariantProps<typeof buttonWithoutBaseWithoutDefaultsArray>
         | CVAX.VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithoutDefaultsWithoutBaseProps, string]>([
@@ -196,7 +350,7 @@ describe("cvax", () => {
         [
           {
             intent: "secondary",
-            size: null,
+            size: "unset",
           },
           "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
         ],
@@ -229,6 +383,14 @@ describe("cvax", () => {
           {
             intent: "primary",
             m: 1,
+            class: "adhoc-class",
+          } as ButtonWithoutDefaultsWithoutBaseProps,
+          "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 m-1 adhoc-class",
+        ],
+        [
+          {
+            intent: "primary",
+            m: 1,
             className: "adhoc-classname",
           } as ButtonWithoutDefaultsWithoutBaseProps,
           "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 m-1 adhoc-classname",
@@ -236,21 +398,95 @@ describe("cvax", () => {
         // typings needed
       ])("button(%o)", (options, expected) => {
         test(`returns ${expected}`, () => {
+          expect(buttonWithoutBaseWithoutDefaultsString(options)).toBe(expected)
           expect(buttonWithoutBaseWithoutDefaultsWithClassNameString(options)).toBe(expected)
+          expect(buttonWithoutBaseWithoutDefaultsArray(options)).toBe(expected)
           expect(buttonWithoutBaseWithoutDefaultsWithClassNameArray(options)).toBe(expected)
         })
       })
     })
 
     describe("with defaults", () => {
-      const buttonWithoutBaseWithDefaultsWithClassNameString = CVAX.cvax({
+      const buttonWithoutBaseWithDefaultsString = cvax({
         base: "button font-semibold border rounded",
         variants: {
           intent: {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: "button--danger bg-red-500 text-white border-transparent hover:bg-red-600",
+            danger: [
+              "button--danger",
+              [
+                1 && "bg-red-500",
+                { baz: false, bat: null },
+                ["text-white", ["border-transparent"]],
+              ],
+              "hover:bg-red-600",
+            ],
+          },
+          disabled: {
+            true: "button--disabled opacity-050 cursor-not-allowed",
+            false: "button--enabled cursor-pointer",
+          },
+          size: {
+            small: "button--small text-sm py-1 px-2",
+            medium: "button--medium text-base py-2 px-4",
+            large: "button--large text-lg py-2.5 px-4",
+          },
+          m: {
+            0: "m-0",
+            1: "m-1",
+          },
+        },
+        compoundVariants: [
+          {
+            intent: "primary",
+            size: "medium",
+            class: "button--primary-medium uppercase",
+          },
+          {
+            intent: "warning",
+            disabled: false,
+            class: "button--warning-enabled text-gray-800",
+          },
+          {
+            intent: "warning",
+            disabled: true,
+            class: ["button--warning-disabled", [1 && "text-black", { baz: false, bat: null }]],
+          },
+          {
+            intent: ["warning", "danger"],
+            class: "button--warning-danger !border-red-500",
+          },
+          {
+            intent: ["warning", "danger"],
+            size: "medium",
+            class: "button--warning-danger-medium",
+          },
+        ],
+        defaultVariants: {
+          m: 0,
+          disabled: false,
+          intent: "primary",
+          size: "medium",
+        },
+      })
+      const buttonWithoutBaseWithDefaultsWithClassNameString = cvax({
+        base: "button font-semibold border rounded",
+        variants: {
+          intent: {
+            primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
+            secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
+            warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
+            danger: [
+              "button--danger",
+              [
+                1 && "bg-red-500",
+                { baz: false, bat: null },
+                ["text-white", ["border-transparent"]],
+              ],
+              "hover:bg-red-600",
+            ],
           },
           disabled: {
             true: "button--disabled opacity-050 cursor-not-allowed",
@@ -280,7 +516,7 @@ describe("cvax", () => {
           {
             intent: "warning",
             disabled: true,
-            className: "button--warning-disabled text-black",
+            className: ["button--warning-disabled", [1 && "text-black", { baz: false, bat: null }]],
           },
           {
             intent: ["warning", "danger"],
@@ -299,8 +535,7 @@ describe("cvax", () => {
           size: "medium",
         },
       })
-
-      const buttonWithoutBaseWithDefaultsWithClassNameArray = CVAX.cvax({
+      const buttonWithoutBaseWithDefaultsArray = cvax({
         base: ["button", "font-semibold", "border", "rounded"],
         variants: {
           intent: {
@@ -326,9 +561,92 @@ describe("cvax", () => {
             ],
             danger: [
               "button--danger",
-              "bg-red-500",
+              [
+                1 && "bg-red-500",
+                { baz: false, bat: null },
+                ["text-white", ["border-transparent"]],
+              ],
+              "hover:bg-red-600",
+            ],
+          },
+          disabled: {
+            true: ["button--disabled", "opacity-050", "cursor-not-allowed"],
+            false: ["button--enabled", "cursor-pointer"],
+          },
+          size: {
+            small: ["button--small", "text-sm", "py-1", "px-2"],
+            medium: ["button--medium", "text-base", "py-2", "px-4"],
+            large: ["button--large", "text-lg", "py-2.5", "px-4"],
+          },
+          m: {
+            0: "m-0",
+            1: "m-1",
+          },
+        },
+        compoundVariants: [
+          {
+            intent: "primary",
+            size: "medium",
+            class: ["button--primary-medium", "uppercase"],
+          },
+          {
+            intent: "warning",
+            disabled: false,
+            class: ["button--warning-enabled", "text-gray-800"],
+          },
+          {
+            intent: "warning",
+            disabled: true,
+            class: ["button--warning-disabled", [1 && "text-black", { baz: false, bat: null }]],
+          },
+          {
+            intent: ["warning", "danger"],
+            class: ["button--warning-danger", "!border-red-500"],
+          },
+          {
+            intent: ["warning", "danger"],
+            size: "medium",
+            class: ["button--warning-danger-medium"],
+          },
+        ],
+        defaultVariants: {
+          m: 0,
+          disabled: false,
+          intent: "primary",
+          size: "medium",
+        },
+      })
+      const buttonWithoutBaseWithDefaultsWithClassNameArray = cvax({
+        base: ["button", "font-semibold", "border", "rounded"],
+        variants: {
+          intent: {
+            primary: [
+              "button--primary",
+              "bg-blue-500",
               "text-white",
               "border-transparent",
+              "hover:bg-blue-600",
+            ],
+            secondary: [
+              "button--secondary",
+              "bg-white",
+              "text-gray-800",
+              "border-gray-400",
+              "hover:bg-gray-100",
+            ],
+            warning: [
+              "button--warning",
+              "bg-yellow-500",
+              "border-transparent",
+              "hover:bg-yellow-600",
+            ],
+            danger: [
+              "button--danger",
+              [
+                1 && "bg-red-500",
+                { baz: false, bat: null },
+                ["text-white", ["border-transparent"]],
+              ],
               "hover:bg-red-600",
             ],
           },
@@ -360,7 +678,7 @@ describe("cvax", () => {
           {
             intent: "warning",
             disabled: true,
-            className: ["button--warning-disabled", "text-black"],
+            className: ["button--warning-disabled", [1 && "text-black", { baz: false, bat: null }]],
           },
           {
             intent: ["warning", "danger"],
@@ -381,7 +699,9 @@ describe("cvax", () => {
       })
 
       type ButtonWithoutBaseWithDefaultsProps =
+        | CVAX.VariantProps<typeof buttonWithoutBaseWithDefaultsString>
         | CVAX.VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameString>
+        | CVAX.VariantProps<typeof buttonWithoutBaseWithDefaultsArray>
         | CVAX.VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithoutBaseWithDefaultsProps, string]>([
@@ -416,7 +736,7 @@ describe("cvax", () => {
         [
           {
             intent: "secondary",
-            size: null,
+            size: "unset",
           },
           "button font-semibold border rounded button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100 button--enabled cursor-pointer m-0",
         ],
@@ -445,7 +765,14 @@ describe("cvax", () => {
           "button font-semibold border rounded button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 button--enabled cursor-pointer button--medium text-base py-2 px-4 m-1 button--primary-medium uppercase",
         ],
         // !@TODO Add type "extractor" including class prop
-
+        [
+          {
+            intent: "primary",
+            m: 0,
+            class: "adhoc-class",
+          } as ButtonWithoutBaseWithDefaultsProps,
+          "button font-semibold border rounded button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 button--enabled cursor-pointer button--medium text-base py-2 px-4 m-0 button--primary-medium uppercase adhoc-class",
+        ],
         [
           {
             intent: "primary",
@@ -456,7 +783,9 @@ describe("cvax", () => {
         ],
       ])("button(%o)", (options, expected) => {
         test(`returns ${expected}`, () => {
+          expect(buttonWithoutBaseWithDefaultsString(options)).toBe(expected)
           expect(buttonWithoutBaseWithDefaultsWithClassNameString(options)).toBe(expected)
+          expect(buttonWithoutBaseWithDefaultsArray(options)).toBe(expected)
           expect(buttonWithoutBaseWithDefaultsWithClassNameArray(options)).toBe(expected)
         })
       })
@@ -465,14 +794,76 @@ describe("cvax", () => {
 
   describe("with base", () => {
     describe("without defaults", () => {
-      const buttonWithBaseWithoutDefaultsWithClassNameString = CVAX.cvax({
+      const buttonWithBaseWithoutDefaultsString = cvax({
         base: "button font-semibold border rounded",
         variants: {
           intent: {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: "button--danger bg-red-500 text-white border-transparent hover:bg-red-600",
+            danger: [
+              "button--danger",
+              [
+                1 && "bg-red-500",
+                { baz: false, bat: null },
+                ["text-white", ["border-transparent"]],
+              ],
+              "hover:bg-red-600",
+            ],
+          },
+          disabled: {
+            true: "button--disabled opacity-050 cursor-not-allowed",
+            false: "button--enabled cursor-pointer",
+          },
+          size: {
+            small: "button--small text-sm py-1 px-2",
+            medium: "button--medium text-base py-2 px-4",
+            large: "button--large text-lg py-2.5 px-4",
+          },
+        },
+        compoundVariants: [
+          {
+            intent: "primary",
+            size: "medium",
+            class: "button--primary-medium uppercase",
+          },
+          {
+            intent: "warning",
+            disabled: false,
+            class: "button--warning-enabled text-gray-800",
+          },
+          {
+            intent: "warning",
+            disabled: true,
+            class: ["button--warning-disabled", [1 && "text-black", { baz: false, bat: null }]],
+          },
+          {
+            intent: ["warning", "danger"],
+            class: "button--warning-danger !border-red-500",
+          },
+          {
+            intent: ["warning", "danger"],
+            size: "medium",
+            class: "button--warning-danger-medium",
+          },
+        ],
+      })
+      const buttonWithBaseWithoutDefaultsWithClassNameString = cvax({
+        base: "button font-semibold border rounded",
+        variants: {
+          intent: {
+            primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
+            secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
+            warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
+            danger: [
+              "button--danger",
+              [
+                1 && "bg-red-500",
+                { baz: false, bat: null },
+                ["text-white", ["border-transparent"]],
+              ],
+              "hover:bg-red-600",
+            ],
           },
           disabled: {
             true: "button--disabled opacity-050 cursor-not-allowed",
@@ -498,7 +889,7 @@ describe("cvax", () => {
           {
             intent: "warning",
             disabled: true,
-            className: "button--warning-disabled text-black",
+            className: ["button--warning-disabled", [1 && "text-black", { baz: false, bat: null }]],
           },
           {
             intent: ["warning", "danger"],
@@ -511,8 +902,7 @@ describe("cvax", () => {
           },
         ],
       })
-
-      const buttonWithBaseWithoutDefaultsWithClassNameArray = CVAX.cvax({
+      const buttonWithBaseWithoutDefaultsArray = cvax({
         base: ["button", "font-semibold", "border", "rounded"],
         variants: {
           intent: {
@@ -538,9 +928,82 @@ describe("cvax", () => {
             ],
             danger: [
               "button--danger",
-              "bg-red-500",
+              [
+                1 && "bg-red-500",
+                { baz: false, bat: null },
+                ["text-white", ["border-transparent"]],
+              ],
+              "hover:bg-red-600",
+            ],
+          },
+          disabled: {
+            true: ["button--disabled", "opacity-050", "cursor-not-allowed"],
+            false: ["button--enabled", "cursor-pointer"],
+          },
+          size: {
+            small: ["button--small", "text-sm", "py-1", "px-2"],
+            medium: ["button--medium", "text-base", "py-2", "px-4"],
+            large: ["button--large", "text-lg", "py-2.5", "px-4"],
+          },
+        },
+        compoundVariants: [
+          {
+            intent: "primary",
+            size: "medium",
+            class: ["button--primary-medium", "uppercase"],
+          },
+          {
+            intent: "warning",
+            disabled: false,
+            class: ["button--warning-enabled", "text-gray-800"],
+          },
+          {
+            intent: "warning",
+            disabled: true,
+            class: ["button--warning-disabled", [1 && "text-black", { baz: false, bat: null }]],
+          },
+          {
+            intent: ["warning", "danger"],
+            class: ["button--warning-danger", "!border-red-500"],
+          },
+          {
+            intent: ["warning", "danger"],
+            size: "medium",
+            class: ["button--warning-danger-medium"],
+          },
+        ],
+      })
+      const buttonWithBaseWithoutDefaultsWithClassNameArray = cvax({
+        base: ["button", "font-semibold", "border", "rounded"],
+        variants: {
+          intent: {
+            primary: [
+              "button--primary",
+              "bg-blue-500",
               "text-white",
               "border-transparent",
+              "hover:bg-blue-600",
+            ],
+            secondary: [
+              "button--secondary",
+              "bg-white",
+              "text-gray-800",
+              "border-gray-400",
+              "hover:bg-gray-100",
+            ],
+            warning: [
+              "button--warning",
+              "bg-yellow-500",
+              "border-transparent",
+              "hover:bg-yellow-600",
+            ],
+            danger: [
+              "button--danger",
+              [
+                1 && "bg-red-500",
+                { baz: false, bat: null },
+                ["text-white", ["border-transparent"]],
+              ],
               "hover:bg-red-600",
             ],
           },
@@ -568,7 +1031,7 @@ describe("cvax", () => {
           {
             intent: "warning",
             disabled: true,
-            className: ["button--warning-disabled", "text-black"],
+            className: ["button--warning-disabled", [1 && "text-black", { baz: false, bat: null }]],
           },
           {
             intent: ["warning", "danger"],
@@ -583,7 +1046,9 @@ describe("cvax", () => {
       })
 
       type ButtonWithBaseWithoutDefaultsProps =
+        | CVAX.VariantProps<typeof buttonWithBaseWithoutDefaultsString>
         | CVAX.VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameString>
+        | CVAX.VariantProps<typeof buttonWithBaseWithoutDefaultsArray>
         | CVAX.VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithBaseWithoutDefaultsProps, string]>([
@@ -611,7 +1076,7 @@ describe("cvax", () => {
           "button font-semibold border rounded button--disabled opacity-050 cursor-not-allowed",
         ],
         [
-          { intent: "secondary", size: null },
+          { intent: "secondary", size: "unset" },
           "button font-semibold border rounded button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
         ],
         [
@@ -627,7 +1092,7 @@ describe("cvax", () => {
           "button font-semibold border rounded button--warning bg-yellow-500 border-transparent hover:bg-yellow-600 button--large text-lg py-2.5 px-4 button--warning-danger !border-red-500",
         ],
         [
-          { intent: "warning", size: "large", disabled: null },
+          { intent: "warning", size: "large", disabled: "unset" },
           "button font-semibold border rounded button--warning bg-yellow-500 border-transparent hover:bg-yellow-600 button--large text-lg py-2.5 px-4 button--warning-danger !border-red-500",
         ],
         [
@@ -642,27 +1107,103 @@ describe("cvax", () => {
         [
           {
             intent: "primary",
+            class: "adhoc-class",
+          } as ButtonWithBaseWithoutDefaultsProps,
+          "button font-semibold border rounded button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 adhoc-class",
+        ],
+        [
+          {
+            intent: "primary",
             className: "adhoc-className",
           } as ButtonWithBaseWithoutDefaultsProps,
           "button font-semibold border rounded button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 adhoc-className",
         ],
       ])("button(%o)", (options, expected) => {
         test(`returns ${expected}`, () => {
+          expect(buttonWithBaseWithoutDefaultsString(options)).toBe(expected)
           expect(buttonWithBaseWithoutDefaultsWithClassNameString(options)).toBe(expected)
+          expect(buttonWithBaseWithoutDefaultsArray(options)).toBe(expected)
           expect(buttonWithBaseWithoutDefaultsWithClassNameArray(options)).toBe(expected)
         })
       })
     })
 
     describe("with defaults", () => {
-      const buttonWithBaseWithDefaultsWithClassNameString = CVAX.cvax({
+      const buttonWithBaseWithDefaultsString = cvax({
         base: "button font-semibold border rounded",
         variants: {
           intent: {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: "button--danger bg-red-500 text-white border-transparent hover:bg-red-600",
+            danger: [
+              "button--danger",
+              [
+                1 && "bg-red-500",
+                { baz: false, bat: null },
+                ["text-white", ["border-transparent"]],
+              ],
+              "hover:bg-red-600",
+            ],
+          },
+          disabled: {
+            true: "button--disabled opacity-050 cursor-not-allowed",
+            false: "button--enabled cursor-pointer",
+          },
+          size: {
+            small: "button--small text-sm py-1 px-2",
+            medium: "button--medium text-base py-2 px-4",
+            large: "button--large text-lg py-2.5 px-4",
+          },
+        },
+        compoundVariants: [
+          {
+            intent: "primary",
+            size: "medium",
+            class: "button--primary-medium uppercase",
+          },
+          {
+            intent: "warning",
+            disabled: false,
+            class: "button--warning-enabled text-gray-800",
+          },
+          {
+            intent: "warning",
+            disabled: true,
+            class: ["button--warning-disabled", [1 && "text-black", { baz: false, bat: null }]],
+          },
+          {
+            intent: ["warning", "danger"],
+            class: "button--warning-danger !border-red-500",
+          },
+          {
+            intent: ["warning", "danger"],
+            size: "medium",
+            class: "button--warning-danger-medium",
+          },
+        ],
+        defaultVariants: {
+          disabled: false,
+          intent: "primary",
+          size: "medium",
+        },
+      })
+      const buttonWithBaseWithDefaultsWithClassNameString = cvax({
+        base: "button font-semibold border rounded",
+        variants: {
+          intent: {
+            primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
+            secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
+            warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
+            danger: [
+              "button--danger",
+              [
+                1 && "bg-red-500",
+                { baz: false, bat: null },
+                ["text-white", ["border-transparent"]],
+              ],
+              "hover:bg-red-600",
+            ],
           },
           disabled: {
             true: "button--disabled opacity-050 cursor-not-allowed",
@@ -688,7 +1229,7 @@ describe("cvax", () => {
           {
             intent: "warning",
             disabled: true,
-            className: "button--warning-disabled text-black",
+            className: ["button--warning-disabled", [1 && "text-black", { baz: false, bat: null }]],
           },
           {
             intent: ["warning", "danger"],
@@ -706,8 +1247,7 @@ describe("cvax", () => {
           size: "medium",
         },
       })
-
-      const buttonWithBaseWithDefaultsWithClassNameArray = CVAX.cvax({
+      const buttonWithBaseWithDefaultsArray = cvax({
         base: ["button", "font-semibold", "border", "rounded"],
         variants: {
           intent: {
@@ -733,9 +1273,87 @@ describe("cvax", () => {
             ],
             danger: [
               "button--danger",
-              "bg-red-500",
+              [
+                1 && "bg-red-500",
+                { baz: false, bat: null },
+                ["text-white", ["border-transparent"]],
+              ],
+              "hover:bg-red-600",
+            ],
+          },
+          disabled: {
+            true: ["button--disabled", "opacity-050", "cursor-not-allowed"],
+            false: ["button--enabled", "cursor-pointer"],
+          },
+          size: {
+            small: ["button--small", "text-sm", "py-1", "px-2"],
+            medium: ["button--medium", "text-base", "py-2", "px-4"],
+            large: ["button--large", "text-lg", "py-2.5", "px-4"],
+          },
+        },
+        compoundVariants: [
+          {
+            intent: "primary",
+            size: "medium",
+            class: ["button--primary-medium", "uppercase"],
+          },
+          {
+            intent: "warning",
+            disabled: false,
+            class: ["button--warning-enabled", "text-gray-800"],
+          },
+          {
+            intent: "warning",
+            disabled: true,
+            class: ["button--warning-disabled", [1 && "text-black", { baz: false, bat: null }]],
+          },
+          {
+            intent: ["warning", "danger"],
+            class: ["button--warning-danger", "!border-red-500"],
+          },
+          {
+            intent: ["warning", "danger"],
+            size: "medium",
+            class: ["button--warning-danger-medium"],
+          },
+        ],
+        defaultVariants: {
+          disabled: false,
+          intent: "primary",
+          size: "medium",
+        },
+      })
+      const buttonWithBaseWithDefaultsWithClassNameArray = cvax({
+        base: ["button", "font-semibold", "border", "rounded"],
+        variants: {
+          intent: {
+            primary: [
+              "button--primary",
+              "bg-blue-500",
               "text-white",
               "border-transparent",
+              "hover:bg-blue-600",
+            ],
+            secondary: [
+              "button--secondary",
+              "bg-white",
+              "text-gray-800",
+              "border-gray-400",
+              "hover:bg-gray-100",
+            ],
+            warning: [
+              "button--warning",
+              "bg-yellow-500",
+              "border-transparent",
+              "hover:bg-yellow-600",
+            ],
+            danger: [
+              "button--danger",
+              [
+                1 && "bg-red-500",
+                { baz: false, bat: null },
+                ["text-white", ["border-transparent"]],
+              ],
               "hover:bg-red-600",
             ],
           },
@@ -763,7 +1381,7 @@ describe("cvax", () => {
           {
             intent: "warning",
             disabled: true,
-            className: ["button--warning-disabled", "text-black"],
+            className: ["button--warning-disabled", [1 && "text-black", { baz: false, bat: null }]],
           },
           {
             intent: ["warning", "danger"],
@@ -783,7 +1401,9 @@ describe("cvax", () => {
       })
 
       type ButtonWithBaseWithDefaultsProps =
+        | CVAX.VariantProps<typeof buttonWithBaseWithDefaultsString>
         | CVAX.VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameString>
+        | CVAX.VariantProps<typeof buttonWithBaseWithDefaultsArray>
         | CVAX.VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithBaseWithDefaultsProps, string]>([
@@ -812,7 +1432,7 @@ describe("cvax", () => {
           "button font-semibold border rounded button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 button--enabled cursor-pointer button--small text-sm py-1 px-2",
         ],
         [
-          { disabled: null },
+          { disabled: "unset" },
           "button font-semibold border rounded button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 button--medium text-base py-2 px-4 button--primary-medium uppercase",
         ],
         [
@@ -824,7 +1444,7 @@ describe("cvax", () => {
           "button font-semibold border rounded button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 button--disabled opacity-050 cursor-not-allowed button--medium text-base py-2 px-4 button--primary-medium uppercase",
         ],
         [
-          { intent: "secondary", size: null },
+          { intent: "secondary", size: "unset" },
           "button font-semibold border rounded button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100 button--enabled cursor-pointer",
         ],
         [
@@ -843,7 +1463,7 @@ describe("cvax", () => {
           {
             intent: "warning",
             size: "large",
-            disabled: null,
+            disabled: "unset",
           },
           "button font-semibold border rounded button--warning bg-yellow-500 border-transparent hover:bg-yellow-600 button--large text-lg py-2.5 px-4 button--warning-danger !border-red-500",
         ],
@@ -859,13 +1479,22 @@ describe("cvax", () => {
         [
           {
             intent: "primary",
+            class: "adhoc-class",
+          } as ButtonWithBaseWithDefaultsProps,
+          "button font-semibold border rounded button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 button--enabled cursor-pointer button--medium text-base py-2 px-4 button--primary-medium uppercase adhoc-class",
+        ],
+        [
+          {
+            intent: "primary",
             className: "adhoc-classname",
           } as ButtonWithBaseWithDefaultsProps,
           "button font-semibold border rounded button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 button--enabled cursor-pointer button--medium text-base py-2 px-4 button--primary-medium uppercase adhoc-classname",
         ],
       ])("button(%o)", (options, expected) => {
         test(`returns ${expected}`, () => {
+          expect(buttonWithBaseWithDefaultsString(options)).toBe(expected)
           expect(buttonWithBaseWithDefaultsWithClassNameString(options)).toBe(expected)
+          expect(buttonWithBaseWithDefaultsArray(options)).toBe(expected)
           expect(buttonWithBaseWithDefaultsWithClassNameArray(options)).toBe(expected)
         })
       })
@@ -874,7 +1503,7 @@ describe("cvax", () => {
 
   describe("composing classes", () => {
     type BoxProps = CVAX.VariantProps<typeof box>
-    const box = CVAX.cvax({
+    const box = cvax({
       base: ["box", "box-border"],
       variants: {
         margin: { 0: "m-0", 2: "m-2", 4: "m-4", 8: "m-8" },
@@ -887,7 +1516,7 @@ describe("cvax", () => {
     })
 
     type CardBaseProps = CVAX.VariantProps<typeof cardBase>
-    const cardBase = CVAX.cvax({
+    const cardBase = cvax({
       base: ["card", "border-solid", "border-slate-300", "rounded"],
       variants: {
         shadow: {
