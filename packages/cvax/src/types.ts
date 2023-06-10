@@ -26,8 +26,6 @@ export type ClassProp =
   | { class?: never; className?: never }
 export type ExcludeUndefined<T> = T extends undefined ? never : T
 export type StringToBoolean<T> = T extends "true" | "false" ? boolean : T
-export type CxOptions = ClassValue[]
-export type CxReturn = string
 export type Prettify<T> = {
   [K in keyof T]: T[K] extends object ? Prettify<T[K]> : T[K]
 } & {}

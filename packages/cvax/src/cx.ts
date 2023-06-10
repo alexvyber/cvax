@@ -2,9 +2,6 @@ import { ClassValue } from "./types"
 
 /* cx
    ============================================ */
-export type CxOptions = Parameters<typeof cx>
-export type CxReturn = ReturnType<typeof cx>
-
 export function cx(...inputs: ClassValue[]): string
 export function cx() {
   let i = 0,
@@ -22,7 +19,7 @@ export function cx() {
 }
 
 function getStr(classes: ClassValue) {
-  if (!classes || typeof classes === "boolean") return ""
+  if (!classes || classes === true || typeof classes === "function") return ""
   if (typeof classes === "number") return classes + " "
 
   if (typeof classes === "object") {
@@ -30,7 +27,6 @@ function getStr(classes: ClassValue) {
 
     if (Array.isArray(classes)) {
       if (classes.length === 0) return ""
-
       for (const item of classes.flat(Infinity as 0)) {
         if (item) {
           str += getStr(item)

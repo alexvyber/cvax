@@ -123,8 +123,9 @@ function getCompoundVariants<
 
   const markingArray: (undefined | null)[] = new Array(base.length)
 
-  for (const [key, compound] of base.entries()) {
-    let compoundLength = length(compound)
+  // Refactor to not use isEqual
+  for (const key of base) {
+    let compoundLength = length(base[key])
     if (compoundLength <= 1) {
       markingArray[key] = null
       continue

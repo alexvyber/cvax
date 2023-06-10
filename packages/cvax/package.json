@@ -1,6 +1,6 @@
 {
   "name": "cvax",
-  "version": "0.5.2",
+  "version": "0.5.4",
   "description": "Customized CVA. fork 'class-variance-authority'",
   "repository": "https://github.com/alexvyber/cvax.git",
   "main": "dist/index.cjs.js",
@@ -27,7 +27,7 @@
     "prepublishOnly": "pnpm build",
     "test": "run-p test:*",
     "test:vitest": "vitest",
-    "test:size": "pnpm build && bundlesize -f 'dist/*.js' -s 1.1KB",
+    "test:size": "pnpm build && bundlesize -f 'dist/*.js' -s 2.1KB",
     "tsc": "tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {

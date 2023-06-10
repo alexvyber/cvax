@@ -20,8 +20,9 @@ function withGeneratedDefault(obj: object): {
 
 // TODO: write all test cases for mergeVariants
 describe("mergeVariants", () => {
-  const defaultVarinats = createVariant({
-    variants: {
+  const defaultVarinats = createVariant(
+    "",
+    {
       intent: {
         primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
         secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
@@ -42,8 +43,8 @@ describe("mergeVariants", () => {
         1: "m-1",
       },
     },
-
-    compoundVariants: [
+    {},
+    [
       {
         intent: "warning",
         disabled: false,
@@ -60,10 +61,11 @@ describe("mergeVariants", () => {
         disabled: true,
         className: "text-black",
       },
-    ],
-  })
-  const newVariants = createVariant({
-    variants: {
+    ]
+  )
+  const newVariants = createVariant(
+    "",
+    {
       intent: {
         primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
         secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
@@ -84,8 +86,8 @@ describe("mergeVariants", () => {
         1: "m-1",
       },
     },
-
-    compoundVariants: [
+    {},
+    [
       {
         intent: "warning",
         disabled: false,
@@ -101,8 +103,8 @@ describe("mergeVariants", () => {
         disabled: true,
         className: "text-black",
       },
-    ],
-  })
+    ]
+  )
 
   const mergedVariants = mergeVariants(defaultVarinats, newVariants)
 
@@ -141,7 +143,6 @@ describe("mergeVariants", () => {
 
   test("same variants", () => {
     expect(mergedVariants).toEqual(withGeneratedDefault(expected))
-    // expect(mergedVariants).toEqual(withGeneratedDefault(newVariants))
   })
 })
 
@@ -150,21 +151,18 @@ describe("mergevariants", () => {
     base: "mt-2",
   }
 
-  const variantsOnly = {
-    base: "mt-2",
-    variants: {
-      intent: {
-        primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
-        secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-        warning: "bg-yellow-500 border-transparent hover:bg-yellow-600",
-        danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
-      },
+  const variantsOnly = createVariant("mt-2", {
+    intent: {
+      primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
+      secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
+      warning: "bg-yellow-500 border-transparent hover:bg-yellow-600",
+      danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
     },
-  } as const
+  })
 
-  const defaultVariants = {
-    base: "mt-2",
-    variants: {
+  const defaultVariants = createVariant(
+    "mt-2",
+    {
       intent: {
         primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
         secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
@@ -172,14 +170,14 @@ describe("mergevariants", () => {
         danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
       },
     },
-    defaultVariants: {
+    {
       intent: "primary",
-    },
-  } as const
+    }
+  )
 
-  const compoundVariants = {
-    base: "mt-2",
-    variants: {
+  const compoundVariants = createVariant(
+    "mt-2",
+    {
       intent: {
         primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
         secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
@@ -187,13 +185,14 @@ describe("mergevariants", () => {
         danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
       },
     },
-    compoundVariants: [
+    {},
+    [
       {
         intent: "primary",
         className: "mt-14",
       },
-    ],
-  } as const
+    ]
+  )
 
   describe.each([
     [{}, {}, generatedDefault],
@@ -207,8 +206,6 @@ describe("mergevariants", () => {
     })
   })
 })
-
-
 
 describe("mergeTwoObjects", () => {
   const func = () => console.log("func")

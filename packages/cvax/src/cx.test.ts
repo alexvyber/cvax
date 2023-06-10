@@ -2,6 +2,8 @@ import { describe, it as test, expect } from "vitest"
 import { cx } from "./cx"
 import { ClassValue } from "./types"
 
+// Clean up stuff
+// Write tests for class and className cases
 test("keeps object keys with truthy values", () => {
   expect(
     cx({
@@ -176,4 +178,71 @@ describe("cx", () => {
       expect(cx(options)).toBe(expected)
     })
   })
+})
+
+test("strings", () => {
+  expect(cx("")).toBe("")
+  expect(cx("foo")).toBe("foo")
+  expect(cx(true && "foo")).toBe("foo")
+  expect(cx(false && "foo")).toBe("")
+})
+
+test("strings (variadic)", () => {
+  expect(cx("")).toBe("")
+  expect(cx("foo", "bar")).toBe("foo bar")
+  expect(cx(true && "foo", false && "bar", "baz")).toBe("foo baz")
+  expect(cx(false && "foo", "bar", "baz", "")).toBe("bar baz")
+})
+
+test("objects", () => {
+  expect(cx({}), "")
+  expect(cx({ foo: true }), "foo")
+  expect(cx({ foo: true, bar: false }), "foo")
+  expect(cx({ foo: "hiya", bar: 1 }), "foo bar")
+  expect(cx({ foo: 1, bar: 0, baz: 1 }), "foo baz")
+  expect(cx({ "-foo": 1, "--bar": 1 }), "-foo --bar")
+})
+
+test("objects (variadic)", () => {
+  expect(cx({}, {})).toBe("")
+  expect(cx({ foo: 1 }, { bar: 2 })).toBe("foo bar")
+  expect(cx({ foo: 1 }, null, { baz: 1, bat: 0 })).toBe("foo baz")
+  expect(cx({ foo: 1 }, {}, {}, { bar: "a" }, { baz: null, bat: Infinity })).toBe("foo bar bat")
+})
+
+test("arrays", () => {
+  expect(cx([])).toBe("")
+  expect(cx(["foo"])).toBe("foo")
+  expect(cx(["foo", "bar"])).toBe("foo bar")
+  expect(cx(["foo", 0 && "bar", 1 && "baz"])).toBe("foo baz")
+})
+
+test("arrays (nested)", () => {
+  expect(cx([[[]]])).toBe("")
+  expect(cx([[["foo"]]])).toBe("foo")
+  expect(cx([true, [["foo"]]])).toBe("foo")
+  expect(cx(["foo", ["bar", ["", [["baz"]]]]])).toBe("foo bar baz")
+})
+
+test("arrays (variadic)", () => {
+  expect(cx([], [])).toBe("")
+  expect(cx(["foo"], ["bar"])).toBe("foo bar")
+  expect(cx(["foo"], null, ["baz", ""], true, "", [])).toBe("foo baz")
+})
+
+test("arrays (no `push` escape)", () => {
+  expect(cx({ push: 1 })).toBe("push")
+  expect(cx({ pop: true })).toBe("pop")
+  expect(cx({ push: true })).toBe("push")
+  expect(cx("hello", { world: 1, push: true })).toBe("hello world push")
+})
+
+test("functions", () => {
+  const foo = () => {}
+  // @ts-expect-error
+  expect(cx(foo, "hello")).toBe("hello")
+  // @ts-expect-error
+  expect(cx(foo, "hello", cx)).toBe("hello")
+  // @ts-expect-error
+  expect(cx(foo, "hello", [[cx], "world"])).toBe("hello world")
 })
