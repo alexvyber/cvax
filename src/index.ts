@@ -21,6 +21,22 @@ type ClassProp =
 type ExcludeUndefined<T> = T extends undefined ? never : T
 type StringToBoolean<T> = T extends "true" | "false" ? boolean : T
 
+/* createVariant
+   TODO: decide on its function future
+   ============================================ */
+export function createVariant<Variants extends CVAXVariantShape>(props: {
+  base?: ClassValue
+  variants?: Variants
+  defaultVariants?: {
+    [Key in keyof Variants]?: StringToBoolean<keyof Variants[Key]> | "unset"
+  }
+  compoundVariants?: ({
+    [Key in keyof Variants]?: StringToBoolean<keyof Variants[Key]> | "unset"
+  } & ClassProp)[]
+}) {
+  return props
+}
+
 /* cvax
    ============================================ */
 type CVAXConfigBase = { base?: ClassValue }
@@ -95,15 +111,11 @@ interface CVAXConfigOptions {
   }
 }
 
-interface CVAXConfig {
-  (options?: CVAXConfigOptions): {
-    compose: Compose
-    cx: CX
-    cvax: CVAX
-  }
-}
-
-const cvaxify: CVAXConfig = (options) => {
+function cvaxify(options?: CVAXConfigOptions): {
+  compose: Compose
+  cx: CX
+  cvax: CVAX
+} {
   const cx: CX = (...inputs) => {
     if (typeof options?.hooks?.onComplete === "function") return options?.hooks.onComplete(classic(inputs))
     return classic(inputs)
@@ -256,17 +268,9 @@ function getStr(classes: ClassValue) {
 
 const { cvax, cx, compose } = cvaxify()
 export { type CVAX, type VariantProps, type ClassValue }
-export {
-  cvax,
-  cx,
-  compose,
-  cvaxify,
-  //  createVariant
-}
+export { cvax, cx, compose, cvaxify }
 
-// HACK: to narrow to `keyof` types
-function assertsKeyof<T>(arg: unknown): asserts arg is T {}
-
+function assertsKeyof<T>(_arg: unknown): asserts _arg is T {}
 function toString<T extends PropertyKey>(value: any): Extract<T, string> {
   if (typeof value === "boolean" || typeof value === "number") {
     return value.toString() as any
