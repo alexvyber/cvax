@@ -21,10 +21,31 @@ type ClassProp =
 type ExcludeUndefined<T> = T extends undefined ? never : T
 type StringToBoolean<T> = T extends "true" | "false" ? boolean : T
 
+type Variant<T extends { variants: any }> = T extends {
+  base?: ClassValue
+  variants?: Record<string, ClassValue>
+  defaultVariants?: {
+    [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | "unset" | undefined
+  }
+  compoundVariants?: (T["variants"] extends CVAXVariantShape
+    ? (
+        | CVAXVariantSchema<T["variants"]>
+        | {
+            [Variant in keyof T["variants"]]?:
+              | StringToBoolean<keyof T["variants"][Variant]>
+              | StringToBoolean<keyof T["variants"][Variant]>[]
+              | undefined
+          }
+      ) &
+        CVAXClassProp
+    : CVAXClassProp)[]
+}
+  ? T
+  : never
+
 /* createVariant
    TODO: decide on its function future
    ============================================ */
-
 function createVariant<
   T extends {
     base?: ClassValue
@@ -288,5 +309,5 @@ function toString<T extends PropertyKey>(value: any): Extract<T, string> {
 }
 
 const { cvax, cx, compose } = cvaxify()
-export { type CVAX, type VariantProps, type ClassValue }
+export { type CVAX, type VariantProps, type ClassValue, type Variant }
 export { cvax, cx, compose, cvaxify, createVariant }
