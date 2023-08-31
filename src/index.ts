@@ -24,17 +24,29 @@ type StringToBoolean<T> = T extends "true" | "false" ? boolean : T
 /* createVariant
    TODO: decide on its function future
    ============================================ */
-export function createVariant<Variants extends CVAXVariantShape>(props: {
-  base?: ClassValue
-  variants?: Variants
-  defaultVariants?: {
-    [Key in keyof Variants]?: StringToBoolean<keyof Variants[Key]> | "unset"
+
+function createVariant<
+  T extends {
+    base?: ClassValue
+    variants?: Record<string, ClassValue>
+    defaultVariants?: {
+      [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | "unset" | undefined
+    }
+    compoundVariants?: (T["variants"] extends CVAXVariantShape
+      ? (
+          | CVAXVariantSchema<T["variants"]>
+          | {
+              [Variant in keyof T["variants"]]?:
+                | StringToBoolean<keyof T["variants"][Variant]>
+                | StringToBoolean<keyof T["variants"][Variant]>[]
+                | undefined
+            }
+        ) &
+          CVAXClassProp
+      : CVAXClassProp)[]
   }
-  compoundVariants?: ({
-    [Key in keyof Variants]?: StringToBoolean<keyof Variants[Key]> | "unset"
-  } & ClassProp)[]
-}) {
-  return props
+>(args: T) {
+  return args
 }
 
 /* cvax
@@ -266,10 +278,6 @@ function getStr(classes: ClassValue) {
   return classes + " "
 }
 
-const { cvax, cx, compose } = cvaxify()
-export { type CVAX, type VariantProps, type ClassValue }
-export { cvax, cx, compose, cvaxify }
-
 function assertsKeyof<T>(_arg: unknown): asserts _arg is T {}
 function toString<T extends PropertyKey>(value: any): Extract<T, string> {
   if (typeof value === "boolean" || typeof value === "number") {
@@ -278,3 +286,7 @@ function toString<T extends PropertyKey>(value: any): Extract<T, string> {
   if (!value) return "" as any
   return value.toString()
 }
+
+const { cvax, cx, compose } = cvaxify()
+export { type CVAX, type VariantProps, type ClassValue }
+export { cvax, cx, compose, cvaxify, createVariant }
