@@ -1,6 +1,6 @@
 import { describe, it as test, expect } from "vitest"
-import { cx } from "./cx"
-import { ClassValue } from "./types"
+import { cx } from "./"
+import { ClassValue } from "./"
 
 // Clean up stuff
 // Write tests for class and className cases
@@ -121,9 +121,7 @@ test("handles all types of truthy and falsy property values as expected", () => 
     greaterZero: 1,
   })
 
-  expect(res).toBe(
-    "function emptyObject nonEmptyString whitespace nonEmptyObject emptyList nonEmptyList greaterZero"
-  )
+  expect(res).toBe("function emptyObject nonEmptyString whitespace nonEmptyObject emptyList nonEmptyList greaterZero")
 })
 
 test("handles all types of truthy and falsy property values as expected", () => {
@@ -131,15 +129,7 @@ test("handles all types of truthy and falsy property values as expected", () => 
     "one two three": true,
     "four five": false,
 
-    class: [
-      "six",
-      true && "seven",
-      false && "eight",
-      true ?? true,
-      true ?? 0,
-      false ?? null,
-      { className: "nine" },
-    ],
+    class: ["six", true && "seven", false && "eight", true ?? true, true ?? 0, false ?? null, { className: "nine" }],
   }
 
   const res = cx({
@@ -158,21 +148,11 @@ describe("cx", () => {
     [
       [
         "foo",
-        [
-          null,
-          ["bar"],
-          [
-            undefined,
-            ["baz", "qux", "quux", "quuz", [[[[[[[[["corge", "grault"]]]]], "garply"]]]]],
-          ],
-        ],
+        [null, ["bar"], [undefined, ["baz", "qux", "quux", "quuz", [[[[[[[[["corge", "grault"]]]]], "garply"]]]]]]],
       ],
       "foo bar baz qux quux quuz corge grault garply",
     ],
-    [
-      ["foo", [1 && "bar", { baz: false, bat: null }, ["hello", ["world"]]], "cya"],
-      "foo bar hello world cya",
-    ],
+    [["foo", [1 && "bar", { baz: false, bat: null }, ["hello", ["world"]]], "cya"], "foo bar hello world cya"],
   ])("cx(%o)", (options, expected) => {
     test(`returns ${expected}`, () => {
       expect(cx(options)).toBe(expected)
@@ -245,4 +225,32 @@ test("functions", () => {
   expect(cx(foo, "hello", cx)).toBe("hello")
   // @ts-expect-error
   expect(cx(foo, "hello", [[cx], "world"])).toBe("hello world")
+})
+
+describe("cx", () => {
+  describe.each<Parameters<typeof cx>>([
+    [{ class: "asdfasdf" }, "asdfasdf"],
+    [{ className: "asdfasdf" }, "asdfasdf"],
+    [null, ""],
+    [undefined, ""],
+    [false && "foo", ""],
+    [true && "foo", "foo"],
+    [["foo", undefined, "bar", undefined, "baz"], "foo bar baz"],
+    [
+      [
+        "foo",
+        [
+          undefined,
+          ["bar"],
+          [undefined, ["baz", "qux", "quux", "quuz", [[[[[[[[["corge", "grault"]]]]], "garply"]]]]]],
+        ],
+      ],
+      "foo bar baz qux quux quuz corge grault garply",
+      [["foo", [1 && "bar", { baz: false, bat: null }, ["hello", ["world"]]], "cya"], "foo bar hello world cya"],
+    ],
+  ])("cx(%o)", (options, expected) => {
+    test(`returns ${expected}`, () => {
+      expect(cx(options)).toBe(expected)
+    })
+  })
 })

@@ -1,9 +1,12 @@
 import { twMerge } from "tailwind-merge"
-import { ClassValue } from "./types"
-import { cx } from "./cx"
+import { ClassValue } from "./"
+import { cx } from "./"
 
 /* cn
    ============================================ */
+/**
+ * @deprecated deprecated
+ */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(cx(inputs))
 }

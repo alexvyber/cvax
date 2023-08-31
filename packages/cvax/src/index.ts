@@ -1,99 +1,177 @@
-import { twMerge } from "tailwind-merge"
-import type { ClassProp, ClassValue, ExcludeUndefined, Prettify, StringToBoolean } from "./types"
-import isEqual from "lodash.isequal"
+type ClassValue = ClassArray | ClassDictionary | string | number | null | boolean | undefined
+type ClassArray = ClassValue[]
+type ClassDictionary = Record<
+  string,
+  | ClassValue[]
+  | string
+  | number
+  | null
+  | boolean
+  | undefined
+  | Record<string, ClassValue[] | string | number | null | boolean | undefined>
+>
 
-/* createVariant
-   ============================================ */
-export function createVariant<Base extends ClassValue, Variants extends VariantShape>(
-  base: Base,
-  variants: Variants = {} as any as Variants,
-  defaultVariants: {
-    [Key in keyof Variants]?: StringToBoolean<keyof Variants[Key]> | "unset"
-  } = {},
-  compoundVariants: ({
-    [Key in keyof Variants]?: StringToBoolean<keyof Variants[Key]> | "unset"
-  } & ClassProp)[] = []
-) {
-  return {
-    base,
-    variants,
-    defaultVariants,
-    compoundVariants,
-  }
-}
+type ClassProp =
+  | {
+      class: ClassValue
+      className?: never
+    }
+  | { class?: never; className: ClassValue }
+  | { class?: never; className?: never }
+type ExcludeUndefined<T> = T extends undefined ? never : T
+type StringToBoolean<T> = T extends "true" | "false" ? boolean : T
 
 /* cvax
    ============================================ */
-export type VariantProps<T> = T extends (props: infer U) => string
-  ? Omit<ExcludeUndefined<U>, keyof ClassProp>
-  : never
-
-export type VariantShape = Record<string, Record<string, ClassValue>>
-
-export type ConfigVariantsMulti<V extends VariantShape> = {
-  [Variant in keyof V]?: StringToBoolean<keyof V[Variant]> | StringToBoolean<keyof V[Variant]>[]
+type CVAXConfigBase = { base?: ClassValue }
+type CVAXVariantShape = Record<string, Record<string, ClassValue>>
+type CVAXVariantSchema<V extends CVAXVariantShape> = {
+  [Variant in keyof V]?: StringToBoolean<keyof V[Variant]> | undefined | "unset"
 }
-
-export type VariantSchema<V extends VariantShape> = {
-  [Variant in keyof V]?: StringToBoolean<keyof V[Variant]> | "unset" | undefined | null
-}
-
-export type Config<V> = V extends VariantShape
-  ? ConfigBase & {
-      variants?: V
-
-      defaultVariants?: VariantSchema<V>
-      compoundVariants?: (V extends VariantShape
-        ? (VariantSchema<V> | VariantSchemaMultiple<V>) & ClassProp
-        : ClassProp)[]
+type CVAXClassProp =
+  | {
+      class?: ClassValue
+      className?: never
     }
-  : ConfigBase & {
-      variants?: never
-      defaultVariants?: never
-      compoundVariants?: never
+  | {
+      class?: never
+      className?: ClassValue
     }
 
-type VariantSchemaMultiple<V extends VariantShape> = {
-  [Variant in keyof V]?:
-    | StringToBoolean<keyof V[Variant]>
-    | StringToBoolean<keyof V[Variant]>[]
-    | undefined
+interface CVAX {
+  <_ extends "iternal use only", V>(
+    config: V extends CVAXVariantShape
+      ? CVAXConfigBase & {
+          variants?: V
+          compoundVariants?: (V extends CVAXVariantShape
+            ? (
+                | CVAXVariantSchema<V>
+                | {
+                    [Variant in keyof V]?:
+                      | StringToBoolean<keyof V[Variant]>
+                      | StringToBoolean<keyof V[Variant]>[]
+                      | undefined
+                  }
+              ) &
+                CVAXClassProp
+            : CVAXClassProp)[]
+          defaultVariants?: CVAXVariantSchema<V>
+        }
+      : CVAXConfigBase & {
+          variants?: never
+          compoundVariants?: never
+          defaultVariants?: never
+        }
+  ): (props?: V extends CVAXVariantShape ? CVAXVariantSchema<V> & CVAXClassProp : CVAXClassProp) => string
 }
 
-type ConfigBase = { base?: ClassValue }
-type Props<T> = T extends VariantShape ? Prettify<VariantSchema<T>> & ClassProp : ClassProp
+type VariantProps<T> = T extends (props: infer U) => string ? Omit<ExcludeUndefined<U>, keyof ClassProp> : never
 
-export function cvax<_ extends "internal use only.", T>(
-  config: Config<T>
-): (props?: Props<T>) => string {
-  if (!config) return (props?: ClassProp): string => cx(props?.class, props?.className)
-  if (!config.variants)
-    return (props?: ClassProp): string => cx(config.base, props?.class, props?.className)
+/* compose
+   ============================================ */
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never
+interface Compose {
+  <T extends ReturnType<CVAX>[]>(...components: [...T]): (
+    props?: (
+      | UnionToIntersection<
+          {
+            [K in keyof T]: VariantProps<T[K]>
+          }[number]
+        >
+      | undefined
+    ) &
+      CVAXClassProp
+  ) => string
+}
 
-  return (props?: Props<T>): string => {
-    let classes = cx(config.base)
-    let tmp: any = ""
+/* defineConfig
+   ============================================ */
+interface CVAXConfigOptions {
+  hooks?: {
+    /**
+     * Returns the completed string of concatenated classes/classNames.
+     */
+    onComplete?: (className: string) => string
+  }
+}
 
-    if (!props) {
-      if (!("defaultVariants" in config) || !config?.defaultVariants) return classes
+interface CVAXConfig {
+  (options?: CVAXConfigOptions): {
+    compose: Compose
+    cx: CX
+    cvax: CVAX
+  }
+}
+
+const cvaxify: CVAXConfig = (options) => {
+  const cx: CX = (...inputs) => {
+    if (typeof options?.hooks?.onComplete === "function") return options?.hooks.onComplete(classic(inputs))
+    return classic(inputs)
+  }
+
+  const cvax: CVAX = (config) => {
+    if (!config) return (props?: ClassProp): string => cx(props?.class, props?.className)
+    if (!config.variants) return (props?: ClassProp): string => cx(config.base, props?.class, props?.className)
+
+    return (props): string => {
+      let classes = cx(config.base)
+      let tmp: any = ""
+
+      if (!props) {
+        if (!("defaultVariants" in config) || !config.defaultVariants) return classes
+
+        for (const variant in config.variants) {
+          const key = toString<keyof typeof variant>(config.defaultVariants[variant])
+          if ((tmp = config.variants[variant][key])) {
+            classes = cx(classes, tmp)
+          }
+        }
+
+        if (!config.compoundVariants) return classes
+
+        let adding = true
+        for (const { class: Class, className, ...compound } of config.compoundVariants) {
+          for (const prop in compound) {
+            assertsKeyof<keyof typeof compound>(prop)
+
+            if (config.defaultVariants[prop] !== compound[prop]) {
+              adding = false
+              break
+            }
+          }
+
+          if (adding) classes = cx(classes, Class, className)
+
+          adding = true
+        }
+
+        return classes
+      }
 
       for (const variant in config.variants) {
-        const key = toString<keyof typeof variant>(config?.defaultVariants?.[variant])
-        if ((tmp = config.variants[variant][key])) {
+        const value = toString(props[variant as keyof typeof props]) || toString(config.defaultVariants?.[variant])
+
+        if ((tmp = config.variants[variant][value])) {
           classes = cx(classes, tmp)
         }
       }
 
-      if (!config?.compoundVariants) return classes
+      if (!config.compoundVariants) return cx(classes, props.class, props.className)
 
       let adding = true
       for (const { class: Class, className, ...compound } of config.compoundVariants) {
         for (const prop in compound) {
-          assertsKeyof<keyof typeof compound>(prop)
-
-          if (config?.defaultVariants?.[prop] !== compound[prop]) {
-            adding = false
-            break
+          assertsKeyof<keyof typeof props & keyof typeof compound>(prop)
+          if (Array.isArray(compound[prop])) {
+            if (!(compound[prop] as any as Array<any>).includes(props[prop as keyof typeof props])) {
+              adding = false
+            }
+          } else {
+            const some = prop in props ? props[prop] : config.defaultVariants?.[prop]
+            if (some !== compound[prop]) {
+              adding = false
+              break
+            }
           }
         }
 
@@ -102,69 +180,38 @@ export function cvax<_ extends "internal use only.", T>(
         adding = true
       }
 
-      return classes
+      return cx(classes, props.class, props.className)
     }
-
-    for (const variant in config.variants) {
-      const value =
-        toString(props[variant as keyof typeof props]) ||
-        toString(config.defaultVariants?.[variant])
-
-      if ((tmp = config.variants?.[variant][value])) {
-        classes = cx(classes, tmp)
-      }
-    }
-
-    if (!config.compoundVariants) return cx(classes, props.class, props.className)
-
-    let adding = true
-    for (const { class: Class, className, ...compound } of config.compoundVariants) {
-      for (const prop in compound) {
-        assertsKeyof<keyof typeof props & keyof typeof compound>(prop)
-
-        if (Array.isArray(compound[prop])) {
-          if (!(compound[prop] as any as Array<any>).includes(props[prop as keyof typeof props])) {
-            adding = false
-          }
-        } else {
-          const some = prop in props ? props?.[prop] : config?.defaultVariants?.[prop]
-          if (some !== compound[prop]) {
-            adding = false
-            break
-          }
-        }
-      }
-
-      if (adding) classes = cx(classes, Class, className)
-
-      adding = true
-    }
-
-    return cx(classes, props?.class, props?.className)
   }
-}
-// HACK: to narrow to `keyof` types
-export function assertsKeyof<T>(arg: unknown): asserts arg is T {}
 
-function toString<T extends PropertyKey>(value: any): Extract<T, string> {
-  if (typeof value === "boolean" || typeof value === "number") {
-    return value.toString() as any
+  const compose: Compose =
+    (...components) =>
+    (props) => {
+      const propsWithoutClass = Object.fromEntries(
+        Object.entries(props || {}).filter(([key]) => !["class", "className"].includes(key))
+      )
+
+      return cx(
+        components.map((component) => component(propsWithoutClass)),
+        props?.class,
+        props?.className
+      )
+    }
+
+  return {
+    cx,
+    cvax,
+    compose,
   }
-  if (!value) return "" as any
-  return value.toString()
-}
-
-// ---------------------------------------------------------------------------------
-/* cn
-   ============================================ */
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(cx(inputs))
 }
 
 /* cx
    ============================================ */
-export function cx(...inputs: ClassValue[]): string
-export function cx() {
+interface CX {
+  (...inputs: ClassValue[]): string
+}
+function classic(...inputs: ClassValue[]): string
+function classic() {
   let i = 0,
     str = "",
     tmp: any,
@@ -180,15 +227,12 @@ export function cx() {
 }
 
 function getStr(classes: ClassValue) {
-  if (!classes || typeof classes === "boolean") return ""
+  if (!classes || classes === true || typeof classes === "function") return ""
   if (typeof classes === "number") return classes + " "
-
   if (typeof classes === "object") {
     let str = ""
-
     if (Array.isArray(classes)) {
       if (classes.length === 0) return ""
-
       for (const item of classes.flat(Infinity as 0)) {
         if (item) {
           str += getStr(item)
@@ -210,161 +254,23 @@ function getStr(classes: ClassValue) {
   return classes + " "
 }
 
-/* mergeVariants
-   ============================================ */
-type MergeVariants<Left, Right> = {
-  [Key in keyof Left & keyof Right]: MergeObjects<Left[Key], Right[Key]>
-} & MergeObjects<Left, Right>
-
-type ToString<T> = T extends string ? string : T extends string[] ? string[] : T
-
-type MergeObjects<Left, Right> = {
-  [Prop in keyof Left | keyof Right]: Prop extends keyof Right
-    ? Right[Prop]
-    : Prop extends keyof Left
-    ? ToString<Left[Prop]>
-    : never
+const { cvax, cx, compose } = cvaxify()
+export { type CVAX, type VariantProps, type ClassValue }
+export {
+  cvax,
+  cx,
+  compose,
+  cvaxify,
+  //  createVariant
 }
 
-type DefaultVariants<T> = {
-  [Key in keyof T]?: keyof T[Key]
-}
+// HACK: to narrow to `keyof` types
+function assertsKeyof<T>(arg: unknown): asserts arg is T {}
 
-export function mergeVariants<T, U>(
-  baseVariants: Config<T>,
-  newVariants: Config<U>
-): Prettify<{
-  base: string
-  variants: Prettify<MergeVariants<T, U>>
-  defaultVariants: DefaultVariants<MergeVariants<T, U>>
-  compoundVariants: []
-}> {
-  const base = cn(baseVariants.base, newVariants.base)
-  const variants = getVariants(baseVariants.variants, newVariants.variants)
-  const defaultVariants = getDefaultVariants(
-    baseVariants.defaultVariants,
-    newVariants.defaultVariants
-  )
-
-  const compoundVariants = getCompoundVariants(
-    baseVariants.compoundVariants,
-    newVariants.compoundVariants
-  )
-
-  return {
-    base,
-    variants,
-    defaultVariants,
-    compoundVariants,
-  } as any
-}
-
-export function mergeTwoObjects<Left extends object, Right extends object>(
-  left: Left,
-  right: Right
-): Prettify<MergeObjects<Left, Right>> {
-  if (Array.isArray(left) || Array.isArray(left)) return {} as any
-  return Object.assign({}, left, right) as any
-}
-
-// getVariants
-function getVariants<T extends VariantShape | undefined, U extends VariantShape | undefined>(
-  left: T,
-  right: U
-): Prettify<MergeVariants<T, U>> {
-  const acc = {} as Exclude<T & U, undefined>
-
-  if (left)
-    for (const variants in left) {
-      for (const variant in left[variants]) {
-        Object.assign(acc, { [variants]: {} })
-        Object.assign(acc[variants], { [variant]: left[variants][variant] })
-      }
-    }
-
-  if (right)
-    for (const variants in right) {
-      for (const variant in right[variants]) {
-        if (!(variants in acc)) {
-          Object.assign(acc, { [variants]: {} })
-          Object.assign(acc[variants], { [variant]: right[variants][variant] })
-        } else {
-          Object.assign(acc[variants], {
-            [variant]: cn(left?.[variants][variant], right[variants][variant]),
-          })
-        }
-      }
-    }
-
-  return acc as any
-}
-
-// getDefaultVariants
-function getDefaultVariants<
-  T extends VariantSchema<any> | undefined,
-  U extends VariantSchema<any> | undefined
->(left: T, right: U): Prettify<MergeObjects<T, U>> {
-  const acc = Object.assign({}, left)
-
-  if (right)
-    for (const variants in right) {
-      Object.assign(acc, { [variants]: right[variants] })
-    }
-
-  return acc as any
-}
-
-function length(obj: unknown) {
-  return obj ? Object.keys(obj).length : -1
-}
-
-// getCompoundVariants
-function getCompoundVariants<
-  const T extends readonly any[] | undefined,
-  const U extends readonly any[] | undefined
->(baseVariants: T, newVariants: U) {
-  if (!baseVariants) return newVariants ? newVariants : []
-  if (!newVariants) return baseVariants
-
-  const base = [...baseVariants, ...newVariants]
-
-  const markingArray: (undefined | null)[] = new Array(base.length)
-
-  for (const [key, compound] of base.entries()) {
-    let compoundLength = length(compound)
-    if (compoundLength <= 1) {
-      markingArray[key] = null
-      continue
-    }
-
-    const {
-      className: _,
-      class: __,
-      ...rest
-    } = base[key] as {
-      [key: string]: string
-    } & ClassProp
-
-    for (let i = key + 1; i < base.length; i++) {
-      if (base[i] < compoundLength) {
-        compoundLength--
-        break
-      }
-      const {
-        className: _,
-        class: __,
-        ...rest2
-      } = base[i] as {
-        [key: string]: string
-      } & ClassProp
-
-      if (isEqual(rest, rest2)) markingArray[i] = null
-    }
+function toString<T extends PropertyKey>(value: any): Extract<T, string> {
+  if (typeof value === "boolean" || typeof value === "number") {
+    return value.toString() as any
   }
-
-  for (let i = base.length; i >= 0; i--) {
-    if (markingArray[i] === null) [base.splice(i, 1)]
-  }
-
-  return base
+  if (!value) return "" as any
+  return value.toString()
 }
