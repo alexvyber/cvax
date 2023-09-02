@@ -1,4 +1,6 @@
 import { UnionToIntersection } from "@alexvyber/turbo-helpers-types"
+import { Prettify } from "@alexvyber/turbo-helpers-types"
+import { twMerge } from "tailwind-merge"
 
 type ClassValue = ClassArray | ClassDictionary | string | number | null | boolean | undefined
 type ClassArray = ClassValue[]
@@ -344,13 +346,10 @@ function toString<T extends PropertyKey>(value: any): Extract<T, string> {
   return value.toString()
 }
 
+/* mergeVariants
+   ============================================ */
 
-// merge
-
-import { Prettify } from "@alexvyber/turbo-helpers-types"
-import { twMerge } from "tailwind-merge"
-
- function cn(...inputs: ClassValue[]) {
+function cn(...inputs: ClassValue[]) {
   return twMerge(cx(inputs))
 }
 
@@ -370,11 +369,8 @@ type MergeObjects<Left, Right> = {
     : never
 }
 
-type DefaultVariants<T extends { variants: Record<PropertyKey, any>}> = {
-  [Key in keyof T]?: 
-  | StringToBoolean<keyof T["variants"][PropertyKey]>
-  | "unset"
-  
+type DefaultVariants<T extends { variants: Record<PropertyKey, any> }> = {
+  [Key in keyof T]?: StringToBoolean<keyof T["variants"][PropertyKey]> | "unset"
 }
 
 function merge<T, U>(
@@ -383,7 +379,9 @@ function merge<T, U>(
 ): Prettify<{
   base: string
   variants: Prettify<MergeVariants<T, U>>
-  defaultVariants: DefaultVariants<MergeVariants<T, U> extends { variants: Record<PropertyKey, any>} ? MergeVariants<T, U> : never>
+  defaultVariants: DefaultVariants<
+    MergeVariants<T, U> extends { variants: Record<PropertyKey, any> } ? MergeVariants<T, U> : never
+  >
   compoundVariants: []
 }> {
   const base = cn(baseVariants?.base, newVariants?.base)
@@ -516,9 +514,6 @@ function length(obj: unknown) {
   return obj ? Object.keys(obj).length : -1
 }
 
-
-
-
 const { cvax, cx, compose } = cvaxify()
 export type {
   CVAX,
@@ -529,6 +524,6 @@ export type {
   Variant,
   ClassProp,
   Config,
-  StringToBoolean
+  StringToBoolean,
 }
-export { cvax, cx, compose, cvaxify, variantIdentity ,  merge as mergeVariants }
+export { cvax, cx, compose, cvaxify, variantIdentity, merge as mergeVariants }

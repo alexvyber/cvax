@@ -18,7 +18,6 @@ const Card = ({ some }: Props) => {
 
 export { Card, config as cardConfig, variants as cardVariants, type Props as CardProps }
 
-
 /**
  * Box
  */
@@ -49,7 +48,6 @@ const cardBase = cvax({
     },
   },
 })
-
 
 interface CardProps extends BoxProps, CardBaseProps {}
 export const card = ({ margin, padding, shadow }: CardProps = {}) =>
