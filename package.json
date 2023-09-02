@@ -1,6 +1,6 @@
 {
   "name": "cvax",
-  "version": "0.6.1",
+  "version": "0.6.3",
   "description": "Customized CVA. fork 'class-variance-authority'",
   "repository": "https://github.com/alexvyber/cvax.git",
   "exports": {
@@ -11,13 +11,7 @@
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
-  "files": [
-    "dist/*.mjs",
-    "dist/*.mjs.map",
-    "dist/*.js",
-    "dist/*.js.map",
-    "dist/*.d.ts"
-  ],
+  "files": ["dist/*.mjs", "dist/*.mjs.map", "dist/*.js", "dist/*.js.map", "dist/*.d.ts"],
   "scripts": {
     "build": "run-p build:**",
     "build:cjs": "swc ./src/index.ts --config-file ./.config/.swcrc -o dist/index.cjs.js -C module.type=commonjs",
@@ -31,10 +25,12 @@
     "tsc": "tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@alexvyber/turbo-helpers-types": "0.0.0-dev-4",
     "@swc/cli": "0.1.62",
     "@swc/core": "1.3.81",
     "bundlesize": "^0.18.1",
     "npm-run-all": "4.1.5",
+    "tailwind-merge": "^1.14.0",
     "typescript": "5.2.2",
     "vitest": "^0.34.3"
   },

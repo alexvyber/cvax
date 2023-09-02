@@ -1,3 +1,5 @@
+import { UnionToIntersection } from "@alexvyber/turbo-helpers-types"
+
 type ClassValue = ClassArray | ClassDictionary | string | number | null | boolean | undefined
 type ClassArray = ClassValue[]
 type ClassDictionary = Record<
@@ -21,11 +23,14 @@ type ClassProp =
 type ExcludeUndefined<T> = T extends undefined ? never : T
 type StringToBoolean<T> = T extends "true" | "false" ? boolean : T
 
-type Variant<T extends { variants: any }> = T extends {
+type Variant<T extends { variants: Record<string, ClassValue> }> = T extends {
   base?: ClassValue
   variants?: Record<string, ClassValue>
   defaultVariants?: {
-    [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | "unset" | undefined
+    [Variant in keyof T["variants"]]?:
+      | StringToBoolean<keyof T["variants"][Variant]>
+      | "unset"
+      | undefined
   }
   compoundVariants?: (T["variants"] extends CVAXVariantShape
     ? (
@@ -43,6 +48,26 @@ type Variant<T extends { variants: any }> = T extends {
   ? T
   : never
 
+type Config<T> = T extends CVAXVariantShape
+  ? {
+      base?: ClassValue
+      variants?: T
+      defaultVariants?: CVAXVariantSchema<T>
+      compoundVariants?: (T["variants"] extends CVAXVariantShape
+        ? (
+            | CVAXVariantSchema<T["variants"]>
+            | {
+                [Variant in keyof T["variants"]]?:
+                  | StringToBoolean<keyof T["variants"][Variant]>
+                  | StringToBoolean<keyof T["variants"][Variant]>[]
+                  | undefined
+              }
+          ) &
+            CVAXClassProp
+        : CVAXClassProp)[]
+    }
+  : never
+
 /* createVariant
    ============================================ */
 function variantIdentity<
@@ -50,7 +75,10 @@ function variantIdentity<
     base?: ClassValue
     variants?: Record<string, ClassValue>
     defaultVariants?: {
-      [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | "unset" | undefined
+      [Variant in keyof T["variants"]]?:
+        | StringToBoolean<keyof T["variants"][Variant]>
+        | "unset"
+        | undefined
     }
     compoundVariants?: (T["variants"] extends CVAXVariantShape
       ? (
@@ -68,8 +96,6 @@ function variantIdentity<
 >(config: T) {
   return config
 }
-
-
 
 /* cvax
    ============================================ */
@@ -112,14 +138,17 @@ interface CVAX {
           compoundVariants?: never
           defaultVariants?: never
         }
-  ): (props?: V extends CVAXVariantShape ? CVAXVariantSchema<V> & CVAXClassProp : CVAXClassProp) => string
+  ): (
+    props?: V extends CVAXVariantShape ? CVAXVariantSchema<V> & CVAXClassProp : CVAXClassProp
+  ) => string
 }
 
-type VariantProps<T> = T extends (props: infer U) => string ? Omit<ExcludeUndefined<U>, keyof ClassProp> : never
+type VariantProps<T> = T extends (props: infer U) => string
+  ? Omit<ExcludeUndefined<U>, keyof ClassProp>
+  : never
 
 /* compose
    ============================================ */
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never
 interface Compose {
   <T extends ReturnType<CVAX>[]>(...components: [...T]): (
     props?: (
@@ -151,13 +180,15 @@ function cvaxify(options?: CVAXConfigOptions): {
   cvax: CVAX
 } {
   const cx: CX = (...inputs) => {
-    if (typeof options?.hooks?.onComplete === "function") return options?.hooks.onComplete(classic(inputs))
+    if (typeof options?.hooks?.onComplete === "function")
+      return options?.hooks.onComplete(classic(inputs))
     return classic(inputs)
   }
 
   const cvax: CVAX = (config) => {
     if (!config) return (props?: ClassProp): string => cx(props?.class, props?.className)
-    if (!config.variants) return (props?: ClassProp): string => cx(config.base, props?.class, props?.className)
+    if (!config.variants)
+      return (props?: ClassProp): string => cx(config.base, props?.class, props?.className)
 
     return (props): string => {
       let classes = cx(config.base)
@@ -195,7 +226,9 @@ function cvaxify(options?: CVAXConfigOptions): {
       }
 
       for (const variant in config.variants) {
-        const value = toString(props[variant as keyof typeof props]) || toString(config.defaultVariants?.[variant])
+        const value =
+          toString(props[variant as keyof typeof props]) ||
+          toString(config.defaultVariants?.[variant])
 
         if ((tmp = config.variants[variant][value])) {
           classes = cx(classes, tmp)
@@ -209,7 +242,9 @@ function cvaxify(options?: CVAXConfigOptions): {
         for (const prop in compound) {
           assertsKeyof<keyof typeof props & keyof typeof compound>(prop)
           if (Array.isArray(compound[prop])) {
-            if (!(compound[prop] as any as Array<any>).includes(props[prop as keyof typeof props])) {
+            if (
+              !(compound[prop] as any as Array<any>).includes(props[prop as keyof typeof props])
+            ) {
               adding = false
             }
           } else {
@@ -310,5 +345,14 @@ function toString<T extends PropertyKey>(value: any): Extract<T, string> {
 }
 
 const { cvax, cx, compose } = cvaxify()
-export { type CVAX, type VariantProps, type ClassValue, type Variant }
+export type {
+  CVAX,
+  VariantProps,
+  CVAXVariantShape,
+  CVAXVariantSchema,
+  ClassValue,
+  Variant,
+  ClassProp,
+  Config,
+}
 export { cvax, cx, compose, cvaxify, variantIdentity }

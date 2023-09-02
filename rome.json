@@ -11,7 +11,7 @@
     "formatWithErrors": true,
     "indentStyle": "space",
     "indentSize": 2,
-    "lineWidth": 120,
+    "lineWidth": 100,
     "ignore": [".next", "build", ".cache", "some-*", "node_modules"]
   },
   "javascript": {
