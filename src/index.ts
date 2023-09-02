@@ -270,15 +270,16 @@ function cvaxify(options?: CVAXConfigOptions): {
   const compose: Compose =
     (...components) =>
     (props) => {
-      const propsWithoutClass = Object.fromEntries(
-        Object.entries(props || {}).filter(([key]) => !["class", "className"].includes(key))
-      )
+      const { class: _, className: __, ...rest } = props || {}
 
-      return cx(
-        components.map((component) => component(propsWithoutClass)),
-        props?.class,
-        props?.className
-      )
+      let tmp,
+        classes = ""
+
+      for (const component of components) {
+        if ((tmp = component(rest))) classes = classes + " " + tmp.trim()
+      }
+
+      return cx(classes, props?.class, props?.className)
     }
 
   return {

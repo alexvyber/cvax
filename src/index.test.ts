@@ -1584,17 +1584,33 @@ describe("compose", () => {
       },
     })
 
-    const card = compose(box, stack)
+    const bg = cvax({
+      variants: {
+        bg: {
+          unset: null,
+          red: "bg-red-300 opacity-50 rounded-lg",
+          blue: "bg-blue-300 opacity-50 rounded-lg",
+          purple: "bg-purple-300 opacity-50 rounded-lg",
+        },
+      },
+      defaultVariants: {
+        bg: "unset",
+      },
+    })
+
+    const card = compose(box, stack, bg)
 
     expectTypeOf(card).toBeFunction()
     expectTypeOf(card).parameter(0).toMatchTypeOf<
       | {
           shadow?: "sm" | "md" | undefined | "unset"
           gap?: "unset" | 1 | 2 | 3 | undefined
+          bg?: "unset" | "red" | "blue" | "purple" | undefined
         }
       | undefined
     >()
 
+    
     expect(card()).toBe("shadow-sm")
     expect(card({ class: "adhoc-class" })).toBe("shadow-sm adhoc-class")
     expect(card({ className: "adhoc-class" })).toBe("shadow-sm adhoc-class")
@@ -1604,6 +1620,7 @@ describe("compose", () => {
     expect(card({ shadow: "md", gap: 3, className: "adhoc-class" })).toBe(
       "shadow-md gap-3 adhoc-class"
     )
+    expect(card({ bg: "red", gap: 2 })).toBe("shadow-sm gap-2 bg-red-300 opacity-50 rounded-lg")
   })
 })
 
