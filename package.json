@@ -26,8 +26,8 @@
     "dev": "vitest",
     "prepublishOnly": "pnpm build",
     "test": "run-p test:*",
-    "test:vitest": "vitest",
     "test:size": "pnpm build && bundlesize -f 'dist/*.js' -s 1.1KB",
+    "test:vitest": "vitest",
     "tsc": "tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {
