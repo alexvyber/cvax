@@ -354,6 +354,7 @@ export type {
   Variant,
   ClassProp,
   Config,
+  StringToBoolean
 }
 export { cvax, cx, compose, cvaxify, variantIdentity }
 export { mergeVariants } from "./merge-variants"

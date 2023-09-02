@@ -1,4 +1,4 @@
-import type { Config, CVAXVariantShape, CVAXVariantSchema, ClassValue } from "."
+import type { Config, CVAXVariantShape, CVAXVariantSchema, ClassValue, StringToBoolean } from "."
 import { cx } from "./"
 import { Prettify } from "@alexvyber/turbo-helpers-types"
 import { twMerge } from "tailwind-merge"
@@ -23,8 +23,11 @@ type MergeObjects<Left, Right> = {
     : never
 }
 
-type DefaultVariants<T> = {
-  [Key in keyof T]?: keyof T[Key]
+type DefaultVariants<T extends { variants: Record<PropertyKey, any>}> = {
+  [Key in keyof T]?: 
+  | StringToBoolean<keyof T["variants"][PropertyKey]>
+  | "unset"
+  
 }
 
 function merge<T, U>(
@@ -33,7 +36,7 @@ function merge<T, U>(
 ): Prettify<{
   base: string
   variants: Prettify<MergeVariants<T, U>>
-  defaultVariants: DefaultVariants<MergeVariants<T, U>>
+  defaultVariants: DefaultVariants<MergeVariants<T, U> extends { variants: Record<PropertyKey, any>} ? MergeVariants<T, U> : never>
   compoundVariants: []
 }> {
   const base = cn(baseVariants?.base, newVariants?.base)
