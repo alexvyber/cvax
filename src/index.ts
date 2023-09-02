@@ -44,9 +44,8 @@ type Variant<T extends { variants: any }> = T extends {
   : never
 
 /* createVariant
-   TODO: decide on its function future
    ============================================ */
-function createVariant<
+function variantIdentity<
   T extends {
     base?: ClassValue
     variants?: Record<string, ClassValue>
@@ -66,9 +65,11 @@ function createVariant<
           CVAXClassProp
       : CVAXClassProp)[]
   }
->(args: T) {
-  return args
+>(config: T) {
+  return config
 }
+
+
 
 /* cvax
    ============================================ */
@@ -310,4 +311,4 @@ function toString<T extends PropertyKey>(value: any): Extract<T, string> {
 
 const { cvax, cx, compose } = cvaxify()
 export { type CVAX, type VariantProps, type ClassValue, type Variant }
-export { cvax, cx, compose, cvaxify, createVariant }
+export { cvax, cx, compose, cvaxify, variantIdentity }

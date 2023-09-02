@@ -3024,7 +3024,7 @@ describe("cvaxify", () => {
         expect(cardShadowGapClassListSplit[cardShadowGapClassListSplit.length - 1]).toBe(SUFFIX)
       })
 
-      test("should extend cva", () => {
+      test("should extend cvax", () => {
         const { cvax: cvaxExtended } = cvaxify({
           hooks: {
             onComplete: onCompleteHandler,
