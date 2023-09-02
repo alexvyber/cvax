@@ -356,3 +356,4 @@ export type {
   Config,
 }
 export { cvax, cx, compose, cvaxify, variantIdentity }
+export { mergeVariants } from "./merge-variants"
