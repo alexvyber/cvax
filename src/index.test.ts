@@ -1610,7 +1610,6 @@ describe("compose", () => {
       | undefined
     >()
 
-    
     expect(card()).toBe("shadow-sm")
     expect(card({ class: "adhoc-class" })).toBe("shadow-sm adhoc-class")
     expect(card({ className: "adhoc-class" })).toBe("shadow-sm adhoc-class")

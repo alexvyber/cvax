@@ -5,6 +5,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "../dist",
+    "incremental": false,
     "declaration": true,
     "emitDeclarationOnly": true
   }
