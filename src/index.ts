@@ -1,7 +1,6 @@
 import { UnionToIntersection } from "@alexvyber/turbo-helpers-types"
 import { Prettify } from "@alexvyber/turbo-helpers-types"
 import { twMerge } from "tailwind-merge"
-
 type ClassValue = ClassArray | ClassDictionary | string | number | null | boolean | undefined
 type ClassArray = ClassValue[]
 type ClassDictionary = Record<
@@ -14,25 +13,18 @@ type ClassDictionary = Record<
   | undefined
   | Record<string, ClassValue[] | string | number | null | boolean | undefined>
 >
-
 type ClassProp =
-  | {
-      class: ClassValue
-      className?: never
-    }
+  | { class: ClassValue; className?: never }
   | { class?: never; className: ClassValue }
   | { class?: never; className?: never }
+
 type ExcludeUndefined<T> = T extends undefined ? never : T
 type StringToBoolean<T> = T extends "true" | "false" ? boolean : T
-
 type Variant<T extends { variants: Record<string, ClassValue> }> = T extends {
   base?: ClassValue
   variants?: Record<string, ClassValue>
   defaultVariants?: {
-    [Variant in keyof T["variants"]]?:
-      | StringToBoolean<keyof T["variants"][Variant]>
-      | "unset"
-      | undefined
+    [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | "unset" | undefined
   }
   compoundVariants?: (T["variants"] extends CVAXVariantShape
     ? (
@@ -49,7 +41,6 @@ type Variant<T extends { variants: Record<string, ClassValue> }> = T extends {
 }
   ? T
   : never
-
 type Config<T> = T extends CVAXVariantShape
   ? {
       base?: ClassValue
@@ -69,7 +60,6 @@ type Config<T> = T extends CVAXVariantShape
         : CVAXClassProp)[]
     }
   : never
-
 /* createVariant
    ============================================ */
 function variantIdentity<
@@ -77,10 +67,7 @@ function variantIdentity<
     base?: ClassValue
     variants?: Record<string, ClassValue>
     defaultVariants?: {
-      [Variant in keyof T["variants"]]?:
-        | StringToBoolean<keyof T["variants"][Variant]>
-        | "unset"
-        | undefined
+      [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | "unset" | undefined
     }
     compoundVariants?: (T["variants"] extends CVAXVariantShape
       ? (
@@ -94,7 +81,7 @@ function variantIdentity<
         ) &
           CVAXClassProp
       : CVAXClassProp)[]
-  }
+  },
 >(config: T) {
   return config
 }
@@ -106,16 +93,7 @@ type CVAXVariantShape = Record<string, Record<string, ClassValue>>
 type CVAXVariantSchema<V extends CVAXVariantShape> = {
   [Variant in keyof V]?: StringToBoolean<keyof V[Variant]> | undefined | "unset"
 }
-type CVAXClassProp =
-  | {
-      class?: ClassValue
-      className?: never
-    }
-  | {
-      class?: never
-      className?: ClassValue
-    }
-
+type CVAXClassProp = { class?: ClassValue; className?: never } | { class?: never; className?: ClassValue }
 interface CVAX {
   <_ extends "iternal use only", V>(
     config: V extends CVAXVariantShape
@@ -135,33 +113,18 @@ interface CVAX {
             : CVAXClassProp)[]
           defaultVariants?: CVAXVariantSchema<V>
         }
-      : CVAXConfigBase & {
-          variants?: never
-          compoundVariants?: never
-          defaultVariants?: never
-        }
-  ): (
-    props?: V extends CVAXVariantShape ? CVAXVariantSchema<V> & CVAXClassProp : CVAXClassProp
-  ) => string
+      : CVAXConfigBase & { variants?: never; compoundVariants?: never; defaultVariants?: never }
+  ): (props?: V extends CVAXVariantShape ? CVAXVariantSchema<V> & CVAXClassProp : CVAXClassProp) => string
 }
 
-type VariantProps<T> = T extends (props: infer U) => string
-  ? Omit<ExcludeUndefined<U>, keyof ClassProp>
-  : never
-
+type VariantProps<T> = T extends (props: infer U) => string ? Omit<ExcludeUndefined<U>, keyof ClassProp> : never
 /* compose
    ============================================ */
 interface Compose {
-  <T extends ReturnType<CVAX>[]>(...components: [...T]): (
-    props?: (
-      | UnionToIntersection<
-          {
-            [K in keyof T]: VariantProps<T[K]>
-          }[number]
-        >
-      | undefined
-    ) &
-      CVAXClassProp
+  <T extends ReturnType<CVAX>[]>(
+    ...components: [...T]
+  ): (
+    props?: (UnionToIntersection<{ [K in keyof T]: VariantProps<T[K]> }[number]> | undefined) & CVAXClassProp
   ) => string
 }
 
@@ -182,23 +145,17 @@ function cvaxify(options?: CVAXConfigOptions): {
   cvax: CVAX
 } {
   const cx: CX = (...inputs) => {
-    if (typeof options?.hooks?.onComplete === "function")
-      return options?.hooks.onComplete(classic(inputs))
+    if (typeof options?.hooks?.onComplete === "function") return options?.hooks.onComplete(classic(inputs))
     return classic(inputs)
   }
-
   const cvax: CVAX = (config) => {
     if (!config) return (props?: ClassProp): string => cx(props?.class, props?.className)
-    if (!config.variants)
-      return (props?: ClassProp): string => cx(config.base, props?.class, props?.className)
-
+    if (!config.variants) return (props?: ClassProp): string => cx(config.base, props?.class, props?.className)
     return (props): string => {
       let classes = cx(config.base)
       let tmp: any = ""
-
       if (!props) {
         if (!("defaultVariants" in config) || !config.defaultVariants) return classes
-
         for (const variant in config.variants) {
           const key = toString<keyof typeof variant>(config.defaultVariants[variant])
           if ((tmp = config.variants[variant][key])) {
@@ -207,12 +164,10 @@ function cvaxify(options?: CVAXConfigOptions): {
         }
 
         if (!config.compoundVariants) return classes
-
         let adding = true
         for (const { class: Class, className, ...compound } of config.compoundVariants) {
           for (const prop in compound) {
             assertsKeyof<keyof typeof compound>(prop)
-
             if (config.defaultVariants[prop] !== compound[prop]) {
               adding = false
               break
@@ -220,7 +175,6 @@ function cvaxify(options?: CVAXConfigOptions): {
           }
 
           if (adding) classes = cx(classes, Class, className)
-
           adding = true
         }
 
@@ -228,25 +182,19 @@ function cvaxify(options?: CVAXConfigOptions): {
       }
 
       for (const variant in config.variants) {
-        const value =
-          toString(props[variant as keyof typeof props]) ||
-          toString(config.defaultVariants?.[variant])
-
+        const value = toString(props[variant as keyof typeof props]) || toString(config.defaultVariants?.[variant])
         if ((tmp = config.variants[variant][value])) {
           classes = cx(classes, tmp)
         }
       }
 
       if (!config.compoundVariants) return cx(classes, props.class, props.className)
-
       let adding = true
       for (const { class: Class, className, ...compound } of config.compoundVariants) {
         for (const prop in compound) {
           assertsKeyof<keyof typeof props & keyof typeof compound>(prop)
           if (Array.isArray(compound[prop])) {
-            if (
-              !(compound[prop] as any as Array<any>).includes(props[prop as keyof typeof props])
-            ) {
+            if (!(compound[prop] as any as Array<any>).includes(props[prop as keyof typeof props])) {
               adding = false
             }
           } else {
@@ -259,7 +207,6 @@ function cvaxify(options?: CVAXConfigOptions): {
         }
 
         if (adding) classes = cx(classes, Class, className)
-
         adding = true
       }
 
@@ -271,10 +218,8 @@ function cvaxify(options?: CVAXConfigOptions): {
     (...components) =>
     (props) => {
       const { class: _, className: __, ...rest } = props || {}
-
       let tmp,
         classes = ""
-
       for (const component of components) {
         if ((tmp = component(rest))) classes = classes + " " + tmp.trim()
       }
@@ -315,6 +260,7 @@ function getStr(classes: ClassValue) {
   if (typeof classes === "number") return classes + " "
   if (typeof classes === "object") {
     let str = ""
+
     if (Array.isArray(classes)) {
       if (classes.length === 0) return ""
       for (const item of classes.flat(Infinity as 0)) {
@@ -340,9 +286,7 @@ function getStr(classes: ClassValue) {
 
 function assertsKeyof<T>(_arg: unknown): asserts _arg is T {}
 function toString<T extends PropertyKey>(value: any): Extract<T, string> {
-  if (typeof value === "boolean" || typeof value === "number") {
-    return value.toString() as any
-  }
+  if (typeof value === "boolean" || typeof value === "number") return value.toString() as any
   if (!value) return "" as any
   return value.toString()
 }
@@ -359,21 +303,17 @@ function cn(...inputs: ClassValue[]) {
 type MergeVariants<Left, Right> = {
   [Key in keyof Left & keyof Right]: MergeObjects<Left[Key], Right[Key]>
 } & MergeObjects<Left, Right>
-
 type ToString<T> = T extends string ? string : T extends string[] ? string[] : T
-
 type MergeObjects<Left, Right> = {
   [Prop in keyof Left | keyof Right]: Prop extends keyof Right
     ? Right[Prop]
     : Prop extends keyof Left
-    ? ToString<Left[Prop]>
-    : never
+      ? ToString<Left[Prop]>
+      : never
 }
-
 type DefaultVariants<T extends { variants: Record<PropertyKey, any> }> = {
   [Key in keyof T]?: StringToBoolean<keyof T["variants"][PropertyKey]> | "unset"
 }
-
 function merge<T, U>(
   baseVariants: Config<T>,
   newVariants: Config<U>
@@ -387,22 +327,9 @@ function merge<T, U>(
 }> {
   const base = cn(baseVariants?.base, newVariants?.base)
   const variants = mergeVariants(baseVariants.variants, newVariants.variants)
-  const defaultVariants = mergeDefaultVariants(
-    baseVariants.defaultVariants,
-    newVariants.defaultVariants
-  )
-
-  const compoundVariants = mergeCompoundVariants(
-    baseVariants.compoundVariants,
-    newVariants.compoundVariants
-  )
-
-  return {
-    base,
-    variants,
-    defaultVariants,
-    compoundVariants,
-  } as any
+  const defaultVariants = mergeDefaultVariants(baseVariants.defaultVariants, newVariants.defaultVariants)
+  const compoundVariants = mergeCompoundVariants(baseVariants.compoundVariants, newVariants.compoundVariants)
+  return { base, variants, defaultVariants, compoundVariants } as any
 }
 
 export function mergeTwoObjects<Left extends object, Right extends object>(
@@ -413,12 +340,11 @@ export function mergeTwoObjects<Left extends object, Right extends object>(
   return Object.assign({}, left, right) as any
 }
 
-function mergeVariants<
-  T extends CVAXVariantShape | undefined,
-  U extends CVAXVariantShape | undefined
->(left: T, right: U): Prettify<MergeVariants<T, U>> {
+function mergeVariants<T extends CVAXVariantShape | undefined, U extends CVAXVariantShape | undefined>(
+  left: T,
+  right: U
+): Prettify<MergeVariants<T, U>> {
   const acc = {} as Exclude<T & U, undefined>
-
   if (left)
     for (const variants in left) {
       for (const variant in left[variants]) {
@@ -434,9 +360,7 @@ function mergeVariants<
           Object.assign(acc, { [variants]: {} })
           Object.assign(acc[variants], { [variant]: right[variants][variant] })
         } else {
-          Object.assign(acc[variants], {
-            [variant]: cn(left?.[variants][variant], right[variants][variant]),
-          })
+          Object.assign(acc[variants], { [variant]: cn(left?.[variants][variant], right[variants][variant]) })
         }
       }
     }
@@ -446,13 +370,11 @@ function mergeVariants<
 
 function mergeDefaultVariants<
   T extends CVAXVariantSchema<any> | undefined,
-  U extends CVAXVariantSchema<any> | undefined
+  U extends CVAXVariantSchema<any> | undefined,
 >(left: T, right: U): Prettify<MergeObjects<T, U>> {
   if (!right) return left || ({} as any)
   if (!left) return right as any
-
   const acc = Object.assign({}, left)
-
   for (const variants in right) {
     Object.assign(acc, { [variants]: right[variants] })
   }
@@ -460,20 +382,17 @@ function mergeDefaultVariants<
   return acc as any
 }
 
-function mergeCompoundVariants<
-  const T extends readonly any[] | undefined,
-  const U extends readonly any[] | undefined
->(baseVariants: T, newVariants: U) {
+function mergeCompoundVariants<const T extends readonly any[] | undefined, const U extends readonly any[] | undefined>(
+  baseVariants: T,
+  newVariants: U
+) {
   if (!baseVariants) return newVariants ? newVariants : []
   if (!newVariants) return baseVariants
-
   // REFACTOR: ???
   const base = [...baseVariants, ...newVariants]
   let compoundLength = 0
-
   for (let i = 0; i < base.length; i++) {
     compoundLength = length(base[i])
-
     if (compoundLength <= 1) {
       base[i] = null
       continue
@@ -500,7 +419,6 @@ export function isCompoundsEquivalent(left: object, right: object): boolean {
   for (const key of Object.keys(left)) {
     if (key === "class" || key === "className") continue
     if (!(key in right)) return false
-
     // @ts-ignore: the key type inference just isn't possible in this case
     // i've tried to make this shit work for too long
     if (left[key] !== right[key]) {

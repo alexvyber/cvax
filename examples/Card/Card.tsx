@@ -50,5 +50,4 @@ const cardBase = cvax({
 })
 
 interface CardProps extends BoxProps, CardBaseProps {}
-export const card = ({ margin, padding, shadow }: CardProps = {}) =>
-  cx(box({ margin, padding }), cardBase({ shadow }))
+export const card = ({ margin, padding, shadow }: CardProps = {}) => cx(box({ margin, padding }), cardBase({ shadow }))

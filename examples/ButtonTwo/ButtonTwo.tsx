@@ -33,9 +33,4 @@ function ButtonTwo({
   return <div className={variants({ intent, rounded, shadow })} {...props} />
 }
 
-export {
-  ButtonTwo,
-  config as buttonTwoConfig,
-  variants as buttonTwoVariants,
-  type Props as ButtonTwoProps,
-}
+export { ButtonTwo, config as buttonTwoConfig, variants as buttonTwoVariants, type Props as ButtonTwoProps }
