@@ -62,8 +62,8 @@ type Config<T> = T extends CvaxVariantShape
     }
   : never
 
-/* createVariant
-   ============================================ */
+// createVariant
+// ---------------------------------------------
 function variantIdentity<
   T extends {
     base?: ClassValue
@@ -88,8 +88,8 @@ function variantIdentity<
   return config
 }
 
-/* cvax
-   ============================================ */
+// cvax
+// ---------------------------------------------
 type CvaxConfigBase = { base?: ClassValue }
 type CvaxVariantShape = Record<string, Record<string, ClassValue>>
 type CvaxClassProp = { class?: ClassValue; className?: never } | { class?: never; className?: ClassValue }
@@ -121,16 +121,16 @@ type Cvax = <_ extends "iternal use only", V>(
 
 type VariantProps<T> = T extends (props: infer U) => string ? Omit<ExcludeUndefined<U>, keyof ClassProp> : never
 
-/* compose
-   ============================================ */
+// compose
+// ---------------------------------------------
 type Compose = <T extends ReturnType<Cvax>[]>(
   ...components: [...T]
 ) => (
   props?: (UnionToIntersection<{ [K in keyof T]: VariantProps<T[K]> }[number]> | undefined) & CvaxClassProp
 ) => string
 
-/* defineConfig
-   ============================================ */
+// defineConfig
+// ---------------------------------------------
 interface CvaxConfigOptions {
   hooks?: {
     /**
@@ -140,8 +140,8 @@ interface CvaxConfigOptions {
   }
 }
 
-/* cvaxify
-   ============================================ */
+// cvaxify
+// ---------------------------------------------
 function cvaxify(options?: CvaxConfigOptions): {
   compose: Compose
   cx: Cx
@@ -166,7 +166,7 @@ function cvaxify(options?: CvaxConfigOptions): {
 
     return (props): string => {
       let classes = cx(config.base)
-      let tmp: any 
+      let tmp: any
 
       if (!props) {
         if (!("defaultVariants" in config && config.defaultVariants)) {
@@ -254,7 +254,7 @@ function cvaxify(options?: CvaxConfigOptions): {
     (...components) =>
     (props) => {
       const { class: _, className: __, ...rest } = props || {}
-      let tmp:any
+      let tmp: any
       let classes = ""
 
       for (const component of components) {
@@ -273,8 +273,8 @@ function cvaxify(options?: CvaxConfigOptions): {
   }
 }
 
-/* cx
-   ============================================ */
+// cx
+// ---------------------------------------------
 type Cx = (...inputs: ClassValue[]) => string
 function classic(...inputs: ClassValue[]): string
 function classic() {
