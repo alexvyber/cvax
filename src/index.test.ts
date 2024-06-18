@@ -1,4 +1,4 @@
-import type * as CVAX from "./"
+import type * as Cvax from "./"
 import { compose, cvax, cvaxify } from "./"
 import { describe, it as test, expect, expectTypeOf } from "vitest"
 import { cx } from "./"
@@ -273,10 +273,10 @@ describe("cvax", () => {
       })
 
       type ButtonWithoutDefaultsWithoutBaseProps =
-        | CVAX.VariantProps<typeof buttonWithoutBaseWithoutDefaultsString>
-        | CVAX.VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameString>
-        | CVAX.VariantProps<typeof buttonWithoutBaseWithoutDefaultsArray>
-        | CVAX.VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameArray>
+        | Cvax.VariantProps<typeof buttonWithoutBaseWithoutDefaultsString>
+        | Cvax.VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameString>
+        | Cvax.VariantProps<typeof buttonWithoutBaseWithoutDefaultsArray>
+        | Cvax.VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithoutDefaultsWithoutBaseProps, string]>([
         [
@@ -596,10 +596,10 @@ describe("cvax", () => {
       })
 
       type ButtonWithoutBaseWithDefaultsProps =
-        | CVAX.VariantProps<typeof buttonWithoutBaseWithDefaultsString>
-        | CVAX.VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameString>
-        | CVAX.VariantProps<typeof buttonWithoutBaseWithDefaultsArray>
-        | CVAX.VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameArray>
+        | Cvax.VariantProps<typeof buttonWithoutBaseWithDefaultsString>
+        | Cvax.VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameString>
+        | Cvax.VariantProps<typeof buttonWithoutBaseWithDefaultsArray>
+        | Cvax.VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithoutBaseWithDefaultsProps, string]>([
         [
@@ -893,10 +893,10 @@ describe("cvax", () => {
       })
 
       type ButtonWithBaseWithoutDefaultsProps =
-        | CVAX.VariantProps<typeof buttonWithBaseWithoutDefaultsString>
-        | CVAX.VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameString>
-        | CVAX.VariantProps<typeof buttonWithBaseWithoutDefaultsArray>
-        | CVAX.VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameArray>
+        | Cvax.VariantProps<typeof buttonWithBaseWithoutDefaultsString>
+        | Cvax.VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameString>
+        | Cvax.VariantProps<typeof buttonWithBaseWithoutDefaultsArray>
+        | Cvax.VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithBaseWithoutDefaultsProps, string]>([
         [undefined as unknown as ButtonWithBaseWithoutDefaultsProps, "button font-semibold border rounded"],
@@ -1192,10 +1192,10 @@ describe("cvax", () => {
       })
 
       type ButtonWithBaseWithDefaultsProps =
-        | CVAX.VariantProps<typeof buttonWithBaseWithDefaultsString>
-        | CVAX.VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameString>
-        | CVAX.VariantProps<typeof buttonWithBaseWithDefaultsArray>
-        | CVAX.VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameArray>
+        | Cvax.VariantProps<typeof buttonWithBaseWithDefaultsString>
+        | Cvax.VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameString>
+        | Cvax.VariantProps<typeof buttonWithBaseWithDefaultsArray>
+        | Cvax.VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithBaseWithDefaultsProps, string]>([
         [
@@ -1293,7 +1293,7 @@ describe("cvax", () => {
   })
 
   describe("composing classes", () => {
-    type BoxProps = CVAX.VariantProps<typeof box>
+    type BoxProps = Cvax.VariantProps<typeof box>
     const box = cvax({
       base: ["box", "box-border"],
       variants: {
@@ -1306,7 +1306,7 @@ describe("cvax", () => {
       },
     })
 
-    type CardBaseProps = CVAX.VariantProps<typeof cardBase>
+    type CardBaseProps = Cvax.VariantProps<typeof cardBase>
     const cardBase = cvax({
       base: ["card", "border-solid", "border-slate-300", "rounded"],
       variants: {
@@ -1509,7 +1509,7 @@ test("handles all types of truthy and falsy property values as expected", () => 
     // falsy:
     null: null,
     emptyString: "",
-    noNumber: NaN,
+    noNumber: Number.NaN,
     zero: 0,
     negativeZero: -0,
     false: false,
@@ -1532,7 +1532,7 @@ test("handles all types of truthy and falsy property values as expected", () => 
     "one two three": true,
     "four five": false,
 
-    class: ["six", true && "seven", false && "eight", true ?? true, true ?? 0, false ?? null, { className: "nine" }],
+    class: ["six", "seven", false, true ?? true, true ?? 0, false ?? null, { className: "nine" }],
   }
 
   const res = cx({
@@ -1544,7 +1544,7 @@ test("handles all types of truthy and falsy property values as expected", () => 
 })
 
 describe("cx", () => {
-  describe.each<CVAX.ClassValue>([
+  describe.each<Cvax.ClassValue>([
     [null, ""],
     [undefined, ""],
     [["foo", null, "bar", undefined, "baz"], "foo bar baz"],
@@ -1566,15 +1566,15 @@ describe("cx", () => {
 test("strings", () => {
   expect(cx("")).toBe("")
   expect(cx("foo")).toBe("foo")
-  expect(cx(true && "foo")).toBe("foo")
-  expect(cx(false && "foo")).toBe("")
+  expect(cx("foo")).toBe("foo")
+  expect(cx(false)).toBe("")
 })
 
 test("strings (variadic)", () => {
   expect(cx("")).toBe("")
   expect(cx("foo", "bar")).toBe("foo bar")
-  expect(cx(true && "foo", false && "bar", "baz")).toBe("foo baz")
-  expect(cx(false && "foo", "bar", "baz", "")).toBe("bar baz")
+  expect(cx("foo", false, "baz")).toBe("foo baz")
+  expect(cx(false, "bar", "baz", "")).toBe("bar baz")
 })
 
 test("objects", () => {
@@ -1590,7 +1590,7 @@ test("objects (variadic)", () => {
   expect(cx({}, {})).toBe("")
   expect(cx({ foo: 1 }, { bar: 2 })).toBe("foo bar")
   expect(cx({ foo: 1 }, null, { baz: 1, bat: 0 })).toBe("foo baz")
-  expect(cx({ foo: 1 }, {}, {}, { bar: "a" }, { baz: null, bat: Infinity })).toBe("foo bar bat")
+  expect(cx({ foo: 1 }, {}, {}, { bar: "a" }, { baz: null, bat: Number.POSITIVE_INFINITY })).toBe("foo bar bat")
 })
 
 test("arrays", () => {
@@ -1636,8 +1636,8 @@ describe("cx", () => {
     [{ className: "asdfasdf" }, "asdfasdf"],
     [null, ""],
     [undefined, ""],
-    [false && "foo", ""],
-    [true && "foo", "foo"],
+    [false, ""],
+    ["foo", "foo"],
     [["foo", undefined, "bar", undefined, "baz"], "foo bar baz"],
     [
       [
@@ -1923,10 +1923,10 @@ describe("cvax", () => {
       })
 
       type ButtonWithoutDefaultsWithoutBaseProps =
-        | CVAX.VariantProps<typeof buttonWithoutBaseWithoutDefaultsString>
-        | CVAX.VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameString>
-        | CVAX.VariantProps<typeof buttonWithoutBaseWithoutDefaultsArray>
-        | CVAX.VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameArray>
+        | Cvax.VariantProps<typeof buttonWithoutBaseWithoutDefaultsString>
+        | Cvax.VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameString>
+        | Cvax.VariantProps<typeof buttonWithoutBaseWithoutDefaultsArray>
+        | Cvax.VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithoutDefaultsWithoutBaseProps, string]>([
         [
@@ -2263,10 +2263,10 @@ describe("cvax", () => {
       })
 
       type ButtonWithoutBaseWithDefaultsProps =
-        | CVAX.VariantProps<typeof buttonWithoutBaseWithDefaultsString>
-        | CVAX.VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameString>
-        | CVAX.VariantProps<typeof buttonWithoutBaseWithDefaultsArray>
-        | CVAX.VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameArray>
+        | Cvax.VariantProps<typeof buttonWithoutBaseWithDefaultsString>
+        | Cvax.VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameString>
+        | Cvax.VariantProps<typeof buttonWithoutBaseWithDefaultsArray>
+        | Cvax.VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithoutBaseWithDefaultsProps, string]>([
         [
@@ -2573,10 +2573,10 @@ describe("cvax", () => {
       })
 
       type ButtonWithBaseWithoutDefaultsProps =
-        | CVAX.VariantProps<typeof buttonWithBaseWithoutDefaultsString>
-        | CVAX.VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameString>
-        | CVAX.VariantProps<typeof buttonWithBaseWithoutDefaultsArray>
-        | CVAX.VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameArray>
+        | Cvax.VariantProps<typeof buttonWithBaseWithoutDefaultsString>
+        | Cvax.VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameString>
+        | Cvax.VariantProps<typeof buttonWithBaseWithoutDefaultsArray>
+        | Cvax.VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithBaseWithoutDefaultsProps, string]>([
         [undefined as unknown as ButtonWithBaseWithoutDefaultsProps, "button font-semibold border rounded"],
@@ -2885,10 +2885,10 @@ describe("cvax", () => {
       })
 
       type ButtonWithBaseWithDefaultsProps =
-        | CVAX.VariantProps<typeof buttonWithBaseWithDefaultsString>
-        | CVAX.VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameString>
-        | CVAX.VariantProps<typeof buttonWithBaseWithDefaultsArray>
-        | CVAX.VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameArray>
+        | Cvax.VariantProps<typeof buttonWithBaseWithDefaultsString>
+        | Cvax.VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameString>
+        | Cvax.VariantProps<typeof buttonWithBaseWithDefaultsArray>
+        | Cvax.VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithBaseWithDefaultsProps, string]>([
         [
@@ -2989,10 +2989,10 @@ describe("cvax", () => {
 describe("cvaxify", () => {
   describe("hooks", () => {
     describe("onComplete", () => {
-      const PREFIX = "never-gonna-give-you-up"
-      const SUFFIX = "never-gonna-let-you-down"
+      const prefix = "never-gonna-give-you-up"
+      const suffix = "never-gonna-let-you-down"
 
-      const onCompleteHandler = (className: string) => [PREFIX, className, SUFFIX].join(" ")
+      const onCompleteHandler = (className: string) => [prefix, className, suffix].join(" ")
 
       test("should extend compose", () => {
         const { compose: composeExtended } = cvaxify({
@@ -3031,13 +3031,13 @@ describe("cvaxify", () => {
 
         const cardClassList = card()
         const cardClassListSplit = cardClassList.split(" ")
-        expect(cardClassListSplit[0]).toBe(PREFIX)
-        expect(cardClassListSplit[cardClassListSplit.length - 1]).toBe(SUFFIX)
+        expect(cardClassListSplit[0]).toBe(prefix)
+        expect(cardClassListSplit[cardClassListSplit.length - 1]).toBe(suffix)
 
         const cardShadowGapClassList = card({ shadow: "md", gap: 3 })
         const cardShadowGapClassListSplit = cardShadowGapClassList.split(" ")
-        expect(cardShadowGapClassListSplit[0]).toBe(PREFIX)
-        expect(cardShadowGapClassListSplit[cardShadowGapClassListSplit.length - 1]).toBe(SUFFIX)
+        expect(cardShadowGapClassListSplit[0]).toBe(prefix)
+        expect(cardShadowGapClassListSplit[cardShadowGapClassListSplit.length - 1]).toBe(suffix)
       })
 
       test("should extend cvax", () => {
@@ -3055,8 +3055,8 @@ describe("cvaxify", () => {
         const componentClassListSplit = componentClassList.split(" ")
 
         expectTypeOf(component).toBeFunction()
-        expect(componentClassListSplit[0]).toBe(PREFIX)
-        expect(componentClassListSplit[componentClassListSplit.length - 1]).toBe(SUFFIX)
+        expect(componentClassListSplit[0]).toBe(prefix)
+        expect(componentClassListSplit[componentClassListSplit.length - 1]).toBe(suffix)
       })
 
       test("should extend cx", () => {
@@ -3070,461 +3070,9 @@ describe("cvaxify", () => {
         const classListSplit = classList.split(" ")
 
         expectTypeOf(classList).toBeString()
-        expect(classListSplit[0]).toBe(PREFIX)
-        expect(classListSplit[classListSplit.length - 1]).toBe(SUFFIX)
+        expect(classListSplit[0]).toBe(prefix)
+        expect(classListSplit[classListSplit.length - 1]).toBe(suffix)
       })
-    })
-  })
-})
-
-import { isCompoundsEquivalent, mergeTwoObjects, mergeVariants } from "./"
-import { variantIdentity } from "."
-
-const generatedDefault = {
-  base: "",
-  compoundVariants: [],
-  defaultVariants: {},
-  variants: {},
-}
-
-function withGeneratedDefault(obj: object): {
-  base: string
-  compoundVariants: any[]
-  // defaultVariants: object
-  variants: object
-} {
-  return { ...generatedDefault, ...obj }
-}
-
-// TODO: write all test cases for mergeVariants
-describe("mergeVariants", () => {
-  const defaultVarinats = variantIdentity({
-    base: "",
-    variants: {
-      intent: {
-        primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
-        secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-        warning: "bg-yellow-500 border-transparent hover:bg-yellow-600",
-        danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
-      },
-      disabled: {
-        true: "opacity-050 cursor-not-allowed",
-        false: "cursor-pointer",
-      },
-      size: {
-        small: "text-sm py-1 px-2",
-        medium: "text-base py-2 px-4",
-        large: "text-lg py-2.5 px-4",
-      },
-      m: {
-        0: "m-0",
-        1: "m-1",
-      },
-    },
-    defaultVariants: {},
-    compoundVariants: [
-      {
-        intent: "warning",
-        disabled: false,
-        className: "text-gray-800",
-      },
-
-      {
-        intent: "primary",
-        size: "medium",
-        className: "uppercase",
-      },
-      {
-        intent: "warning",
-        disabled: true,
-        className: "text-black",
-      },
-    ],
-  })
-  const newVariants = variantIdentity({
-    base: "",
-    variants: {
-      intent: {
-        primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
-        secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-        warning: "bg-yellow-500 border-transparent hover:bg-yellow-600",
-        danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
-      },
-      disabled: {
-        true: "opacity-050 cursor-not-allowed",
-        false: "cursor-pointer",
-      },
-      size: {
-        small: "text-sm py-1 px-2",
-        medium: "text-base py-2 px-4",
-        large: "text-lg py-2.5 px-4",
-      },
-      m: {
-        0: "m-0",
-        1: "m-1",
-      },
-    },
-    defaultVariants: {},
-    compoundVariants: [
-      {
-        intent: "warning",
-        disabled: false,
-        className: "text-gray-800",
-      },
-      {
-        intent: "primary",
-        size: "medium",
-        className: "uppercase",
-      },
-      {
-        intent: "warning",
-        disabled: true,
-        className: "text-black",
-      },
-    ],
-  })
-
-  const mergedVariants = mergeVariants(defaultVarinats, newVariants)
-
-  test("same variants", () => {
-    expect(mergedVariants).toEqual(withGeneratedDefault(defaultVarinats))
-    expect(mergedVariants).toEqual(withGeneratedDefault(newVariants))
-  })
-})
-
-describe("mergeVariants", () => {
-  const defaultVarinats = {
-    variants: {
-      intent: {
-        primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600 text-7xl",
-      },
-    },
-  }
-
-  const newVariants = {
-    variants: {
-      intent: {
-        primary: "bg-blue-500 text-red border-transparent hover:bg-blue-600",
-      },
-    },
-  }
-
-  const expected = {
-    variants: {
-      intent: {
-        primary: "text-7xl bg-blue-500 text-red border-transparent hover:bg-blue-600",
-      },
-    },
-  }
-
-  const mergedVariants = mergeVariants(defaultVarinats, newVariants)
-
-  test("same variants", () => {
-    expect(mergedVariants).toEqual(withGeneratedDefault(expected))
-  })
-})
-
-describe("mergevariants", () => {
-  const baseOnly = {
-    base: "mt-2",
-  }
-
-  const variantsOnly = variantIdentity({
-    base: "mt-2",
-    variants: {
-      intent: {
-        primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
-        secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-        warning: "bg-yellow-500 border-transparent hover:bg-yellow-600",
-        danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
-      },
-    },
-  })
-
-  const defaultVariants = variantIdentity({
-    base: "mt-2",
-    variants: {
-      intent: {
-        primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
-        secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-        warning: "bg-yellow-500 border-transparent hover:bg-yellow-600",
-        danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
-      },
-    },
-    defaultVariants: {
-      intent: "primary",
-    },
-  })
-
-  const compoundVariants = variantIdentity({
-    base: "mt-2",
-    variants: {
-      intent: {
-        primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
-        secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-        warning: "bg-yellow-500 border-transparent hover:bg-yellow-600",
-        danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
-      },
-    },
-    defaultVariants: {},
-    compoundVariants: [
-      {
-        intent: "primary",
-        className: "mt-14",
-      },
-    ],
-  })
-
-  const stupidShit = variantIdentity({
-    base: "mt-2",
-    variants: {
-      intent: {
-        primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
-        secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-        warning: "bg-yellow-500 border-transparent hover:bg-yellow-600",
-        danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
-      },
-    },
-    defaultVariants: {},
-    compoundVariants: [
-      {
-        className: "mt-14",
-      },
-
-      {
-        class: "mt-14",
-      },
-
-      {
-        intent: "primary",
-      },
-    ],
-  })
-
-  const moreShit = variantIdentity({
-    base: "mt-2",
-    variants: {
-      intent: {
-        primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
-        secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-        warning: "bg-yellow-500 border-transparent hover:bg-yellow-600",
-        danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
-      },
-    },
-    defaultVariants: {},
-    compoundVariants: [
-      {
-        intent: "primary",
-        class: "mt-14",
-      },
-
-      {
-        intent: "primary",
-        className: "mt-14",
-      },
-
-      {
-        intent: "primary",
-        class: "mt-14",
-      },
-
-      {
-        intent: "primary",
-        class: "mt-14",
-      },
-      {
-        intent: "primary",
-        className: "mt-14",
-      },
-
-      {
-        intent: "primary",
-        class: "mt-14",
-      },
-
-      {
-        intent: "primary",
-        className: "mt-14",
-      },
-    ],
-  })
-
-  describe.each([
-    [{}, {}, generatedDefault],
-    [baseOnly, baseOnly, withGeneratedDefault(baseOnly)],
-    [variantsOnly, variantsOnly, withGeneratedDefault(variantsOnly)],
-    [defaultVariants, defaultVariants, withGeneratedDefault(defaultVariants)],
-    [compoundVariants, compoundVariants, withGeneratedDefault(compoundVariants)],
-    [
-      stupidShit,
-      stupidShit,
-      {
-        base: "mt-2",
-        variants: {
-          intent: {
-            primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
-            secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-            warning: "bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
-          },
-        },
-        defaultVariants: {},
-        compoundVariants: [],
-      },
-    ],
-    [
-      moreShit,
-      moreShit,
-      {
-        base: "mt-2",
-        variants: {
-          intent: {
-            primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
-            secondary: "bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-            warning: "bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: "bg-red-500 text-white border-transparent hover:bg-red-600",
-          },
-        },
-        defaultVariants: {},
-        compoundVariants: [
-          {
-            intent: "primary",
-            className: "mt-14",
-          },
-        ],
-      },
-    ],
-  ])("mergevariants(%o)", (baseVariants, newVariants, expected) => {
-    test("same variants", () => {
-      // @ts-ignore
-      expect(mergeVariants(baseVariants, newVariants)).toEqual(expected)
-    })
-  })
-})
-
-describe("mergeTwoObjects", () => {
-  const func = () => console.log("func")
-  const otherFunc = () => console.log("otherFunc")
-
-  const obj = {
-    a: { f: func },
-  }
-  const otherObj = {
-    a: { f: otherFunc },
-  }
-
-  describe.each<{
-    left: object
-    right: object
-    expected: object
-  }>([
-    { left: {}, right: {}, expected: {} },
-    { left: [], right: [], expected: {} },
-    { left: [1, 2, 3, 4], right: [], expected: {} },
-    { left: () => {}, right: [], expected: {} },
-    {
-      left: (a: any, b: any, c: any) => {
-        return [a, b, c]
-      },
-      right: [],
-      expected: {},
-    },
-    { left: { a: 1 }, right: {}, expected: { a: 1 } },
-    {
-      left: { a: "string" },
-      right: { a: "string" },
-      expected: { a: "string" },
-    },
-    { left: { a: "string" }, right: { a: 69 }, expected: { a: 69 } },
-    { left: { a: "string" }, right: { a: false }, expected: { a: false } },
-    { left: { a: 420 }, right: { a: obj }, expected: { a: obj } },
-    {
-      left: { a: "string", b: { c: [] } },
-      right: {},
-      expected: { a: "string", b: { c: [] } },
-    },
-    {
-      left: { a: "string", b: { c: [], f: func } },
-      right: {},
-      expected: { a: "string", b: { c: [], f: func } },
-    },
-    { left: { o: obj }, right: {}, expected: { o: obj } },
-    { left: { f: func }, right: { f: otherFunc }, expected: { f: otherFunc } },
-    {
-      left: { f: func, o: obj },
-      right: { f: otherFunc, o: otherObj },
-      expected: { f: otherFunc, o: otherObj },
-    },
-  ])("merge(%o)", ({ left, right, expected }) => {
-    test(`returns ${expected}`, () => {
-      expect(mergeTwoObjects(left, right)).toEqual(expected)
-    })
-  })
-})
-
-describe("isCompoundsEquivalent", () => {
-  describe.each<[object, object, boolean]>([
-    [
-      {
-        class: "one",
-        className: "two",
-      },
-      {
-        class: "three",
-        className: "four",
-      },
-      true,
-    ],
-    [
-      {
-        one: 1,
-        two: 2,
-        class: "one",
-        className: "two",
-      },
-      {
-        one: 1,
-        two: 2,
-        class: "three",
-        className: "four",
-      },
-      true,
-    ],
-
-    [
-      {
-        one: 1,
-        two: 2,
-        class: "one",
-        className: "two",
-      },
-      {
-        one: 1,
-        two: 2,
-        three: 3,
-        class: "three",
-        className: "four",
-      },
-      false,
-    ],
-    [
-      {
-        one: 2,
-
-        class: "one",
-        className: "two",
-      },
-      {
-        one: 1,
-
-        class: "three",
-        className: "four",
-      },
-      false,
-    ],
-  ])("isCompoundsEquivalent(%o)", (left, right, expected) => {
-    test(`returns ${expected}`, () => {
-      expect(isCompoundsEquivalent(left, right)).toEqual(expected)
     })
   })
 })
