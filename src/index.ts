@@ -204,10 +204,10 @@ function cvaxify(options?: CvaxConfigOptions): {
           return classes
         }
 
-        for (const variant in config.variants) {
-          const key = toString<keyof typeof variant>(config.defaultVariants[variant])
+        for (const variant of Object.keys(config.variants!) as (keyof typeof config.variants)[]) {
+          const key = toString(config.defaultVariants[variant])
 
-          if ((tmp = config.variants[variant][key])) {
+          if ((tmp = config.variants?.[variant][key])) {
             classes = cx(classes, tmp)
           }
         }
@@ -218,8 +218,12 @@ function cvaxify(options?: CvaxConfigOptions): {
 
         let adding = true
 
-        for (const { class: Class, className, ...compound } of config.compoundVariants) {
+        for (const compound of config.compoundVariants) {
           for (const prop in compound) {
+            if (prop === "class" || prop === "className") {
+              continue
+            }
+
             assertsKeyof<keyof typeof compound>(prop)
 
             if (config.defaultVariants[prop] !== compound[prop]) {
@@ -229,7 +233,7 @@ function cvaxify(options?: CvaxConfigOptions): {
           }
 
           if (adding) {
-            classes = cx(classes, Class, className)
+            classes = cx(classes, compound.class, compound.className)
           }
 
           adding = true
@@ -238,10 +242,10 @@ function cvaxify(options?: CvaxConfigOptions): {
         return classes
       }
 
-      for (const variant in config.variants) {
+      for (const variant of Object.keys(config.variants!) as (keyof typeof config.variants)[]) {
         const value = toString(props[variant as keyof typeof props]) || toString(config.defaultVariants?.[variant])
 
-        if ((tmp = config.variants[variant][value])) {
+        if ((tmp = config.variants?.[variant][value])) {
           classes = cx(classes, tmp)
         }
       }
@@ -252,12 +256,14 @@ function cvaxify(options?: CvaxConfigOptions): {
 
       let adding = true
 
-      for (const { class: Class, className, ...compound } of config.compoundVariants) {
+      for (const compound of config.compoundVariants) {
         for (const prop in compound) {
-          assertsKeyof<keyof typeof props & keyof typeof compound>(prop)
+          if (prop === "class" || prop === "className") {
+            continue
+          }
 
           if (Array.isArray(compound[prop])) {
-            if (!(compound[prop] as any as any[]).includes(props[prop as keyof typeof props])) {
+            if (!(compound[prop] as any[]).includes(props[prop as keyof typeof props])) {
               adding = false
             }
           } else {
@@ -271,7 +277,7 @@ function cvaxify(options?: CvaxConfigOptions): {
         }
 
         if (adding) {
-          classes = cx(classes, Class, className)
+          classes = cx(classes, compound.class, compound.className)
         }
 
         adding = true
@@ -284,8 +290,8 @@ function cvaxify(options?: CvaxConfigOptions): {
   const compose: Compose =
     (...components) =>
     (props) => {
-      const { class: _, className: __, ...rest } = props || {}
-      let tmp: any
+      const { class: clss, className, ...rest } = props ?? {}
+      let tmp: string
       let classes = ""
 
       for (const component of components) {
@@ -294,7 +300,7 @@ function cvaxify(options?: CvaxConfigOptions): {
         }
       }
 
-      return cx(classes, props?.class, props?.className)
+      return cx(classes, clss, className)
     }
 
   return {
@@ -317,14 +323,14 @@ function classic() {
 
   while (i < length) {
     if ((tmp = arguments[i++])) {
-      str += getStr(tmp)
+      str += produceClasses(tmp)
     }
   }
 
   return str.trim()
 }
 
-function getStr(classes: ClassValue) {
+function produceClasses(classes: ClassValue) {
   if (!classes || classes === true || typeof classes === "function") {
     return ""
   }
@@ -343,13 +349,13 @@ function getStr(classes: ClassValue) {
 
       for (const item of classes.flat(Number.MAX_SAFE_INTEGER as 0)) {
         if (item) {
-          str += getStr(item)
+          str += produceClasses(item)
         }
       }
     } else {
       for (const key in classes) {
         if (key === "class" || key === "className") {
-          str += `${getStr(classes[key])} `
+          str += `${produceClasses(classes[key])} `
         } else if (classes[key]) {
           str += `${key} `
         }
@@ -364,19 +370,20 @@ function getStr(classes: ClassValue) {
 
 function assertsKeyof<T>(_arg: unknown): asserts _arg is T {}
 
-function toString<T extends PropertyKey>(value: any): Extract<T, string> {
+function toString(value: any): string {
   if (typeof value === "boolean" || typeof value === "number") {
-    return value.toString() as any
+    return value.toString()
   }
 
   if (!value) {
-    return "" as any
+    return ""
   }
 
   return value.toString()
 }
 
 const { cvax, cx, compose } = cvaxify()
+
 export type {
   Cvax,
   VariantProps,
