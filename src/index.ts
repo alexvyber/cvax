@@ -27,6 +27,11 @@ type Variant<T extends { variants: Record<string, ClassValue> }> = T extends {
   defaultVariants?: {
     [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | "unset" | undefined
   }
+  // incompatible?: {
+  //   [Variant in keyof T["variants"]]?: {
+  //     [IncompatibleVariant in Exclude<keyof T["variants"], Variant>]?: (keyof T["variants"][IncompatibleVariant])[]
+  //   }
+  // }
   compoundVariants?: (T["variants"] extends CvaxVariantShape
     ? (
         | CvaxVariantSchema<T["variants"]>
@@ -42,11 +47,17 @@ type Variant<T extends { variants: Record<string, ClassValue> }> = T extends {
 }
   ? T
   : never
+
 type Config<T> = T extends CvaxVariantShape
   ? {
       base?: ClassValue
       variants?: T
       defaultVariants?: CvaxVariantSchema<T>
+      // incompatible?: {
+      //   [Variant in keyof T["variants"]]?: {
+      //     [IncompatibleVariant in Exclude<keyof T["variants"], Variant>]?: (keyof T["variants"][IncompatibleVariant])[]
+      //   }
+      // }
       compoundVariants?: (T["variants"] extends CvaxVariantShape
         ? (
             | CvaxVariantSchema<T["variants"]>
@@ -71,6 +82,11 @@ function variantIdentity<
     defaultVariants?: {
       [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | "unset" | undefined
     }
+    // incompatible?: {
+    //   [Variant in keyof T["variants"]]?: {
+    //     [IncompatibleVariant in Exclude<keyof T["variants"], Variant>]?: (keyof T["variants"][IncompatibleVariant])[]
+    //   }
+    // }
     compoundVariants?: (T["variants"] extends CvaxVariantShape
       ? (
           | CvaxVariantSchema<T["variants"]>
@@ -98,7 +114,17 @@ type CvaxVariantSchema<V extends CvaxVariantShape> = {
   [Variant in keyof V]?: StringToBoolean<keyof V[Variant]> | undefined | "unset"
 }
 
-type Cvax = <_ extends "iternal use only", V>(
+type Cvax = <
+  _ extends "iternal use only",
+  V,
+  // Incompatible extends {
+  //   [Variant in keyof V]?: {
+  //     [Key in keyof V[Variant]]?: {
+  //       [IncompatibleVariant in Exclude<keyof V, Variant>]?: readonly (keyof V[IncompatibleVariant])[]
+  //     }
+  //   }
+  // },
+>(
   config: V extends CvaxVariantShape
     ? CvaxConfigBase & {
         variants?: V
@@ -114,9 +140,14 @@ type Cvax = <_ extends "iternal use only", V>(
             ) &
               CvaxClassProp
           : CvaxClassProp)[]
+        // incompatible?: Incompatible
         defaultVariants?: CvaxVariantSchema<V>
       }
-    : CvaxConfigBase & { variants?: never; compoundVariants?: never; defaultVariants?: never }
+    : CvaxConfigBase & {
+        variants?: never
+        compoundVariants?: never
+        defaultVariants?: never
+      }
 ) => (props?: V extends CvaxVariantShape ? CvaxVariantSchema<V> & CvaxClassProp : CvaxClassProp) => string
 
 type VariantProps<T> = T extends (props: infer U) => string ? Omit<ExcludeUndefined<U>, keyof ClassProp> : never

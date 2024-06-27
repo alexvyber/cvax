@@ -9,7 +9,9 @@ type Cvax = <_ extends "iternal use only", V extends CvaxVariantShape>(config: {
   compoundVariants?: (V extends CvaxVariantShape
     ? (
         | CvaxVariantSchema<V>
-        | { [Variant in keyof V]?: StringToBoolean<keyof V[Variant]> | StringToBoolean<keyof V[Variant]>[] | undefined }
+        | {
+            [Variant in keyof V]?: StringToBoolean<keyof V[Variant]> | StringToBoolean<keyof V[Variant]>[] | undefined
+          }
       ) &
         CvaxStyles
     : CvaxStyles)[]
@@ -20,7 +22,9 @@ type CvaxVariantSchema<V extends CvaxVariantShape> = {
   [Variant in keyof V]?: StringToBoolean<keyof V[Variant]> | undefined | "unset"
 }
 
-type CvaxVariantShape = { [config: string]: { [variant: string]: UserAuthoredStyles } }
+type CvaxVariantShape = {
+  [config: string]: { [variant: string]: UserAuthoredStyles }
+}
 
 const cvax: Cvax = (_) => {
   return null as any
