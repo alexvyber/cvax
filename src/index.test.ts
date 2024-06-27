@@ -94,6 +94,129 @@ describe("cvax", () => {
       })
     })
 
+    describe("objects", () => {
+      const buttonOnlyBase = cvax({
+        base: {},
+      })
+      const buttonOnlyVariants = cvax({
+        variants: {},
+      })
+      const buttonOnlyCompoundVariants = cvax({
+        // @ts-expect-error
+        compoundVariants: [],
+      })
+      const buttonOnlyDefaultVariants = cvax({
+        // @ts-expect-error
+        defaultVariants: {},
+      })
+
+      const buttonAllEmptyObjects = cvax({
+        base: {},
+        variants: {},
+        compoundVariants: [],
+        defaultVariants: {},
+      })
+
+      const buttonOnlyBaseNull = cvax({
+        base: null,
+      })
+
+      const buttonOnlyVariantsNull = cvax({
+        // @ts-expect-error
+        variants: null,
+      })
+      const buttonOnlyCompoundVariantsNull = cvax({
+        // @ts-expect-error
+        compoundVariants: null,
+      })
+      const buttonOnlyDefaultVariantsNull = cvax({
+        // @ts-expect-error
+        defaultVariants: null,
+      })
+
+      const buttonAllEmptyObjectsNull = cvax({
+        base: null,
+        // @ts-expect-error
+
+        variants: null,
+        // @ts-expect-error
+
+        compoundVariants: null,
+        // @ts-expect-error
+
+        defaultVariants: null,
+      })
+
+      type ButtonWithoutDefaultsWithoutBaseProps =
+        | Cvax.VariantProps<typeof buttonOnlyBase>
+        | Cvax.VariantProps<typeof buttonOnlyVariants>
+        | Cvax.VariantProps<typeof buttonOnlyCompoundVariants>
+        | Cvax.VariantProps<typeof buttonOnlyDefaultVariants>
+        | Cvax.VariantProps<typeof buttonAllEmptyObjects>
+        | Cvax.VariantProps<typeof buttonOnlyBaseNull>
+
+      describe.each<[ButtonWithoutDefaultsWithoutBaseProps, string]>([
+        [
+          // @ts-expect-error
+          undefined,
+          "",
+        ],
+        [{}, ""],
+        [
+          {
+            aCheekyInvalidProp: "lol",
+          } as ButtonWithoutDefaultsWithoutBaseProps,
+          "",
+        ],
+        [{ intent: "secondary" }, ""],
+        [{ size: "small" }, ""],
+        [{ disabled: true }, ""],
+        [
+          {
+            intent: "secondary",
+            size: "unset",
+          },
+          "",
+        ],
+        [{ intent: "secondary", size: undefined }, ""],
+        [{ intent: "danger", size: "medium" }, ""],
+        [{ intent: "warning", size: "large" }, ""],
+        [{ intent: "warning", size: "large", disabled: true }, ""],
+        [{ intent: "primary", m: 0 }, ""],
+        [{ intent: "primary", m: 1 }, ""],
+        [
+          {
+            intent: "primary",
+            m: 1,
+            class: "adhoc-class",
+          },
+          "adhoc-class",
+        ],
+        [
+          {
+            intent: "primary",
+            m: 1,
+            className: "adhoc-classname",
+          },
+          "adhoc-classname",
+        ],
+      ])("button(%o)", (options, expected) => {
+        test(`returns ${expected}`, () => {
+          expect(buttonOnlyBase(options)).toBe(expected)
+          expect(buttonOnlyVariants(options)).toBe(expected)
+          expect(buttonOnlyCompoundVariants(options)).toBe(expected)
+          expect(buttonOnlyDefaultVariants(options)).toBe(expected)
+          expect(buttonAllEmptyObjects(options)).toBe(expected)
+
+          expect(buttonOnlyBaseNull(options)).toBe(expected)
+          expect(buttonOnlyVariantsNull(options)).toBe(expected)
+          expect(buttonOnlyCompoundVariantsNull(options)).toBe(expected)
+          expect(buttonOnlyDefaultVariantsNull(options)).toBe(expected)
+          expect(buttonAllEmptyObjectsNull(options)).toBe(expected)
+        })
+      })
+    })
+
     describe("without defaults", () => {
       const buttonWithoutBaseWithoutDefaultsString = cvax({
         variants: {
