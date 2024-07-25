@@ -16,9 +16,9 @@
   "files": ["dist/"],
   "scripts": {
     "build": "pnpm build:cjs && pnpm build:esm && pnpm build:tsc",
-    "build:cjs": "swc ./src/index.ts --config-file ./.config/.swcrc -o dist/index.js -C module.type=commonjs",
+    "build:cjs": "swc ./src/index.ts --config-file ./.config/.swcrc -o dist/index.js  -C module.type=commonjs",
     "build:esm": "swc ./src/index.ts --config-file ./.config/.swcrc -o dist/index.mjs -C module.type=es6 ",
-    "build:tsc": "tsc --project .config/tsconfig.build.json",
+    "build:tsc": "tsc --project .config/tsconfig.build.json ",
     "dev": "vitest",
     "prepublishOnly": "pnpm build",
     "test": "run-p test:*",
