@@ -5,6 +5,7 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
+    "lib": ["ES2023"],
     "resolveJsonModule": true,
     "target": "ES2021",
     "strict": true,
