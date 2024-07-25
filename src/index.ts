@@ -27,11 +27,6 @@ type Variant<T extends { variants: Record<string, ClassValue> }> = T extends {
   defaultVariants?: {
     [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | "unset" | undefined
   }
-  // incompatible?: {
-  //   [Variant in keyof T["variants"]]?: {
-  //     [IncompatibleVariant in Exclude<keyof T["variants"], Variant>]?: (keyof T["variants"][IncompatibleVariant])[]
-  //   }
-  // }
   compoundVariants?: (T["variants"] extends CvaxVariantShape
     ? (
         | CvaxVariantSchema<T["variants"]>
@@ -44,6 +39,11 @@ type Variant<T extends { variants: Record<string, ClassValue> }> = T extends {
       ) &
         CvaxClassProp
     : CvaxClassProp)[]
+  incompatible?: {
+    [Variant in keyof T["variants"]]?: {
+      [IncompatibleVariant in Exclude<keyof T["variants"], Variant>]?: (keyof T["variants"][IncompatibleVariant])[]
+    }
+  }
 }
   ? T
   : never
@@ -53,11 +53,7 @@ type Config<T> = T extends CvaxVariantShape
       base?: ClassValue
       variants?: T
       defaultVariants?: CvaxVariantSchema<T>
-      // incompatible?: {
-      //   [Variant in keyof T["variants"]]?: {
-      //     [IncompatibleVariant in Exclude<keyof T["variants"], Variant>]?: (keyof T["variants"][IncompatibleVariant])[]
-      //   }
-      // }
+
       compoundVariants?: (T["variants"] extends CvaxVariantShape
         ? (
             | CvaxVariantSchema<T["variants"]>
@@ -70,6 +66,12 @@ type Config<T> = T extends CvaxVariantShape
           ) &
             CvaxClassProp
         : CvaxClassProp)[]
+
+      incompatible?: {
+        [Variant in keyof T["variants"]]?: {
+          [IncompatibleVariant in Exclude<keyof T["variants"], Variant>]?: (keyof T["variants"][IncompatibleVariant])[]
+        }
+      }
     }
   : never
 
@@ -82,11 +84,7 @@ function variantIdentity<
     defaultVariants?: {
       [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | "unset" | undefined
     }
-    // incompatible?: {
-    //   [Variant in keyof T["variants"]]?: {
-    //     [IncompatibleVariant in Exclude<keyof T["variants"], Variant>]?: (keyof T["variants"][IncompatibleVariant])[]
-    //   }
-    // }
+
     compoundVariants?: (T["variants"] extends CvaxVariantShape
       ? (
           | CvaxVariantSchema<T["variants"]>
@@ -99,6 +97,11 @@ function variantIdentity<
         ) &
           CvaxClassProp
       : CvaxClassProp)[]
+    incompatible?: {
+      [Variant in keyof T["variants"]]?: {
+        [IncompatibleVariant in Exclude<keyof T["variants"], Variant>]?: (keyof T["variants"][IncompatibleVariant])[]
+      }
+    }
   },
 >(config: T) {
   return config
@@ -114,20 +117,12 @@ type CvaxVariantSchema<V extends CvaxVariantShape> = {
   [Variant in keyof V]?: StringToBoolean<keyof V[Variant]> | undefined | "unset"
 }
 
-type Cvax = <
-  _ extends "iternal use only",
-  V,
-  // Incompatible extends {
-  //   [Variant in keyof V]?: {
-  //     [Key in keyof V[Variant]]?: {
-  //       [IncompatibleVariant in Exclude<keyof V, Variant>]?: readonly (keyof V[IncompatibleVariant])[]
-  //     }
-  //   }
-  // },
->(
+type Cvax = <_ extends "iternal use only", V>(
   config: V extends CvaxVariantShape
     ? CvaxConfigBase & {
         variants?: V
+
+        // TODO: compoundVariants should type error when trying to compound incompatible variants
         compoundVariants?: (V extends CvaxVariantShape
           ? (
               | CvaxVariantSchema<V>
@@ -140,13 +135,23 @@ type Cvax = <
             ) &
               CvaxClassProp
           : CvaxClassProp)[]
-        // incompatible?: Incompatible
+
+        // TODO: defaultVariants should type error when trying to default incompatible variants
         defaultVariants?: CvaxVariantSchema<V>
+
+        incompatible?: {
+          [Variant in keyof V]?: {
+            [Key in keyof V[Variant]]?: {
+              [IncompatibleVariant in Exclude<keyof V, Variant>]?: readonly (keyof V[IncompatibleVariant])[]
+            }
+          }
+        }
       }
     : CvaxConfigBase & {
         variants?: never
         compoundVariants?: never
         defaultVariants?: never
+        incompatible?: never
       }
 ) => (props?: V extends CvaxVariantShape ? CvaxVariantSchema<V> & CvaxClassProp : CvaxClassProp) => string
 
@@ -195,7 +200,7 @@ function cvaxify(options?: CvaxConfigOptions): {
       return (props?: ClassProp): string => cx(config.base, props?.class, props?.className)
     }
 
-    return (props): string => {
+    return function variants(props): string {
       let classes = cx(config.base)
       let tmp: any
 
@@ -242,6 +247,31 @@ function cvaxify(options?: CvaxConfigOptions): {
         return classes
       }
 
+      // incompatible
+      if (config.incompatible) {
+        for (const key of Object.keys(config.incompatible)) {
+          if (key in props) {
+            // @ts-expect-error: no inference needed
+
+            if (props[key] in config.incompatible[key]) {
+              // @ts-expect-error: kinda imposible to make inference right
+              const incompatibles = config.incompatible[key][props[key]] as object
+
+              for (const incompatible of Object.keys(incompatibles)) {
+                // @ts-expect-error: no inference needed
+                if (incompatible in props && incompatibles[incompatible].includes(props[incompatible])) {
+                  throw new Error(
+                    // @ts-expect-error: no inference needed
+                    `You called variants with incompatible variatns: { ${key}: "${props[key]}"} incompatible with {  ${incompatible}: "${props[incompatible]}"}`
+                  )
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // TODO: rewrite to go through variants from props - not from config
       for (const variant of Object.keys(config.variants!) as (keyof typeof config.variants)[]) {
         const value = toString(props[variant as keyof typeof props]) || toString(config.defaultVariants?.[variant])
 
