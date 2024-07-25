@@ -185,7 +185,7 @@
     "ignore": ["dist", "build", "node_modules"]
   },
   "formatter": {
-    "lineWidth": 120,
+    "lineWidth": 192,
     "indentStyle": "space",
     "indentWidth": 2,
     "ignore": ["dist", "build", "node_modules"],

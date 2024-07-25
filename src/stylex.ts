@@ -8,11 +8,7 @@ type Cvax = <_ extends "iternal use only", V extends CvaxVariantShape>(config: {
   base?: UserAuthoredStyles
   variants?: V
   compoundVariants?: (V extends CvaxVariantShape
-    ? (
-        | CvaxVariantSchema<V>
-        | { [Variant in keyof V]?: StringToBoolean<keyof V[Variant]> | StringToBoolean<keyof V[Variant]>[] | undefined }
-      ) &
-        CvaxStyles
+    ? (CvaxVariantSchema<V> | { [Variant in keyof V]?: StringToBoolean<keyof V[Variant]> | StringToBoolean<keyof V[Variant]>[] | undefined }) & CvaxStyles
     : CvaxStyles)[]
   defaultVariants?: CvaxVariantSchema<V>
 }) => (props?: V extends CvaxVariantShape ? CvaxVariantSchema<V> & CvaxStyles : CvaxStyles) => Readonly<{

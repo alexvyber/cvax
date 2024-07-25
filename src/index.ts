@@ -3,21 +3,9 @@ import type { UnionToIntersection } from "@alexvyber/turbo-helpers-types"
 type ClassValue = ClassArray | ClassDictionary | string | number | null | boolean | undefined
 type ClassArray = ClassValue[]
 
-type ClassDictionary = Record<
-  string,
-  | ClassValue[]
-  | string
-  | number
-  | null
-  | boolean
-  | undefined
-  | Record<string, ClassValue[] | string | number | null | boolean | undefined>
->
+type ClassDictionary = Record<string, ClassValue[] | string | number | null | boolean | undefined | Record<string, ClassValue[] | string | number | null | boolean | undefined>>
 
-type ClassProp =
-  | { class: ClassValue; className?: never }
-  | { class?: never; className: ClassValue }
-  | { class?: never; className?: never }
+type ClassProp = { class: ClassValue; className?: never } | { class?: never; className: ClassValue } | { class?: never; className?: never }
 
 type ExcludeUndefined<T> = T extends undefined ? never : T
 type StringToBoolean<T> = T extends "true" | "false" ? boolean : T
@@ -27,18 +15,17 @@ type Variant<T extends { variants: Record<string, ClassValue> }> = T extends {
   defaultVariants?: {
     [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | "unset" | undefined
   }
+
   compoundVariants?: (T["variants"] extends CvaxVariantShape
     ? (
         | CvaxVariantSchema<T["variants"]>
         | {
-            [Variant in keyof T["variants"]]?:
-              | StringToBoolean<keyof T["variants"][Variant]>
-              | StringToBoolean<keyof T["variants"][Variant]>[]
-              | undefined
+            [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | StringToBoolean<keyof T["variants"][Variant]>[] | undefined
           }
       ) &
         CvaxClassProp
     : CvaxClassProp)[]
+
   incompatible?: {
     [Variant in keyof T["variants"]]?: {
       [IncompatibleVariant in Exclude<keyof T["variants"], Variant>]?: (keyof T["variants"][IncompatibleVariant])[]
@@ -58,10 +45,7 @@ type Config<T> = T extends CvaxVariantShape
         ? (
             | CvaxVariantSchema<T["variants"]>
             | {
-                [Variant in keyof T["variants"]]?:
-                  | StringToBoolean<keyof T["variants"][Variant]>
-                  | StringToBoolean<keyof T["variants"][Variant]>[]
-                  | undefined
+                [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | StringToBoolean<keyof T["variants"][Variant]>[] | undefined
               }
           ) &
             CvaxClassProp
@@ -89,14 +73,12 @@ function variantIdentity<
       ? (
           | CvaxVariantSchema<T["variants"]>
           | {
-              [Variant in keyof T["variants"]]?:
-                | StringToBoolean<keyof T["variants"][Variant]>
-                | StringToBoolean<keyof T["variants"][Variant]>[]
-                | undefined
+              [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | StringToBoolean<keyof T["variants"][Variant]>[] | undefined
             }
         ) &
           CvaxClassProp
       : CvaxClassProp)[]
+      
     incompatible?: {
       [Variant in keyof T["variants"]]?: {
         [IncompatibleVariant in Exclude<keyof T["variants"], Variant>]?: (keyof T["variants"][IncompatibleVariant])[]
@@ -127,10 +109,7 @@ type Cvax = <_ extends "iternal use only", V>(
           ? (
               | CvaxVariantSchema<V>
               | {
-                  [Variant in keyof V]?:
-                    | StringToBoolean<keyof V[Variant]>
-                    | StringToBoolean<keyof V[Variant]>[]
-                    | undefined
+                  [Variant in keyof V]?: StringToBoolean<keyof V[Variant]> | StringToBoolean<keyof V[Variant]>[] | undefined
                 }
             ) &
               CvaxClassProp
@@ -159,11 +138,7 @@ type VariantProps<T> = T extends (props: infer U) => string ? Omit<ExcludeUndefi
 
 // compose
 // ---------------------------------------------
-type Compose = <T extends ReturnType<Cvax>[]>(
-  ...components: [...T]
-) => (
-  props?: (UnionToIntersection<{ [K in keyof T]: VariantProps<T[K]> }[number]> | undefined) & CvaxClassProp
-) => string
+type Compose = <T extends ReturnType<Cvax>[]>(...components: [...T]) => (props?: (UnionToIntersection<{ [K in keyof T]: VariantProps<T[K]> }[number]> | undefined) & CvaxClassProp) => string
 
 // defineConfig
 // ---------------------------------------------
@@ -414,15 +389,5 @@ function toString(value: any): string {
 
 const { cvax, cx, compose } = cvaxify()
 
-export type {
-  Cvax,
-  VariantProps,
-  CvaxVariantShape,
-  CvaxVariantSchema,
-  ClassValue,
-  Variant,
-  ClassProp,
-  Config,
-  StringToBoolean,
-}
+export type { Cvax, VariantProps, CvaxVariantShape, CvaxVariantSchema, ClassValue, Variant, ClassProp, Config, StringToBoolean }
 export { cvax, cx, compose, cvaxify, variantIdentity }

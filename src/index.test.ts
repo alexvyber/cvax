@@ -224,11 +224,7 @@ describe("cvax", () => {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             true: "button--disabled opacity-050 cursor-not-allowed",
@@ -268,11 +264,7 @@ describe("cvax", () => {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             true: "button--disabled opacity-050 cursor-not-allowed",
@@ -312,11 +304,7 @@ describe("cvax", () => {
             primary: ["button--primary", "bg-blue-500", "text-white", "border-transparent", "hover:bg-blue-600"],
             secondary: ["button--secondary", "bg-white", "text-gray-800", "border-gray-400", "hover:bg-gray-100"],
             warning: ["button--warning", "bg-yellow-500", "border-transparent", "hover:bg-yellow-600"],
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             true: ["button--disabled", "opacity-050", "cursor-not-allowed"],
@@ -356,11 +344,7 @@ describe("cvax", () => {
             primary: ["button--primary", "bg-blue-500", "text-white", "border-transparent", "hover:bg-blue-600"],
             secondary: ["button--secondary", "bg-white", "text-gray-800", "border-gray-400", "hover:bg-gray-100"],
             warning: ["button--warning", "bg-yellow-500", "border-transparent", "hover:bg-yellow-600"],
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             true: ["button--disabled", "opacity-050", "cursor-not-allowed"],
@@ -424,30 +408,15 @@ describe("cvax", () => {
           },
           "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
         ],
-        [
-          { intent: "secondary", size: undefined },
-          "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-        ],
-        [
-          { intent: "danger", size: "medium" },
-          "button--danger bg-red-500 text-white border-transparent hover:bg-red-600 button--medium text-base py-2 px-4",
-        ],
-        [
-          { intent: "warning", size: "large" },
-          "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600 button--large text-lg py-2.5 px-4",
-        ],
+        [{ intent: "secondary", size: undefined }, "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100"],
+        [{ intent: "danger", size: "medium" }, "button--danger bg-red-500 text-white border-transparent hover:bg-red-600 button--medium text-base py-2 px-4"],
+        [{ intent: "warning", size: "large" }, "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600 button--large text-lg py-2.5 px-4"],
         [
           { intent: "warning", size: "large", disabled: true },
           "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600 button--disabled opacity-050 cursor-not-allowed button--large text-lg py-2.5 px-4 button--warning-disabled text-black",
         ],
-        [
-          { intent: "primary", m: 0 },
-          "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 m-0",
-        ],
-        [
-          { intent: "primary", m: 1 },
-          "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 m-1",
-        ],
+        [{ intent: "primary", m: 0 }, "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 m-0"],
+        [{ intent: "primary", m: 1 }, "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 m-1"],
         // !@TODO Add type "extractor" including class prop
         [
           {
@@ -484,11 +453,7 @@ describe("cvax", () => {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             true: "button--disabled opacity-050 cursor-not-allowed",
@@ -544,11 +509,7 @@ describe("cvax", () => {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             true: "button--disabled opacity-050 cursor-not-allowed",
@@ -604,11 +565,7 @@ describe("cvax", () => {
             primary: ["button--primary", "bg-blue-500", "text-white", "border-transparent", "hover:bg-blue-600"],
             secondary: ["button--secondary", "bg-white", "text-gray-800", "border-gray-400", "hover:bg-gray-100"],
             warning: ["button--warning", "bg-yellow-500", "border-transparent", "hover:bg-yellow-600"],
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             true: ["button--disabled", "opacity-050", "cursor-not-allowed"],
@@ -664,11 +621,7 @@ describe("cvax", () => {
             primary: ["button--primary", "bg-blue-500", "text-white", "border-transparent", "hover:bg-blue-600"],
             secondary: ["button--secondary", "bg-white", "text-gray-800", "border-gray-400", "hover:bg-gray-100"],
             warning: ["button--warning", "bg-yellow-500", "border-transparent", "hover:bg-yellow-600"],
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             true: ["button--disabled", "opacity-050", "cursor-not-allowed"],
@@ -821,11 +774,7 @@ describe("cvax", () => {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             true: "button--disabled opacity-050 cursor-not-allowed",
@@ -871,11 +820,7 @@ describe("cvax", () => {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             true: "button--disabled opacity-050 cursor-not-allowed",
@@ -921,11 +866,7 @@ describe("cvax", () => {
             primary: ["button--primary", "bg-blue-500", "text-white", "border-transparent", "hover:bg-blue-600"],
             secondary: ["button--secondary", "bg-white", "text-gray-800", "border-gray-400", "hover:bg-gray-100"],
             warning: ["button--warning", "bg-yellow-500", "border-transparent", "hover:bg-yellow-600"],
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             true: ["button--disabled", "opacity-050", "cursor-not-allowed"],
@@ -971,11 +912,7 @@ describe("cvax", () => {
             primary: ["button--primary", "bg-blue-500", "text-white", "border-transparent", "hover:bg-blue-600"],
             secondary: ["button--secondary", "bg-white", "text-gray-800", "border-gray-400", "hover:bg-gray-100"],
             warning: ["button--warning", "bg-yellow-500", "border-transparent", "hover:bg-yellow-600"],
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             true: ["button--disabled", "opacity-050", "cursor-not-allowed"],
@@ -1031,22 +968,13 @@ describe("cvax", () => {
           },
           "button font-semibold border rounded",
         ],
-        [
-          { intent: "secondary" },
-          "button font-semibold border rounded button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-        ],
+        [{ intent: "secondary" }, "button font-semibold border rounded button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100"],
 
         [{ size: "small" }, "button font-semibold border rounded button--small text-sm py-1 px-2"],
         [{ disabled: false }, "button font-semibold border rounded button--enabled cursor-pointer"],
         [{ disabled: true }, "button font-semibold border rounded button--disabled opacity-050 cursor-not-allowed"],
-        [
-          { intent: "secondary", size: "unset" },
-          "button font-semibold border rounded button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-        ],
-        [
-          { intent: "secondary", size: undefined },
-          "button font-semibold border rounded button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-        ],
+        [{ intent: "secondary", size: "unset" }, "button font-semibold border rounded button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100"],
+        [{ intent: "secondary", size: undefined }, "button font-semibold border rounded button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100"],
         [
           { intent: "danger", size: "medium" },
           "button font-semibold border rounded button--danger bg-red-500 text-white border-transparent hover:bg-red-600 button--medium text-base py-2 px-4 button--warning-danger !border-red-500 button--warning-danger-medium",
@@ -1100,11 +1028,7 @@ describe("cvax", () => {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             true: "button--disabled opacity-050 cursor-not-allowed",
@@ -1155,11 +1079,7 @@ describe("cvax", () => {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             true: "button--disabled opacity-050 cursor-not-allowed",
@@ -1210,11 +1130,7 @@ describe("cvax", () => {
             primary: ["button--primary", "bg-blue-500", "text-white", "border-transparent", "hover:bg-blue-600"],
             secondary: ["button--secondary", "bg-white", "text-gray-800", "border-gray-400", "hover:bg-gray-100"],
             warning: ["button--warning", "bg-yellow-500", "border-transparent", "hover:bg-yellow-600"],
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             true: ["button--disabled", "opacity-050", "cursor-not-allowed"],
@@ -1265,11 +1181,7 @@ describe("cvax", () => {
             primary: ["button--primary", "bg-blue-500", "text-white", "border-transparent", "hover:bg-blue-600"],
             secondary: ["button--secondary", "bg-white", "text-gray-800", "border-gray-400", "hover:bg-gray-100"],
             warning: ["button--warning", "bg-yellow-500", "border-transparent", "hover:bg-yellow-600"],
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             true: ["button--disabled", "opacity-050", "cursor-not-allowed"],
@@ -1560,14 +1472,7 @@ it("supports heterogenous arguments", () => {
 })
 
 it("should be trimmed", () => {
-  expect(
-    cx(
-      "",
-      "                   two             three            ",
-      { four: true, "                five              ": true },
-      ""
-    ).replace(/\s+/g, " ")
-  ).toBe("two three four five")
+  expect(cx("", "                   two             three            ", { four: true, "                five              ": true }, "").replace(/\s+/g, " ")).toBe("two three four five")
 })
 
 it("returns an empty string for an empty configuration", () => {
@@ -1671,13 +1576,7 @@ describe("cx", () => {
     [null, ""],
     [undefined, ""],
     [["foo", null, "bar", undefined, "baz"], "foo bar baz"],
-    [
-      [
-        "foo",
-        [null, ["bar"], [undefined, ["baz", "qux", "quux", "quuz", [[[[[[[[["corge", "grault"]]]]], "garply"]]]]]]],
-      ],
-      "foo bar baz qux quux quuz corge grault garply",
-    ],
+    [["foo", [null, ["bar"], [undefined, ["baz", "qux", "quux", "quuz", [[[[[[[[["corge", "grault"]]]]], "garply"]]]]]]]], "foo bar baz qux quux quuz corge grault garply"],
     [["foo", [1 && "bar", { baz: false, bat: null }, ["hello", ["world"]]], "cya"], "foo bar hello world cya"],
   ])("cx(%o)", (options, expected) => {
     it(`returns ${expected}`, () => {
@@ -1763,14 +1662,7 @@ describe("cx", () => {
     ["foo", "foo"],
     [["foo", undefined, "bar", undefined, "baz"], "foo bar baz"],
     [
-      [
-        "foo",
-        [
-          undefined,
-          ["bar"],
-          [undefined, ["baz", "qux", "quux", "quuz", [[[[[[[[["corge", "grault"]]]]], "garply"]]]]]],
-        ],
-      ],
+      ["foo", [undefined, ["bar"], [undefined, ["baz", "qux", "quux", "quuz", [[[[[[[[["corge", "grault"]]]]], "garply"]]]]]]]],
       "foo bar baz qux quux quuz corge grault garply",
       [["foo", [1 && "bar", { baz: false, bat: null }, ["hello", ["world"]]], "cya"], "foo bar hello world cya"],
     ],
@@ -1858,11 +1750,7 @@ describe("cvax", () => {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             unset: null,
@@ -1906,11 +1794,7 @@ describe("cvax", () => {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             unset: null,
@@ -1955,11 +1839,7 @@ describe("cvax", () => {
             primary: ["button--primary", "bg-blue-500", "text-white", "border-transparent", "hover:bg-blue-600"],
             secondary: ["button--secondary", "bg-white", "text-gray-800", "border-gray-400", "hover:bg-gray-100"],
             warning: ["button--warning", "bg-yellow-500", "border-transparent", "hover:bg-yellow-600"],
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             unset: null,
@@ -2003,11 +1883,7 @@ describe("cvax", () => {
             primary: ["button--primary", "bg-blue-500", "text-white", "border-transparent", "hover:bg-blue-600"],
             secondary: ["button--secondary", "bg-white", "text-gray-800", "border-gray-400", "hover:bg-gray-100"],
             warning: ["button--warning", "bg-yellow-500", "border-transparent", "hover:bg-yellow-600"],
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             unset: null,
@@ -2074,30 +1950,15 @@ describe("cvax", () => {
           },
           "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
         ],
-        [
-          { intent: "secondary", size: undefined },
-          "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-        ],
-        [
-          { intent: "danger", size: "medium" },
-          "button--danger bg-red-500 text-white border-transparent hover:bg-red-600 button--medium text-base py-2 px-4",
-        ],
-        [
-          { intent: "warning", size: "large" },
-          "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600 button--large text-lg py-2.5 px-4",
-        ],
+        [{ intent: "secondary", size: undefined }, "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100"],
+        [{ intent: "danger", size: "medium" }, "button--danger bg-red-500 text-white border-transparent hover:bg-red-600 button--medium text-base py-2 px-4"],
+        [{ intent: "warning", size: "large" }, "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600 button--large text-lg py-2.5 px-4"],
         [
           { intent: "warning", size: "large", disabled: true },
           "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600 button--disabled opacity-050 cursor-not-allowed button--large text-lg py-2.5 px-4 button--warning-disabled text-black",
         ],
-        [
-          { intent: "primary", m: 0 },
-          "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 m-0",
-        ],
-        [
-          { intent: "primary", m: 1 },
-          "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 m-1",
-        ],
+        [{ intent: "primary", m: 0 }, "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 m-0"],
+        [{ intent: "primary", m: 1 }, "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 m-1"],
         // !@TODO Add type "extractor" including class prop
         [
           {
@@ -2135,11 +1996,7 @@ describe("cvax", () => {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             unset: null,
@@ -2199,11 +2056,7 @@ describe("cvax", () => {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             unset: null,
@@ -2264,11 +2117,7 @@ describe("cvax", () => {
             primary: ["button--primary", "bg-blue-500", "text-white", "border-transparent", "hover:bg-blue-600"],
             secondary: ["button--secondary", "bg-white", "text-gray-800", "border-gray-400", "hover:bg-gray-100"],
             warning: ["button--warning", "bg-yellow-500", "border-transparent", "hover:bg-yellow-600"],
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             unset: null,
@@ -2328,11 +2177,7 @@ describe("cvax", () => {
             primary: ["button--primary", "bg-blue-500", "text-white", "border-transparent", "hover:bg-blue-600"],
             secondary: ["button--secondary", "bg-white", "text-gray-800", "border-gray-400", "hover:bg-gray-100"],
             warning: ["button--warning", "bg-yellow-500", "border-transparent", "hover:bg-yellow-600"],
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             unset: null,
@@ -2489,11 +2334,7 @@ describe("cvax", () => {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             unset: null,
@@ -2542,11 +2383,7 @@ describe("cvax", () => {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             unset: null,
@@ -2596,11 +2433,7 @@ describe("cvax", () => {
             primary: ["button--primary", "bg-blue-500", "text-white", "border-transparent", "hover:bg-blue-600"],
             secondary: ["button--secondary", "bg-white", "text-gray-800", "border-gray-400", "hover:bg-gray-100"],
             warning: ["button--warning", "bg-yellow-500", "border-transparent", "hover:bg-yellow-600"],
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             unset: null,
@@ -2649,11 +2482,7 @@ describe("cvax", () => {
             primary: ["button--primary", "bg-blue-500", "text-white", "border-transparent", "hover:bg-blue-600"],
             secondary: ["button--secondary", "bg-white", "text-gray-800", "border-gray-400", "hover:bg-gray-100"],
             warning: ["button--warning", "bg-yellow-500", "border-transparent", "hover:bg-yellow-600"],
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             unset: null,
@@ -2711,22 +2540,13 @@ describe("cvax", () => {
           },
           "button font-semibold border rounded",
         ],
-        [
-          { intent: "secondary" },
-          "button font-semibold border rounded button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-        ],
+        [{ intent: "secondary" }, "button font-semibold border rounded button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100"],
 
         [{ size: "small" }, "button font-semibold border rounded button--small text-sm py-1 px-2"],
         [{ disabled: false }, "button font-semibold border rounded button--enabled cursor-pointer"],
         [{ disabled: true }, "button font-semibold border rounded button--disabled opacity-050 cursor-not-allowed"],
-        [
-          { intent: "secondary", size: "unset" },
-          "button font-semibold border rounded button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-        ],
-        [
-          { intent: "secondary", size: undefined },
-          "button font-semibold border rounded button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
-        ],
+        [{ intent: "secondary", size: "unset" }, "button font-semibold border rounded button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100"],
+        [{ intent: "secondary", size: undefined }, "button font-semibold border rounded button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100"],
         [
           { intent: "danger", size: "medium" },
           "button font-semibold border rounded button--danger bg-red-500 text-white border-transparent hover:bg-red-600 button--medium text-base py-2 px-4 button--warning-danger !border-red-500 button--warning-danger-medium",
@@ -2781,11 +2601,7 @@ describe("cvax", () => {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             unset: null,
@@ -2839,11 +2655,7 @@ describe("cvax", () => {
             primary: "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600",
             secondary: "button--secondary bg-white text-gray-800 border-gray-400 hover:bg-gray-100",
             warning: "button--warning bg-yellow-500 border-transparent hover:bg-yellow-600",
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             unset: null,
@@ -2898,11 +2710,7 @@ describe("cvax", () => {
             primary: ["button--primary", "bg-blue-500", "text-white", "border-transparent", "hover:bg-blue-600"],
             secondary: ["button--secondary", "bg-white", "text-gray-800", "border-gray-400", "hover:bg-gray-100"],
             warning: ["button--warning", "bg-yellow-500", "border-transparent", "hover:bg-yellow-600"],
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             unset: null,
@@ -2956,11 +2764,7 @@ describe("cvax", () => {
             primary: ["button--primary", "bg-blue-500", "text-white", "border-transparent", "hover:bg-blue-600"],
             secondary: ["button--secondary", "bg-white", "text-gray-800", "border-gray-400", "hover:bg-gray-100"],
             warning: ["button--warning", "bg-yellow-500", "border-transparent", "hover:bg-yellow-600"],
-            danger: [
-              "button--danger",
-              [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]],
-              "hover:bg-red-600",
-            ],
+            danger: ["button--danger", [1 && "bg-red-500", { baz: false, bat: null }, ["text-white", ["border-transparent"]]], "hover:bg-red-600"],
           },
           disabled: {
             unset: null,
