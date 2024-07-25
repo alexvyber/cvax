@@ -1,6 +1,6 @@
 {
   "name": "cvax",
-  "version": "0.6.10",
+  "version": "0.7.0",
   "description": "Customized CVA. fork 'class-variance-authority'",
   "repository": "https://github.com/alexvyber/cvax.git",
   "exports": {
@@ -15,7 +15,7 @@
   "types": "src/index.ts",
   "files": ["dist/"],
   "scripts": {
-    "build": "run-p build:**",
+    "build": "pnpm build:cjs && pnpm build:esm && pnpm build:tsc",
     "build:cjs": "swc ./src/index.ts --config-file ./.config/.swcrc -o dist/index.js -C module.type=commonjs",
     "build:esm": "swc ./src/index.ts --config-file ./.config/.swcrc -o dist/index.mjs -C module.type=es6 ",
     "build:tsc": "tsc --project .config/tsconfig.build.json",
@@ -26,10 +26,17 @@
     "tsc": "tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@alexvyber/turbo-helpers-types": "0.0.0-dev-4",
     "@swc/cli": "0.4.0",
     "@swc/core": "1.7.1"
   },
+  "devDependencies": {
+    "@stylexjs/stylex": "^0.7.5",
+    "@types/node": "^20.14.12",
+    "tsx": "^4.16.2",
+    "typescript": "5.5.4",
+    "vitest": "^2.0.4"
+  },
+  "packageManager": "pnpm@8.15.1+sha1.8adba2d20330c02d3856e18c4eb3819d1d3ca6aa",
   "publishConfig": {
     "exports": {
       "import": "./dist/index.mjs",
@@ -39,13 +46,5 @@
     "main": "dist/index.js",
     "module": "dist/index.mjs",
     "types": "dist/index.d.ts"
-  },
-  "packageManager": "pnpm@8.15.1+sha1.8adba2d20330c02d3856e18c4eb3819d1d3ca6aa",
-  "devDependencies": {
-    "@stylexjs/stylex": "^0.7.5",
-    "@types/node": "link:/Users/alexs/REPOS/DefinitelyTyped/types/node",
-    "tsx": "^4.16.2",
-    "typescript": "5.5.4",
-    "vitest": "^2.0.4"
   }
 }

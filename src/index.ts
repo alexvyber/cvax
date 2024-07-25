@@ -1,4 +1,4 @@
-import type { UnionToIntersection } from "@alexvyber/turbo-helpers-types"
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never
 
 type ClassValue = ClassArray | ClassDictionary | string | number | null | boolean | undefined
 type ClassArray = ClassValue[]
@@ -78,7 +78,7 @@ function variantIdentity<
         ) &
           CvaxClassProp
       : CvaxClassProp)[]
-      
+
     incompatible?: {
       [Variant in keyof T["variants"]]?: {
         [IncompatibleVariant in Exclude<keyof T["variants"], Variant>]?: (keyof T["variants"][IncompatibleVariant])[]
