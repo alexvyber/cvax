@@ -1,12 +1,12 @@
 import type * as Cvax from "./"
 import { compose, cvax, cvaxify } from "./"
-import { describe, it as test, expect, expectTypeOf } from "vitest"
+import { describe, it, expect, expectTypeOf } from "vitest"
 import { cx } from "./"
 
 describe("cvax", () => {
   describe("without base", () => {
     describe("without anything", () => {
-      test("empty", () => {
+      it("empty", () => {
         // @ts-expect-error
         const example = cvax()
         expect(example()).toBe("")
@@ -34,7 +34,7 @@ describe("cvax", () => {
         ).toBe("adhoc-class adhoc-className")
       })
 
-      test("undefined", () => {
+      it("undefined", () => {
         // @ts-expect-error
         const example = cvax(undefined)
         expect(example()).toBe("")
@@ -63,7 +63,7 @@ describe("cvax", () => {
         ).toBe("adhoc-class adhoc-className")
       })
 
-      test("null", () => {
+      it("null", () => {
         const example = cvax(
           // @ts-expect-error
           null
@@ -201,7 +201,7 @@ describe("cvax", () => {
           "adhoc-classname",
         ],
       ])("button(%o)", (options, expected) => {
-        test(`returns ${expected}`, () => {
+        it(`returns ${expected}`, () => {
           expect(buttonOnlyBase(options)).toBe(expected)
           expect(buttonOnlyVariants(options)).toBe(expected)
           expect(buttonOnlyCompoundVariants(options)).toBe(expected)
@@ -467,7 +467,7 @@ describe("cvax", () => {
         ],
         // typings needed
       ])("button(%o)", (options, expected) => {
-        test(`returns ${expected}`, () => {
+        it(`returns ${expected}`, () => {
           expect(buttonWithoutBaseWithoutDefaultsString(options)).toBe(expected)
           expect(buttonWithoutBaseWithoutDefaultsWithClassNameString(options)).toBe(expected)
           expect(buttonWithoutBaseWithoutDefaultsArray(options)).toBe(expected)
@@ -802,7 +802,7 @@ describe("cvax", () => {
           "button font-semibold border rounded button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 button--enabled cursor-pointer button--medium text-base py-2 px-4 m-1 button--primary-medium uppercase adhoc-classname",
         ],
       ])("button(%o)", (options, expected) => {
-        test(`returns ${expected}`, () => {
+        it(`returns ${expected}`, () => {
           expect(buttonWithoutBaseWithDefaultsString(options)).toBe(expected)
           expect(buttonWithoutBaseWithDefaultsWithClassNameString(options)).toBe(expected)
           expect(buttonWithoutBaseWithDefaultsArray(options)).toBe(expected)
@@ -1083,7 +1083,7 @@ describe("cvax", () => {
           "button font-semibold border rounded button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 adhoc-className",
         ],
       ])("button(%o)", (options, expected) => {
-        test(`returns ${expected}`, () => {
+        it(`returns ${expected}`, () => {
           expect(buttonWithBaseWithoutDefaultsString(options)).toBe(expected)
           expect(buttonWithBaseWithoutDefaultsWithClassNameString(options)).toBe(expected)
           expect(buttonWithBaseWithoutDefaultsArray(options)).toBe(expected)
@@ -1405,7 +1405,7 @@ describe("cvax", () => {
           "button font-semibold border rounded button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 button--enabled cursor-pointer button--medium text-base py-2 px-4 button--primary-medium uppercase adhoc-classname",
         ],
       ])("button(%o)", (options, expected) => {
-        test(`returns ${expected}`, () => {
+        it(`returns ${expected}`, () => {
           expect(buttonWithBaseWithDefaultsString(options)).toBe(expected)
           expect(buttonWithBaseWithDefaultsWithClassNameString(options)).toBe(expected)
           expect(buttonWithBaseWithDefaultsArray(options)).toBe(expected)
@@ -1456,7 +1456,7 @@ describe("cvax", () => {
       [{ margin: 2, padding: 4 }, "box box-border m-2 p-4 card border-solid border-slate-300 rounded"],
       [{ shadow: "md" }, "box box-border m-0 p-0 card border-solid border-slate-300 rounded drop-shadow-md"],
     ])("card(%o)", (options, expected) => {
-      test(`returns ${expected}`, () => {
+      it(`returns ${expected}`, () => {
         expect(card(options)).toBe(expected)
       })
     })
@@ -1464,7 +1464,7 @@ describe("cvax", () => {
 })
 
 describe("compose", () => {
-  test("should merge into a single component", () => {
+  it("should merge into a single component", () => {
     const box = cvax({
       variants: {
         shadow: {
@@ -1530,7 +1530,7 @@ describe("compose", () => {
 
 // Clean up stuff
 // Write tests for class and className cases
-test("keeps object keys with truthy values", () => {
+it("keeps object keys with truthy values", () => {
   expect(
     cx({
       one: true,
@@ -1543,15 +1543,15 @@ test("keeps object keys with truthy values", () => {
   ).toBe("one six")
 })
 
-test("joins arrays of class names and ignore falsy values", () => {
+it("joins arrays of class names and ignore falsy values", () => {
   expect(cx("one", 0, null, undefined, true, 1, "seven")).toBe("one 1 seven")
 })
 
-test("handles arrays that include falsy and true values", () => {
+it("handles arrays that include falsy and true values", () => {
   expect(cx(["one", 0, null, undefined, false, true, "seven"])).toBe("one seven")
 })
 
-test("supports heterogenous arguments", () => {
+it("supports heterogenous arguments", () => {
   expect(
     cx({ one: true }, "two", 0, false, "five", [[{ six: true }]], {
       className: [{ seven: false }, [[{ eight: true }]]],
@@ -1559,7 +1559,7 @@ test("supports heterogenous arguments", () => {
   ).toBe("one two five six eight")
 })
 
-test("should be trimmed", () => {
+it("should be trimmed", () => {
   expect(
     cx(
       "",
@@ -1570,44 +1570,44 @@ test("should be trimmed", () => {
   ).toBe("two three four five")
 })
 
-test("returns an empty string for an empty configuration", () => {
+it("returns an empty string for an empty configuration", () => {
   expect(cx({})).toBe("")
 })
 
-test("supports an array of class names", () => {
+it("supports an array of class names", () => {
   expect(cx(["one", "two"])).toBe("one two")
 })
 
-test("joins array arguments with string arguments", () => {
+it("joins array arguments with string arguments", () => {
   expect(cx(["one", "two"], "three")).toBe("one two three")
   expect(cx("three", ["one", "two"])).toBe("three one two")
 })
 
-test("handles multiple array arguments", () => {
+it("handles multiple array arguments", () => {
   expect(cx(["one", "two"], ["three", "four"])).toBe("one two three four")
 })
 
-test("handles arrays that include arrays", () => {
+it("handles arrays that include arrays", () => {
   expect(cx(["one", ["two", "three"]])).toBe("one two three")
 })
 
-test("handles arrays that include objects", () => {
+it("handles arrays that include objects", () => {
   expect(cx(["one", { two: true, three: false }])).toBe("one two")
 })
 
-test("handles deep array recursion", () => {
+it("handles deep array recursion", () => {
   expect(cx(["one", ["two", ["three", { four: true }]]])).toBe("one two three four")
 })
 
-test("handles arrays that are empty", () => {
+it("handles arrays that are empty", () => {
   expect(cx("one", [])).toBe("one")
 })
 
-test("handles nested arrays with nested arrays", () => {
+it("handles nested arrays with nested arrays", () => {
   expect(cx([[[[[[[[], [], [[], [[]]], [[[[[[[[[[[["one"]]]]]]]]]]]]]]]]]]])).toBe("one")
 })
 
-test("handles nested arrays that have empty nested arrays", () => {
+it("handles nested arrays that have empty nested arrays", () => {
   expect(
     cx([
       "one",
@@ -1622,7 +1622,7 @@ test("handles nested arrays that have empty nested arrays", () => {
   ).toBe("one three")
 })
 
-test("handles all types of truthy and falsy property values as expected", () => {
+it("handles all types of truthy and falsy property values as expected", () => {
   // @ts-expect-error
   const res = cx({
     // These ARE causing TypeScript errors:
@@ -1650,7 +1650,7 @@ test("handles all types of truthy and falsy property values as expected", () => 
   expect(res).toBe("function emptyObject nonEmptyString whitespace nonEmptyObject emptyList nonEmptyList greaterZero")
 })
 
-test("handles all types of truthy and falsy property values as expected", () => {
+it("handles all types of truthy and falsy property values as expected", () => {
   const className = {
     "one two three": true,
     "four five": false,
@@ -1680,27 +1680,27 @@ describe("cx", () => {
     ],
     [["foo", [1 && "bar", { baz: false, bat: null }, ["hello", ["world"]]], "cya"], "foo bar hello world cya"],
   ])("cx(%o)", (options, expected) => {
-    test(`returns ${expected}`, () => {
+    it(`returns ${expected}`, () => {
       expect(cx(options)).toBe(expected)
     })
   })
 })
 
-test("strings", () => {
+it("strings", () => {
   expect(cx("")).toBe("")
   expect(cx("foo")).toBe("foo")
   expect(cx("foo")).toBe("foo")
   expect(cx(false)).toBe("")
 })
 
-test("strings (variadic)", () => {
+it("strings (variadic)", () => {
   expect(cx("")).toBe("")
   expect(cx("foo", "bar")).toBe("foo bar")
   expect(cx("foo", false, "baz")).toBe("foo baz")
   expect(cx(false, "bar", "baz", "")).toBe("bar baz")
 })
 
-test("objects", () => {
+it("objects", () => {
   expect(cx({}), "")
   expect(cx({ foo: true }), "foo")
   expect(cx({ foo: true, bar: false }), "foo")
@@ -1709,41 +1709,41 @@ test("objects", () => {
   expect(cx({ "-foo": 1, "--bar": 1 }), "-foo --bar")
 })
 
-test("objects (variadic)", () => {
+it("objects (variadic)", () => {
   expect(cx({}, {})).toBe("")
   expect(cx({ foo: 1 }, { bar: 2 })).toBe("foo bar")
   expect(cx({ foo: 1 }, null, { baz: 1, bat: 0 })).toBe("foo baz")
   expect(cx({ foo: 1 }, {}, {}, { bar: "a" }, { baz: null, bat: Number.POSITIVE_INFINITY })).toBe("foo bar bat")
 })
 
-test("arrays", () => {
+it("arrays", () => {
   expect(cx([])).toBe("")
   expect(cx(["foo"])).toBe("foo")
   expect(cx(["foo", "bar"])).toBe("foo bar")
   expect(cx(["foo", 0 && "bar", 1 && "baz"])).toBe("foo baz")
 })
 
-test("arrays (nested)", () => {
+it("arrays (nested)", () => {
   expect(cx([[[]]])).toBe("")
   expect(cx([[["foo"]]])).toBe("foo")
   expect(cx([true, [["foo"]]])).toBe("foo")
   expect(cx(["foo", ["bar", ["", [["baz"]]]]])).toBe("foo bar baz")
 })
 
-test("arrays (variadic)", () => {
+it("arrays (variadic)", () => {
   expect(cx([], [])).toBe("")
   expect(cx(["foo"], ["bar"])).toBe("foo bar")
   expect(cx(["foo"], null, ["baz", ""], true, "", [])).toBe("foo baz")
 })
 
-test("arrays (no `push` escape)", () => {
+it("arrays (no `push` escape)", () => {
   expect(cx({ push: 1 })).toBe("push")
   expect(cx({ pop: true })).toBe("pop")
   expect(cx({ push: true })).toBe("push")
   expect(cx("hello", { world: 1, push: true })).toBe("hello world push")
 })
 
-test("functions", () => {
+it("functions", () => {
   const foo = () => {}
   // @ts-expect-error
   expect(cx(foo, "hello")).toBe("hello")
@@ -1775,7 +1775,7 @@ describe("cx", () => {
       [["foo", [1 && "bar", { baz: false, bat: null }, ["hello", ["world"]]], "cya"], "foo bar hello world cya"],
     ],
   ])("cx(%o)", (options, expected) => {
-    test(`returns ${expected}`, () => {
+    it(`returns ${expected}`, () => {
       expect(cx(options)).toBe(expected)
     })
   })
@@ -1784,7 +1784,7 @@ describe("cx", () => {
 describe("cvax", () => {
   describe("without base", () => {
     describe("without anything", () => {
-      test("empty", () => {
+      it("empty", () => {
         // @ts-expect-error
         const example = cvax()
         expect(example()).toBe("")
@@ -1805,7 +1805,7 @@ describe("cvax", () => {
         ).toBe("adhoc-class adhoc-className")
       })
 
-      test("undefined", () => {
+      it("undefined", () => {
         // @ts-expect-error
         const example = cvax(undefined)
         expect(example()).toBe("")
@@ -1826,7 +1826,7 @@ describe("cvax", () => {
         ).toBe("adhoc-class adhoc-className")
       })
 
-      test("null", () => {
+      it("null", () => {
         const example = cvax(
           // @ts-expect-error
           null
@@ -2117,7 +2117,7 @@ describe("cvax", () => {
         ],
         // typings needed
       ])("button(%o)", (options, expected) => {
-        test(`returns ${expected}`, () => {
+        it(`returns ${expected}`, () => {
           expect(buttonWithoutBaseWithoutDefaultsString(options)).toBe(expected)
           expect(buttonWithoutBaseWithoutDefaultsWithClassNameString(options)).toBe(expected)
           expect(buttonWithoutBaseWithoutDefaultsArray(options)).toBe(expected)
@@ -2469,7 +2469,7 @@ describe("cvax", () => {
           "button font-semibold border rounded button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 button--enabled cursor-pointer button--medium text-base py-2 px-4 m-1 button--primary-medium uppercase adhoc-classname",
         ],
       ])("button(%o)", (options, expected) => {
-        test(`returns ${expected}`, () => {
+        it(`returns ${expected}`, () => {
           expect(buttonWithoutBaseWithDefaultsString(options)).toBe(expected)
           expect(buttonWithoutBaseWithDefaultsWithClassNameString(options)).toBe(expected)
           expect(buttonWithoutBaseWithDefaultsArray(options)).toBe(expected)
@@ -2763,7 +2763,7 @@ describe("cvax", () => {
           "button font-semibold border rounded button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 adhoc-className",
         ],
       ])("button(%o)", (options, expected) => {
-        test(`returns ${expected}`, () => {
+        it(`returns ${expected}`, () => {
           expect(buttonWithBaseWithoutDefaultsString(options)).toBe(expected)
           expect(buttonWithBaseWithoutDefaultsWithClassNameString(options)).toBe(expected)
           expect(buttonWithBaseWithoutDefaultsArray(options)).toBe(expected)
@@ -3098,7 +3098,7 @@ describe("cvax", () => {
           "button font-semibold border rounded button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 button--enabled cursor-pointer button--medium text-base py-2 px-4 button--primary-medium uppercase adhoc-classname",
         ],
       ])("button(%o)", (options, expected) => {
-        test(`returns ${expected}`, () => {
+        it(`returns ${expected}`, () => {
           expect(buttonWithBaseWithDefaultsString(options)).toBe(expected)
           expect(buttonWithBaseWithDefaultsWithClassNameString(options)).toBe(expected)
           expect(buttonWithBaseWithDefaultsArray(options)).toBe(expected)
@@ -3117,7 +3117,7 @@ describe("cvaxify", () => {
 
       const onCompleteHandler = (className: string) => [prefix, className, suffix].join(" ")
 
-      test("should extend compose", () => {
+      it("should extend compose", () => {
         const { compose: composeExtended } = cvaxify({
           hooks: {
             onComplete: onCompleteHandler,
@@ -3163,7 +3163,7 @@ describe("cvaxify", () => {
         expect(cardShadowGapClassListSplit[cardShadowGapClassListSplit.length - 1]).toBe(suffix)
       })
 
-      test("should extend cvax", () => {
+      it("should extend cvax", () => {
         const { cvax: cvaxExtended } = cvaxify({
           hooks: {
             onComplete: onCompleteHandler,
@@ -3182,7 +3182,7 @@ describe("cvaxify", () => {
         expect(componentClassListSplit[componentClassListSplit.length - 1]).toBe(suffix)
       })
 
-      test("should extend cx", () => {
+      it("should extend cx", () => {
         const { cx: cxExtended } = cvaxify({
           hooks: {
             onComplete: onCompleteHandler,
