@@ -153,11 +153,7 @@ interface CvaxConfigOptions {
 
 // cvaxify
 // ---------------------------------------------
-function cvaxify(options?: CvaxConfigOptions): {
-  compose: Compose
-  cx: Cx
-  cvax: Cvax
-} {
+function cvaxify(options?: CvaxConfigOptions): { compose: Compose; cx: Cx; cvax: Cvax } {
   const cx: Cx = (...inputs) => {
     if (typeof options?.hooks?.onComplete === "function") {
       return options?.hooks.onComplete(classic(inputs))
@@ -336,12 +332,8 @@ function classic() {
 }
 
 function produceClasses(classes: ClassValue) {
-  if (!classes || classes === true || typeof classes === "function") {
+  if (typeof classes === "boolean" || !classes || typeof classes === "function") {
     return ""
-  }
-
-  if (typeof classes === "number") {
-    return `${classes} `
   }
 
   if (typeof classes === "object") {
@@ -359,6 +351,7 @@ function produceClasses(classes: ClassValue) {
       }
     } else {
       for (const key in classes) {
+        // special case
         if (key === "class" || key === "className") {
           str += `${produceClasses(classes[key])} `
         } else if (classes[key]) {
