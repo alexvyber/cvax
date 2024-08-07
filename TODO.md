@@ -13,3 +13,4 @@
 13. get rid of all unnecessary `keyof typeof` stuff
 14. may separate types and implementation
 15. hide unnecessary exports
+16. switch vitepress to nextra 
