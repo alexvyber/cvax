@@ -223,7 +223,6 @@ function cvaxify(options?: CvaxConfigOptions): { compose: Compose; cx: Cx; cvax:
         for (const key of Object.keys(config.incompatible)) {
           if (key in props) {
             // @ts-expect-error: no inference needed
-
             if (props[key] in config.incompatible[key]) {
               // @ts-expect-error: kinda imposible to make inference right
               const incompatibles = config.incompatible[key][props[key]] as object
