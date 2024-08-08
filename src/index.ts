@@ -153,7 +153,11 @@ interface CvaxConfigOptions {
 
 // cvaxify
 // ---------------------------------------------
-function cvaxify(options?: CvaxConfigOptions): { compose: Compose; cx: Cx; cvax: Cvax } {
+function cvaxify(options?: CvaxConfigOptions): {
+  compose: Compose
+  cx: Cx
+  cvax: Cvax
+} {
   const cx: Cx = (...inputs) => {
     if (typeof options?.hooks?.onComplete === "function") {
       return options?.hooks.onComplete(classic(inputs))
@@ -225,11 +229,17 @@ function cvaxify(options?: CvaxConfigOptions): { compose: Compose; cx: Cx; cvax:
             // @ts-expect-error: no inference needed
             if (props[key] in config.incompatible[key]) {
               // @ts-expect-error: kinda imposible to make inference right
-              const incompatibles = config.incompatible[key][props[key]] as object
+              const incompatibles = config.incompatible[key][
+                // @ts-expect-error: kinda imposible to make inference right
+                props[key]
+              ] as object
 
               for (const incompatible of Object.keys(incompatibles)) {
-                // @ts-expect-error: no inference needed
-                if (incompatible in props && incompatibles[incompatible].includes(props[incompatible])) {
+                if (
+                  incompatible in props &&
+                  // @ts-expect-error: no inference needed
+                  incompatibles[incompatible].includes(props[incompatible])
+                ) {
                   throw new Error(
                     // @ts-expect-error: no inference needed
                     `You called variants with incompatible variatns: { ${key}: "${props[key]}"} incompatible with {  ${incompatible}: "${props[incompatible]}"}`

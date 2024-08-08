@@ -13,25 +13,23 @@
   "main": "src/index.ts",
   "module": "src/index.ts",
   "types": "src/index.ts",
-  "files": [
-    "dist/"
-  ],
+  "files": ["dist/"],
   "scripts": {
     "build": "pnpm build:cjs && pnpm build:esm && pnpm build:tsc",
     "build:cjs": "swc ./src/index.ts --config-file ./.config/.swcrc -o dist/index.js  -C module.type=commonjs",
     "build:esm": "swc ./src/index.ts --config-file ./.config/.swcrc -o dist/index.mjs -C module.type=es6 ",
     "build:tsc": "tsc --project .config/tsconfig.build.json ",
     "dev": "vitest",
+    "docs:build": "vitepress build docs",
+    "docs:dev": "vitepress dev docs",
+    "docs:preview": "vitepress preview docs",
     "format": "biome format --write .",
     "lint": "biome lint --write .",
     "lint:unsafe": "biome lint --write --unsafe .",
     "prepublishOnly": "pnpm build",
     "test": "run-p test:*",
     "test:vitest": "vitest",
-    "tsc": "tsc --project tsconfig.json --noEmit",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "tsc": "tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {
     "@swc/cli": "0.4.0",
