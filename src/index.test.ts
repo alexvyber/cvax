@@ -1,7 +1,6 @@
-import type * as Cvax from "./"
-import { compose, cvax, cvaxify } from "./"
+import { classic } from "@alexvyber/classic"
+import { compose, cvax, cvaxify, type VariantProps } from "./index.js"
 import { describe, it, expect, expectTypeOf } from "vitest"
-import { cx } from "./"
 
 describe("cvax", () => {
   describe("without base", () => {
@@ -137,23 +136,20 @@ describe("cvax", () => {
       const buttonAllEmptyObjectsNull = cvax({
         base: null,
         // @ts-expect-error
-
         variants: null,
         // @ts-expect-error
-
         compoundVariants: null,
         // @ts-expect-error
-
         defaultVariants: null,
       })
 
       type ButtonWithoutDefaultsWithoutBaseProps =
-        | Cvax.VariantProps<typeof buttonOnlyBase>
-        | Cvax.VariantProps<typeof buttonOnlyVariants>
-        | Cvax.VariantProps<typeof buttonOnlyCompoundVariants>
-        | Cvax.VariantProps<typeof buttonOnlyDefaultVariants>
-        | Cvax.VariantProps<typeof buttonAllEmptyObjects>
-        | Cvax.VariantProps<typeof buttonOnlyBaseNull>
+        | VariantProps<typeof buttonOnlyBase>
+        | VariantProps<typeof buttonOnlyVariants>
+        | VariantProps<typeof buttonOnlyCompoundVariants>
+        | VariantProps<typeof buttonOnlyDefaultVariants>
+        | VariantProps<typeof buttonAllEmptyObjects>
+        | VariantProps<typeof buttonOnlyBaseNull>
 
       describe.each<[ButtonWithoutDefaultsWithoutBaseProps, string]>([
         [
@@ -380,10 +376,10 @@ describe("cvax", () => {
       })
 
       type ButtonWithoutDefaultsWithoutBaseProps =
-        | Cvax.VariantProps<typeof buttonWithoutBaseWithoutDefaultsString>
-        | Cvax.VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameString>
-        | Cvax.VariantProps<typeof buttonWithoutBaseWithoutDefaultsArray>
-        | Cvax.VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameArray>
+        | VariantProps<typeof buttonWithoutBaseWithoutDefaultsString>
+        | VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameString>
+        | VariantProps<typeof buttonWithoutBaseWithoutDefaultsArray>
+        | VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithoutDefaultsWithoutBaseProps, string]>([
         [
@@ -434,7 +430,6 @@ describe("cvax", () => {
           } as ButtonWithoutDefaultsWithoutBaseProps,
           "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 m-1 adhoc-classname",
         ],
-        // typings needed
       ])("button(%o)", (options, expected) => {
         it(`returns ${expected}`, () => {
           expect(buttonWithoutBaseWithoutDefaultsString(options)).toBe(expected)
@@ -672,10 +667,10 @@ describe("cvax", () => {
       })
 
       type ButtonWithoutBaseWithDefaultsProps =
-        | Cvax.VariantProps<typeof buttonWithoutBaseWithDefaultsString>
-        | Cvax.VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameString>
-        | Cvax.VariantProps<typeof buttonWithoutBaseWithDefaultsArray>
-        | Cvax.VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameArray>
+        | VariantProps<typeof buttonWithoutBaseWithDefaultsString>
+        | VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameString>
+        | VariantProps<typeof buttonWithoutBaseWithDefaultsArray>
+        | VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithoutBaseWithDefaultsProps, string]>([
         [
@@ -953,10 +948,10 @@ describe("cvax", () => {
       })
 
       type ButtonWithBaseWithoutDefaultsProps =
-        | Cvax.VariantProps<typeof buttonWithBaseWithoutDefaultsString>
-        | Cvax.VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameString>
-        | Cvax.VariantProps<typeof buttonWithBaseWithoutDefaultsArray>
-        | Cvax.VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameArray>
+        | VariantProps<typeof buttonWithBaseWithoutDefaultsString>
+        | VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameString>
+        | VariantProps<typeof buttonWithBaseWithoutDefaultsArray>
+        | VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithBaseWithoutDefaultsProps, string]>([
         [undefined as unknown as ButtonWithBaseWithoutDefaultsProps, "button font-semibold border rounded"],
@@ -1227,10 +1222,10 @@ describe("cvax", () => {
       })
 
       type ButtonWithBaseWithDefaultsProps =
-        | Cvax.VariantProps<typeof buttonWithBaseWithDefaultsString>
-        | Cvax.VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameString>
-        | Cvax.VariantProps<typeof buttonWithBaseWithDefaultsArray>
-        | Cvax.VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameArray>
+        | VariantProps<typeof buttonWithBaseWithDefaultsString>
+        | VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameString>
+        | VariantProps<typeof buttonWithBaseWithDefaultsArray>
+        | VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithBaseWithDefaultsProps, string]>([
         [
@@ -1328,7 +1323,7 @@ describe("cvax", () => {
   })
 
   describe("composing classes", () => {
-    type BoxProps = Cvax.VariantProps<typeof box>
+    type BoxProps = VariantProps<typeof box>
     const box = cvax({
       base: ["box", "box-border"],
       variants: {
@@ -1341,7 +1336,7 @@ describe("cvax", () => {
       },
     })
 
-    type CardBaseProps = Cvax.VariantProps<typeof cardBase>
+    type CardBaseProps = VariantProps<typeof cardBase>
     const cardBase = cvax({
       base: ["card", "border-solid", "border-slate-300", "rounded"],
       variants: {
@@ -1354,7 +1349,7 @@ describe("cvax", () => {
     })
 
     interface CardProps extends BoxProps, CardBaseProps {}
-    const card = ({ margin, padding, shadow }: CardProps = {}) => cx(box({ margin, padding }), cardBase({ shadow }))
+    const card = ({ margin, padding, shadow }: CardProps = {}) => classic(box({ margin, padding }), cardBase({ shadow }))
 
     describe.each<[CardProps, string]>([
       [
@@ -1440,245 +1435,13 @@ describe("compose", () => {
   })
 })
 
-// Clean up stuff
-// Write tests for class and className cases
-it("keeps object keys with truthy values", () => {
-  expect(
-    cx({
-      one: true,
-      two: false,
-      three: 0,
-      four: null,
-      five: undefined,
-      six: 1,
-    })
-  ).toBe("one six")
-})
-
-it("joins arrays of class names and ignore falsy values", () => {
-  expect(cx("one", 0, null, undefined, true, 1, "seven")).toBe("one 1 seven")
-})
-
-it("handles arrays that include falsy and true values", () => {
-  expect(cx(["one", 0, null, undefined, false, true, "seven"])).toBe("one seven")
-})
-
-it("supports heterogenous arguments", () => {
-  expect(
-    cx({ one: true }, "two", 0, false, "five", [[{ six: true }]], {
-      className: [{ seven: false }, [[{ eight: true }]]],
-    })
-  ).toBe("one two five six eight")
-})
-
-it("should be trimmed", () => {
-  expect(cx("", "                   two             three            ", { four: true, "                five              ": true }, "").replace(/\s+/g, " ")).toBe("two three four five")
-})
-
-it("returns an empty string for an empty configuration", () => {
-  expect(cx({})).toBe("")
-})
-
-it("supports an array of class names", () => {
-  expect(cx(["one", "two"])).toBe("one two")
-})
-
-it("joins array arguments with string arguments", () => {
-  expect(cx(["one", "two"], "three")).toBe("one two three")
-  expect(cx("three", ["one", "two"])).toBe("three one two")
-})
-
-it("handles multiple array arguments", () => {
-  expect(cx(["one", "two"], ["three", "four"])).toBe("one two three four")
-})
-
-it("handles arrays that include arrays", () => {
-  expect(cx(["one", ["two", "three"]])).toBe("one two three")
-})
-
-it("handles arrays that include objects", () => {
-  expect(cx(["one", { two: true, three: false }])).toBe("one two")
-})
-
-it("handles deep array recursion", () => {
-  expect(cx(["one", ["two", ["three", { four: true }]]])).toBe("one two three four")
-})
-
-it("handles arrays that are empty", () => {
-  expect(cx("one", [])).toBe("one")
-})
-
-it("handles nested arrays with nested arrays", () => {
-  expect(cx([[[[[[[[], [], [[], [[]]], [[[[[[[[[[[["one"]]]]]]]]]]]]]]]]]]])).toBe("one")
-})
-
-it("handles nested arrays that have empty nested arrays", () => {
-  expect(
-    cx([
-      "one",
-      [
-        [
-          [[[[[{}, {}]], {}, null]], { two: false }],
-          // @ts-expect-error
-          { three: () => {} },
-        ],
-      ],
-    ])
-  ).toBe("one three")
-})
-
-it("handles all types of truthy and falsy property values as expected", () => {
-  // @ts-expect-error
-  const res = cx({
-    // These ARE causing TypeScript errors:
-    function: Object.prototype.toString,
-    emptyObject: {},
-
-    // falsy:
-    null: null,
-    emptyString: "",
-    noNumber: Number.NaN,
-    zero: 0,
-    negativeZero: -0,
-    false: false,
-    undefined: undefined,
-
-    // truthy
-    nonEmptyString: "foobar",
-    whitespace: " ",
-    nonEmptyObject: { a: 1, b: 2 },
-    emptyList: [],
-    nonEmptyList: [1, 2, 3],
-    greaterZero: 1,
-  })
-
-  expect(res).toBe("function emptyObject nonEmptyString whitespace nonEmptyObject emptyList nonEmptyList greaterZero")
-})
-
-it("handles all types of truthy and falsy property values as expected", () => {
-  const className = {
-    "one two three": true,
-    "four five": false,
-
-    class: ["six", "seven", false, true ?? true, true ?? 0, false ?? null, { className: "nine" }],
-  }
-
-  const res = cx({
-    className,
-    class: ["ten", ["eleven", ["twelve", { thirteen: true }]]],
-  })
-
-  expect(res.replace(/\s+/g, " ")).toBe("one two three six seven nine ten eleven twelve thirteen")
-})
-
-describe("cx", () => {
-  describe.each<Cvax.ClassValue>([
-    [null, ""],
-    [undefined, ""],
-    [["foo", null, "bar", undefined, "baz"], "foo bar baz"],
-    [["foo", [null, ["bar"], [undefined, ["baz", "qux", "quux", "quuz", [[[[[[[[["corge", "grault"]]]]], "garply"]]]]]]]], "foo bar baz qux quux quuz corge grault garply"],
-    [["foo", [1 && "bar", { baz: false, bat: null }, ["hello", ["world"]]], "cya"], "foo bar hello world cya"],
-  ])("cx(%o)", (options, expected) => {
-    it(`returns ${expected}`, () => {
-      expect(cx(options)).toBe(expected)
-    })
-  })
-})
-
-it("strings", () => {
-  expect(cx("")).toBe("")
-  expect(cx("foo")).toBe("foo")
-  expect(cx("foo")).toBe("foo")
-  expect(cx(false)).toBe("")
-})
-
-it("strings (variadic)", () => {
-  expect(cx("")).toBe("")
-  expect(cx("foo", "bar")).toBe("foo bar")
-  expect(cx("foo", false, "baz")).toBe("foo baz")
-  expect(cx(false, "bar", "baz", "")).toBe("bar baz")
-})
-
-it("objects", () => {
-  expect(cx({}), "")
-  expect(cx({ foo: true }), "foo")
-  expect(cx({ foo: true, bar: false }), "foo")
-  expect(cx({ foo: "hiya", bar: 1 }), "foo bar")
-  expect(cx({ foo: 1, bar: 0, baz: 1 }), "foo baz")
-  expect(cx({ "-foo": 1, "--bar": 1 }), "-foo --bar")
-})
-
-it("objects (variadic)", () => {
-  expect(cx({}, {})).toBe("")
-  expect(cx({ foo: 1 }, { bar: 2 })).toBe("foo bar")
-  expect(cx({ foo: 1 }, null, { baz: 1, bat: 0 })).toBe("foo baz")
-  expect(cx({ foo: 1 }, {}, {}, { bar: "a" }, { baz: null, bat: Number.POSITIVE_INFINITY })).toBe("foo bar bat")
-})
-
-it("arrays", () => {
-  expect(cx([])).toBe("")
-  expect(cx(["foo"])).toBe("foo")
-  expect(cx(["foo", "bar"])).toBe("foo bar")
-  expect(cx(["foo", 0 && "bar", 1 && "baz"])).toBe("foo baz")
-})
-
-it("arrays (nested)", () => {
-  expect(cx([[[]]])).toBe("")
-  expect(cx([[["foo"]]])).toBe("foo")
-  expect(cx([true, [["foo"]]])).toBe("foo")
-  expect(cx(["foo", ["bar", ["", [["baz"]]]]])).toBe("foo bar baz")
-})
-
-it("arrays (variadic)", () => {
-  expect(cx([], [])).toBe("")
-  expect(cx(["foo"], ["bar"])).toBe("foo bar")
-  expect(cx(["foo"], null, ["baz", ""], true, "", [])).toBe("foo baz")
-})
-
-it("arrays (no `push` escape)", () => {
-  expect(cx({ push: 1 })).toBe("push")
-  expect(cx({ pop: true })).toBe("pop")
-  expect(cx({ push: true })).toBe("push")
-  expect(cx("hello", { world: 1, push: true })).toBe("hello world push")
-})
-
-it("functions", () => {
-  const foo = () => {}
-  // @ts-expect-error
-  expect(cx(foo, "hello")).toBe("hello")
-  // @ts-expect-error
-  expect(cx(foo, "hello", cx)).toBe("hello")
-  // @ts-expect-error
-  expect(cx(foo, "hello", [[cx], "world"])).toBe("hello world")
-})
-
-describe("cx", () => {
-  describe.each<Parameters<typeof cx>>([
-    [{ class: "asdfasdf" }, "asdfasdf"],
-    [{ className: "asdfasdf" }, "asdfasdf"],
-    [null, ""],
-    [undefined, ""],
-    [false, ""],
-    ["foo", "foo"],
-    [["foo", undefined, "bar", undefined, "baz"], "foo bar baz"],
-    [
-      ["foo", [undefined, ["bar"], [undefined, ["baz", "qux", "quux", "quuz", [[[[[[[[["corge", "grault"]]]]], "garply"]]]]]]]],
-      "foo bar baz qux quux quuz corge grault garply",
-      [["foo", [1 && "bar", { baz: false, bat: null }, ["hello", ["world"]]], "cya"], "foo bar hello world cya"],
-    ],
-  ])("cx(%o)", (options, expected) => {
-    it(`returns ${expected}`, () => {
-      expect(cx(options)).toBe(expected)
-    })
-  })
-})
-
 describe("cvax", () => {
   describe("without base", () => {
     describe("without anything", () => {
       it("empty", () => {
         // @ts-expect-error
         const example = cvax()
+
         expect(example()).toBe("")
         expect(
           example({
@@ -1922,10 +1685,10 @@ describe("cvax", () => {
       })
 
       type ButtonWithoutDefaultsWithoutBaseProps =
-        | Cvax.VariantProps<typeof buttonWithoutBaseWithoutDefaultsString>
-        | Cvax.VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameString>
-        | Cvax.VariantProps<typeof buttonWithoutBaseWithoutDefaultsArray>
-        | Cvax.VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameArray>
+        | VariantProps<typeof buttonWithoutBaseWithoutDefaultsString>
+        | VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameString>
+        | VariantProps<typeof buttonWithoutBaseWithoutDefaultsArray>
+        | VariantProps<typeof buttonWithoutBaseWithoutDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithoutDefaultsWithoutBaseProps, string]>([
         [
@@ -1976,7 +1739,6 @@ describe("cvax", () => {
           } as ButtonWithoutDefaultsWithoutBaseProps,
           "button--primary bg-blue-500 text-white border-transparent hover:bg-blue-600 m-1 adhoc-classname",
         ],
-        // typings needed
       ])("button(%o)", (options, expected) => {
         it(`returns ${expected}`, () => {
           expect(buttonWithoutBaseWithoutDefaultsString(options)).toBe(expected)
@@ -2231,10 +1993,10 @@ describe("cvax", () => {
       })
 
       type ButtonWithoutBaseWithDefaultsProps =
-        | Cvax.VariantProps<typeof buttonWithoutBaseWithDefaultsString>
-        | Cvax.VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameString>
-        | Cvax.VariantProps<typeof buttonWithoutBaseWithDefaultsArray>
-        | Cvax.VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameArray>
+        | VariantProps<typeof buttonWithoutBaseWithDefaultsString>
+        | VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameString>
+        | VariantProps<typeof buttonWithoutBaseWithDefaultsArray>
+        | VariantProps<typeof buttonWithoutBaseWithDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithoutBaseWithDefaultsProps, string]>([
         [
@@ -2525,10 +2287,10 @@ describe("cvax", () => {
       })
 
       type ButtonWithBaseWithoutDefaultsProps =
-        | Cvax.VariantProps<typeof buttonWithBaseWithoutDefaultsString>
-        | Cvax.VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameString>
-        | Cvax.VariantProps<typeof buttonWithBaseWithoutDefaultsArray>
-        | Cvax.VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameArray>
+        | VariantProps<typeof buttonWithBaseWithoutDefaultsString>
+        | VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameString>
+        | VariantProps<typeof buttonWithBaseWithoutDefaultsArray>
+        | VariantProps<typeof buttonWithBaseWithoutDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithBaseWithoutDefaultsProps, string]>([
         [undefined as unknown as ButtonWithBaseWithoutDefaultsProps, "button font-semibold border rounded"],
@@ -2812,10 +2574,10 @@ describe("cvax", () => {
       })
 
       type ButtonWithBaseWithDefaultsProps =
-        | Cvax.VariantProps<typeof buttonWithBaseWithDefaultsString>
-        | Cvax.VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameString>
-        | Cvax.VariantProps<typeof buttonWithBaseWithDefaultsArray>
-        | Cvax.VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameArray>
+        | VariantProps<typeof buttonWithBaseWithDefaultsString>
+        | VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameString>
+        | VariantProps<typeof buttonWithBaseWithDefaultsArray>
+        | VariantProps<typeof buttonWithBaseWithDefaultsWithClassNameArray>
 
       describe.each<[ButtonWithBaseWithDefaultsProps, string]>([
         [

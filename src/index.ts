@@ -1,103 +1,18 @@
+import { classic, type ClassValue } from "@alexvyber/classic"
+
+// Utility types
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never
-
-type ClassValue = ClassArray | ClassDictionary | string | number | null | boolean | undefined
-type ClassArray = ClassValue[]
-
-type ClassDictionary = Record<string, ClassValue[] | string | number | null | boolean | undefined | Record<string, ClassValue[] | string | number | null | boolean | undefined>>
-
-type ClassProp = { class: ClassValue; className?: never } | { class?: never; className: ClassValue } | { class?: never; className?: never }
-
-type ExcludeUndefined<T> = T extends undefined ? never : T
 type StringToBoolean<T> = T extends "true" | "false" ? boolean : T
-type Variant<T extends { variants: Record<string, ClassValue> }> = T extends {
-  base?: ClassValue
-  variants?: Record<string, ClassValue>
-  defaultVariants?: {
-    [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | "unset" | undefined
-  }
-
-  compoundVariants?: (T["variants"] extends CvaxVariantShape
-    ? (
-        | CvaxVariantSchema<T["variants"]>
-        | {
-            [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | StringToBoolean<keyof T["variants"][Variant]>[] | undefined
-          }
-      ) &
-        CvaxClassProp
-    : CvaxClassProp)[]
-
-  incompatible?: {
-    [Variant in keyof T["variants"]]?: {
-      [IncompatibleVariant in Exclude<keyof T["variants"], Variant>]?: (keyof T["variants"][IncompatibleVariant])[]
-    }
-  }
-}
-  ? T
-  : never
-
-type Config<T> = T extends CvaxVariantShape
-  ? {
-      base?: ClassValue
-      variants?: T
-      defaultVariants?: CvaxVariantSchema<T>
-
-      compoundVariants?: (T["variants"] extends CvaxVariantShape
-        ? (
-            | CvaxVariantSchema<T["variants"]>
-            | {
-                [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | StringToBoolean<keyof T["variants"][Variant]>[] | undefined
-              }
-          ) &
-            CvaxClassProp
-        : CvaxClassProp)[]
-
-      incompatible?: {
-        [Variant in keyof T["variants"]]?: {
-          [IncompatibleVariant in Exclude<keyof T["variants"], Variant>]?: (keyof T["variants"][IncompatibleVariant])[]
-        }
-      }
-    }
-  : never
-
-// createVariant
-// ---------------------------------------------
-function variantIdentity<
-  T extends {
-    base?: ClassValue
-    variants?: Record<string, ClassValue>
-    defaultVariants?: {
-      [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | "unset" | undefined
-    }
-
-    compoundVariants?: (T["variants"] extends CvaxVariantShape
-      ? (
-          | CvaxVariantSchema<T["variants"]>
-          | {
-              [Variant in keyof T["variants"]]?: StringToBoolean<keyof T["variants"][Variant]> | StringToBoolean<keyof T["variants"][Variant]>[] | undefined
-            }
-        ) &
-          CvaxClassProp
-      : CvaxClassProp)[]
-
-    incompatible?: {
-      [Variant in keyof T["variants"]]?: {
-        [IncompatibleVariant in Exclude<keyof T["variants"], Variant>]?: (keyof T["variants"][IncompatibleVariant])[]
-      }
-    }
-  },
->(config: T) {
-  return config
-}
 
 // cvax
-// ---------------------------------------------
 type CvaxConfigBase = { base?: ClassValue }
 type CvaxVariantShape = Record<string, Record<string, ClassValue>>
-type CvaxClassProp = { class?: ClassValue; className?: never } | { class?: never; className?: ClassValue }
-
+type CvaxClassProp = { class: ClassValue; className?: never } | { class?: never; className: ClassValue } | { class?: never; className?: never }
 type CvaxVariantSchema<V extends CvaxVariantShape> = {
   [Variant in keyof V]?: StringToBoolean<keyof V[Variant]> | undefined | "unset"
 }
+
+type VariantProps<T> = T extends (props: infer U) => string ? Omit<U extends undefined ? never : U, keyof CvaxClassProp> : never
 
 type Cvax = <_ extends "iternal use only", V>(
   config: V extends CvaxVariantShape
@@ -134,14 +49,10 @@ type Cvax = <_ extends "iternal use only", V>(
       }
 ) => (props?: V extends CvaxVariantShape ? CvaxVariantSchema<V> & CvaxClassProp : CvaxClassProp) => string
 
-type VariantProps<T> = T extends (props: infer U) => string ? Omit<ExcludeUndefined<U>, keyof ClassProp> : never
-
 // compose
-// ---------------------------------------------
 type Compose = <T extends ReturnType<Cvax>[]>(...components: [...T]) => (props?: (UnionToIntersection<{ [K in keyof T]: VariantProps<T[K]> }[number]> | undefined) & CvaxClassProp) => string
 
 // defineConfig
-// ---------------------------------------------
 interface CvaxConfigOptions {
   hooks?: {
     /**
@@ -152,13 +63,12 @@ interface CvaxConfigOptions {
 }
 
 // cvaxify
-// ---------------------------------------------
 function cvaxify(options?: CvaxConfigOptions): {
   compose: Compose
-  cx: Cx
+  cx: typeof classic
   cvax: Cvax
 } {
-  const cx: Cx = (...inputs) => {
+  const cx: typeof classic = (...inputs) => {
     if (typeof options?.hooks?.onComplete === "function") {
       return options?.hooks.onComplete(classic(inputs))
     }
@@ -168,11 +78,11 @@ function cvaxify(options?: CvaxConfigOptions): {
 
   const cvax: Cvax = (config) => {
     if (!config) {
-      return (props?: ClassProp): string => cx(props?.class, props?.className)
+      return (props?: CvaxClassProp): string => cx(props?.class, props?.className)
     }
 
     if (!config.variants) {
-      return (props?: ClassProp): string => cx(config.base, props?.class, props?.className)
+      return (props?: CvaxClassProp): string => cx(config.base, props?.class, props?.className)
     }
 
     return function variants(props): string {
@@ -203,8 +113,6 @@ function cvaxify(options?: CvaxConfigOptions): {
             if (prop === "class" || prop === "className") {
               continue
             }
-
-            assertsKeyof<keyof typeof compound>(prop)
 
             if (config.defaultVariants[prop] !== compound[prop]) {
               adding = false
@@ -313,69 +221,8 @@ function cvaxify(options?: CvaxConfigOptions): {
       return cx(classes, clss, className)
     }
 
-  return {
-    cx,
-    cvax,
-    compose,
-  }
+  return { cx, cvax, compose }
 }
-
-// cx
-// ---------------------------------------------
-type Cx = (...inputs: ClassValue[]) => string
-function classic(...inputs: ClassValue[]): string
-function classic() {
-  let i = 0
-  let str = ""
-  let tmp: any
-
-  const length = arguments.length
-
-  while (i < length) {
-    if ((tmp = arguments[i++])) {
-      str += produceClasses(tmp)
-    }
-  }
-
-  return str.trim()
-}
-
-function produceClasses(classes: ClassValue) {
-  if (typeof classes === "boolean" || !classes || typeof classes === "function") {
-    return ""
-  }
-
-  if (typeof classes === "object") {
-    let str = ""
-
-    if (Array.isArray(classes)) {
-      if (classes.length === 0) {
-        return ""
-      }
-
-      for (const item of classes.flat(Number.MAX_SAFE_INTEGER as 0)) {
-        if (item) {
-          str += produceClasses(item)
-        }
-      }
-    } else {
-      for (const key in classes) {
-        // special case
-        if (key === "class" || key === "className") {
-          str += `${produceClasses(classes[key])} `
-        } else if (classes[key]) {
-          str += `${key} `
-        }
-      }
-    }
-
-    return str
-  }
-
-  return `${classes} `
-}
-
-function assertsKeyof<T>(_arg: unknown): asserts _arg is T {}
 
 function toString(value: any): string {
   if (typeof value === "boolean" || typeof value === "number") {
@@ -391,5 +238,5 @@ function toString(value: any): string {
 
 const { cvax, cx, compose } = cvaxify()
 
-export type { Cvax, VariantProps, CvaxVariantShape, CvaxVariantSchema, ClassValue, Variant, ClassProp, Config, StringToBoolean }
-export { cvax, cx, compose, cvaxify, variantIdentity }
+export type { VariantProps, Cvax, ClassValue, Compose, CvaxConfigOptions }
+export { cvax, cx, compose, cvaxify }
