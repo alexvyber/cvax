@@ -35,6 +35,18 @@ suite("cvax incopitable", () => {
     },
   })
 
+  if (false) {
+    const incompatibleCall = withIncopitable<{ size: "first"; color: "one" }>
+    const compatibleCall = withIncopitable<{ size: "first"; color: "two" }>
+    type IncompatibleReturn = ReturnType<typeof incompatibleCall>
+    type CompatibleReturn = ReturnType<typeof compatibleCall>
+    const _incompatibleResult: never = undefined as IncompatibleReturn
+    const _compatibleResult: CompatibleReturn = ""
+
+    // @ts-expect-error: incompatible variant pair should be rejected
+    withIncopitable({ size: "first", color: "one" })
+  }
+
   test("allways throws", () => {
     const varints = [
       //size
@@ -50,10 +62,10 @@ suite("cvax incopitable", () => {
       { shape: "outline", color: "two" },
       { shape: "outline", size: "first" },
       { shape: "outline", size: "second" },
-    ] satisfies Cvax.VariantProps<typeof withIncopitable>[]
+    ]
 
     for (const variant of varints) {
-      assert.throws(() => withIncopitable(variant))
+      assert.throws(() => withIncopitable(variant as any))
     }
   })
 
@@ -92,7 +104,7 @@ suite("cvax incopitable", () => {
     ] satisfies Cvax.VariantProps<typeof withIncopitable>[]
 
     for (const variant of varints) {
-      assert.doesNotThrow(() => withIncopitable(variant))
+      assert.doesNotThrow(() => withIncopitable(variant as any))
     }
   })
 })
