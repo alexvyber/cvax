@@ -28,7 +28,8 @@
     "lint:unsafe": "biome lint --write --unsafe .",
     "prepublishOnly": "pnpm build",
     "test": "run-p test:*",
-    "test:vitest": "vitest ./src/index.test.ts",
+    "test:vitest": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "tsc": "tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {
@@ -40,6 +41,7 @@
   "devDependencies": {
     "@stylexjs/stylex": "^0.7.5",
     "@types/node": "^22.3.0",
+    "@vitest/coverage-v8": "2.0.5",
     "tsx": "^4.17.0",
     "typescript": "5.5.4",
     "vitest": "^2.0.5"
