@@ -134,12 +134,13 @@ describe("cvax", () => {
       })
 
       const buttonAllEmptyObjectsNull = cvax({
+        // @ts-expect-error: invalid config is rejected as a whole
         base: null,
-        // @ts-expect-error
+        // @ts-expect-error: variants cannot be null
         variants: null,
-        // @ts-expect-error
+        // @ts-expect-error: compound variants cannot be null
         compoundVariants: null,
-        // @ts-expect-error
+        // @ts-expect-error: default variants cannot be null
         defaultVariants: null,
       })
 
@@ -1415,14 +1416,13 @@ describe("compose", () => {
     const card = compose(box, stack, bg)
 
     expectTypeOf(card).toBeFunction()
-    expectTypeOf(card).parameter(0).toMatchTypeOf<
-      | {
-          shadow?: "sm" | "md" | undefined | "unset"
-          gap?: "unset" | 1 | 2 | 3 | undefined
-          bg?: "unset" | "red" | "blue" | "purple" | undefined
-        }
-      | undefined
-    >()
+    expectTypeOf<VariantProps<typeof card>>().toMatchTypeOf<{
+      readonly shadow?: "sm" | "md" | undefined | "unset"
+      readonly gap?: "unset" | 1 | 2 | 3 | undefined
+      readonly bg?: "unset" | "red" | "blue" | "purple" | undefined
+    }>()
+    const emptyCardProps = {} satisfies VariantProps<typeof card>
+    expect(emptyCardProps).toEqual({})
 
     expect(card()).toBe("shadow-sm")
     expect(card({ class: "adhoc-class" })).toBe("shadow-sm adhoc-class")

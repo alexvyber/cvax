@@ -22,8 +22,25 @@ type CvaxIncompatible<V extends CvaxVariantShape> = {
   }
 }
 
-type CvaxTypeBrand<Props> = {
+type CvaxTypeBrand<Props, Rules = never> = {
   readonly __cvax_variant_props__?: Props
+  readonly __cvax_incompatible_rules__?: Rules
+}
+
+type Defined<T> = Exclude<T, undefined>
+
+type DefaultValue<D, Variant extends PropertyKey> = D extends object
+  ? Variant extends keyof D
+    ? Defined<D[Variant]>
+    : never
+  : never
+
+type EffectiveVariantProps<V extends CvaxVariantShape, D, P> = {
+  [Variant in keyof V]: Variant extends keyof P
+    ? [Defined<P[Variant]>] extends [never]
+      ? DefaultValue<D, Variant>
+      : Defined<P[Variant]>
+    : DefaultValue<D, Variant>
 }
 
 type IncompatibleRuleForValue<
@@ -40,14 +57,16 @@ type IncompatibleRuleForValue<
 type VariantIsIncompatible<
   V extends CvaxVariantShape,
   I extends CvaxIncompatible<V>,
-  P extends CvaxVariantSchema<V>,
+  P,
   Variant extends keyof V & keyof P,
 > = IncompatibleRuleForValue<V, I, Variant, Exclude<P[Variant], undefined>> extends infer Rule
   ? Rule extends Record<PropertyKey, readonly unknown[]>
     ? AnyTrue<{
-        [IncompatibleVariant in keyof Rule & keyof P]: ToIncompatibleKey<Exclude<P[IncompatibleVariant], undefined>> extends Rule[IncompatibleVariant][number]
-          ? true
-          : false
+        [IncompatibleVariant in keyof Rule & keyof P]: [Exclude<P[IncompatibleVariant], undefined>] extends [never]
+          ? false
+          : ToIncompatibleKey<Exclude<P[IncompatibleVariant], undefined>> extends Rule[IncompatibleVariant][number]
+            ? true
+            : false
       }[keyof Rule & keyof P]>
     : false
   : false
@@ -55,7 +74,7 @@ type VariantIsIncompatible<
 type HasIncompatibleProps<
   V extends CvaxVariantShape,
   I extends CvaxIncompatible<V>,
-  P extends CvaxVariantSchema<V>,
+  P,
 > = AnyTrue<
   {
     [Variant in keyof V & keyof P]: VariantIsIncompatible<V, I, P, Variant>
@@ -65,65 +84,108 @@ type HasIncompatibleProps<
 type EnsureCompatibleProps<
   V extends CvaxVariantShape,
   I extends CvaxIncompatible<V> | undefined,
-  P extends CvaxVariantSchema<V>,
+  P,
 > = I extends CvaxIncompatible<V> ? (HasIncompatibleProps<V, I, P> extends true ? never : unknown) : unknown
 
 type CvaxCallResult<
   V extends CvaxVariantShape,
   I extends CvaxIncompatible<V> | undefined,
-  P extends CvaxVariantSchema<V>,
+  P,
 > = I extends CvaxIncompatible<V> ? (HasIncompatibleProps<V, I, P> extends true ? never : string) : string
+
+type CvaxIncompatibleRule<
+  V extends CvaxVariantShape,
+  I extends CvaxIncompatible<V>,
+  D,
+> = {
+  variants: V
+  incompatible: I
+  defaults: D
+}
+
+type RuleIsIncompatible<Rule, P> = Rule extends CvaxIncompatibleRule<infer V, infer I, infer D>
+  ? HasIncompatibleProps<V, I, EffectiveVariantProps<V, D, P>>
+  : false
+
+type HasIncompatibleRules<Rules, P> = [Rules] extends [never]
+  ? false
+  : AnyTrue<Rules extends unknown ? RuleIsIncompatible<Rules, P> : never>
+
+type EnsureCompatibleRules<Rules, P> = HasIncompatibleRules<Rules, P> extends true ? never : unknown
 
 type CvaxReturnWithVariants<
   V extends CvaxVariantShape,
   I extends CvaxIncompatible<V> | undefined,
-> = CvaxTypeBrand<CvaxVariantSchema<V>> & {
-  <P extends CvaxVariantSchema<V> = CvaxVariantSchema<V>>(props?: P & CvaxClassProp & EnsureCompatibleProps<V, I, P>): CvaxCallResult<V, I, P>
+  D extends CvaxVariantSchema<V> | undefined,
+> = CvaxTypeBrand<
+  CvaxVariantSchema<V>,
+  I extends CvaxIncompatible<V> ? CvaxIncompatibleRule<V, I, D> : never
+> & {
+  <P = {}>(
+    props?: P & CvaxVariantSchema<V> & CvaxClassProp & EnsureCompatibleProps<V, I, EffectiveVariantProps<V, D, P>>
+  ): CvaxCallResult<V, I, EffectiveVariantProps<V, D, P>>
 }
 
-type VariantProps<T> = T extends CvaxTypeBrand<infer Props>
+type VariantProps<T> = T extends CvaxTypeBrand<infer Props, any>
   ? Props
   : T extends (props: infer U) => string
     ? Omit<U extends undefined ? never : U, keyof CvaxClassProp>
     : never
 
-type Cvax = <
-  _ extends "iternal use only",
-  V,
-  I extends CvaxIncompatible<Extract<V, CvaxVariantShape>> | undefined = undefined,
->(
-  config: V extends CvaxVariantShape
-    ? CvaxConfigBase & {
-        variants?: V
+type CvaxCompoundVariant<V extends CvaxVariantShape> = (
+  | CvaxVariantSchema<V>
+  | {
+      [Variant in keyof V]?: StringToBoolean<keyof V[Variant]> | StringToBoolean<keyof V[Variant]>[] | undefined
+    }
+) &
+  CvaxClassProp
 
-        // TODO: compoundVariants should type error when trying to compound incompatible variants
-        compoundVariants?: (V extends CvaxVariantShape
-          ? (
-              | CvaxVariantSchema<V>
-              | {
-                  [Variant in keyof V]?: StringToBoolean<keyof V[Variant]> | StringToBoolean<keyof V[Variant]>[] | undefined
-                }
-            ) &
-              CvaxClassProp
-          : CvaxClassProp)[]
+type ConfigVariants<C> = C extends { variants: infer V extends CvaxVariantShape } ? V : never
+type ConfigIncompatible<C, V extends CvaxVariantShape> = C extends { incompatible: infer I }
+  ? Extract<I, CvaxIncompatible<V>>
+  : undefined
+type ConfigDefaults<C, V extends CvaxVariantShape> = C extends { defaultVariants: infer D }
+  ? Extract<D, CvaxVariantSchema<V>>
+  : undefined
 
-        // TODO: defaultVariants should type error when trying to default incompatible variants
-        defaultVariants?: CvaxVariantSchema<V>
+type CvaxConfigConstraint<C> = C extends { variants: infer V extends CvaxVariantShape }
+  ? CvaxConfigBase & {
+      variants: V
+      // TODO: compoundVariants should type error when trying to compound incompatible variants
+      compoundVariants?: CvaxCompoundVariant<V>[]
+      defaultVariants?: CvaxVariantSchema<V>
+      incompatible?: CvaxIncompatible<V>
+    } & EnsureCompatibleProps<
+      V,
+      ConfigIncompatible<C, V>,
+      EffectiveVariantProps<V, undefined, ConfigDefaults<C, V>>
+    >
+  : CvaxConfigBase & {
+      variants?: never
+      compoundVariants?: never
+      defaultVariants?: never
+      incompatible?: never
+    }
 
-        incompatible?: I
-      }
-    : CvaxConfigBase & {
-        variants?: never
-        compoundVariants?: never
-        defaultVariants?: never
-        incompatible?: never
-      }
-) => V extends CvaxVariantShape ? CvaxReturnWithVariants<V, Extract<I, CvaxIncompatible<V> | undefined>> : CvaxTypeBrand<{}> & ((props?: CvaxClassProp) => string)
+type CvaxReturn<C> = ConfigVariants<C> extends infer V extends CvaxVariantShape
+  ? [V] extends [never]
+    ? CvaxTypeBrand<{}> & ((props?: CvaxClassProp) => string)
+    : CvaxReturnWithVariants<V, ConfigIncompatible<C, V>, ConfigDefaults<C, V>>
+  : CvaxTypeBrand<{}> & ((props?: CvaxClassProp) => string)
+
+type Cvax = <const C>(config: C & CvaxConfigConstraint<C>) => CvaxReturn<C>
 
 // compose
-type Compose = <T extends ReturnType<Cvax>[]>(
-  ...components: [...T]
-) => (props?: (UnionToIntersection<{ [K in keyof T]: VariantProps<T[K]> }[number]> | undefined) & CvaxClassProp) => string
+type IncompatibleRules<T> = T extends CvaxTypeBrand<any, infer Rules> ? Rules : never
+type CvaxComponent = CvaxTypeBrand<any, any> & ((props?: any) => string)
+type ComposedVariantProps<T extends CvaxComponent[]> = UnionToIntersection<{ [K in keyof T]: VariantProps<T[K]> }[number]>
+type ComposedIncompatibleRules<T extends CvaxComponent[]> = IncompatibleRules<T[number]>
+
+type CvaxComposed<T extends CvaxComponent[]> = CvaxTypeBrand<ComposedVariantProps<T>, ComposedIncompatibleRules<T>> & {
+  <P = {}>(props?: P & ComposedVariantProps<T> & CvaxClassProp & EnsureCompatibleRules<ComposedIncompatibleRules<T>, P>): string
+}
+
+type Compose = <T extends CvaxComponent[]>(...components: [...T]) => CvaxComposed<T>
 
 // defineConfig
 interface CvaxConfigOptions {
@@ -161,6 +223,18 @@ function cvaxify(options?: CvaxConfigOptions): {
     return function variants(props: any): string {
       let classes = cx(config.base)
       let tmp: any
+
+      if (config.incompatible) {
+        const effectiveProps = { ...config.defaultVariants }
+
+        for (const variant of Object.keys(config.variants)) {
+          if (props && toString(props[variant])) {
+            effectiveProps[variant] = props[variant]
+          }
+        }
+
+        assertCompatible(config.incompatible, effectiveProps)
+      }
 
       if (!props) {
         if (!("defaultVariants" in config && config.defaultVariants)) {
@@ -201,27 +275,6 @@ function cvaxify(options?: CvaxConfigOptions): {
         }
 
         return classes
-      }
-
-      // incompatible
-      if (config.incompatible) {
-        const incompatibleConfig = config.incompatible as Record<string, Record<string, Record<string, unknown[]>>>
-
-        for (const key of Object.keys(config.incompatible)) {
-          if (key in props) {
-            if (props[key] in incompatibleConfig[key]) {
-              const incompatibles = incompatibleConfig[key][props[key]] as Record<string, unknown[]>
-
-              for (const incompatible of Object.keys(incompatibles)) {
-                if (incompatible in props && incompatibles[incompatible].includes(props[incompatible])) {
-                  throw new Error(
-                    `You called variants with incompatible variatns: { ${key}: "${props[key]}"} incompatible with {  ${incompatible}: "${props[incompatible]}"}`
-                  )
-                }
-              }
-            }
-          }
-        }
       }
 
       // TODO: rewrite to go through variants from props - not from config
@@ -287,6 +340,27 @@ function cvaxify(options?: CvaxConfigOptions): {
     }
 
   return { cx, cvax, compose }
+}
+
+function assertCompatible(incompatibleConfig: Record<string, Record<string, Record<string, unknown[]>>>, props: Record<string, unknown>): void {
+  for (const variant of Object.keys(incompatibleConfig)) {
+    const value = toString(props[variant])
+    const incompatibleForValue = incompatibleConfig[variant]?.[value]
+
+    if (!incompatibleForValue) {
+      continue
+    }
+
+    for (const incompatibleVariant of Object.keys(incompatibleForValue)) {
+      const incompatibleValue = toString(props[incompatibleVariant])
+
+      if (incompatibleForValue[incompatibleVariant].some((value) => toString(value) === incompatibleValue)) {
+        throw new Error(
+          `You called variants with incompatible variants: { ${variant}: "${value}" } is incompatible with { ${incompatibleVariant}: "${incompatibleValue}" }`
+        )
+      }
+    }
+  }
 }
 
 function toString(value: any): string {
